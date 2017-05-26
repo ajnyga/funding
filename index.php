@@ -15,8 +15,8 @@
  */
 
 
-require_once('FundRefPlugin.inc.php');
+require_once('fundRefPlugin.inc.php');
 
-return new FundRefPlugin();
+return new fundRefPlugin();
 
 ?>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE schema SYSTEM "../../../lib/pkp/dtd/xmlSchema.dtd">
+
+<!--
+  * schema.xml
+  *
+  * Copyright (c) 2014-2017 Simon Fraser University
+  * Copyright (c) 2003-2017 John Willinsky
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * FundRef plugin schema in XML.
+  *
+  -->
+
+<schema version="0.2">
+	<!--
+	 *
+	 * TABLE funders
+	 *
+	 -->
+	<table name="funders">
+		<field name="funder_id" type="I8">
+			<KEY/>
+			<AUTOINCREMENT/>
+		</field>
+		<field name="funder_name" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<field name="funder_identification" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<field name="funder_grants" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<field name="submission_id" type="I8">
+			<NOTNULL/>
+		</field>
+		<field name="context_id" type="I8">
+			<NOTNULL/>
+		</field>
+		<descr>List of funders for each submission</descr>
+	</table>
+
+</schema>

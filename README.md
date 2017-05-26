@@ -20,7 +20,7 @@ The data is saved in a separate database table.
 ### TODO
 
 - Add funding data to the CrossRef metadata exports. Currently not possible via a plugin?
-
+- Add fundig data to OAI-PMH
 
 ## Version 1.0
 Adds an autocomplete to the Supporting Agencies field.

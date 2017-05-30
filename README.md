@@ -1,7 +1,16 @@
 # OJS3 fundRef
 Integrates Crossref Funder registry to OJS3
 
+Upload and enable in plugin settings. Run *php tools/dbXMLtoSQL.php -schema execute plugins/generic/fundRef/schema.xml*
+
+### TODO
+
+- Add funding data to the CrossRef metadata exports. Currently not possible via a plugin?
+- Add funding data to OAI-PMH
+- OpenAIRE?
+
 ## Version 2.0
+
 
 Version 2.0 supports the combination of funder name, funder id and grant numbers used in the CrossRef Funder Registry (https://www.crossref.org/services/funder-registry/). The plugin adds a funder grid panel to the metatadata view.
 
@@ -17,10 +26,6 @@ The funding data is shown on the article landing page.
 
 The data is saved in a separate database table.
 
-### TODO
-
-- Add funding data to the CrossRef metadata exports. Currently not possible via a plugin?
-- Add fundig data to OAI-PMH
 
 ## Version 1.0
 Adds an autocomplete to the Supporting Agencies field.

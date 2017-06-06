@@ -16,5 +16,5 @@
 	<release>2.0.0.2</release>
 	<date>2017-05-26</date>
 	<lazy-load>1</lazy-load>
-	<class>fundRefPlugin</class>
+	<class>FundRefPlugin</class>
 </version>

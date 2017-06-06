@@ -3,7 +3,7 @@
 /**
  * @defgroup plugins_generic_fundRef
  */
- 
+
 /**
  * @file plugins/generic/fundRef/index.php
  *
@@ -15,8 +15,8 @@
  */
 
 
-require_once('fundRefPlugin.inc.php');
+require_once('FundRefPlugin.inc.php');
 
-return new fundRefPlugin();
+return new FundRefPlugin();
 
 ?>

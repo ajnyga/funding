@@ -43,6 +43,8 @@ class fundRefPlugin extends GenericPlugin {
 
 			HookRegistry::register('Templates::Article::Details', array($this, 'addArticleDisplay'));
 
+			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
+
         }
 		return $success;
 	}
@@ -117,6 +119,52 @@ class fundRefPlugin extends GenericPlugin {
 
 	}
 
+	function addCrossrefElement($hookName, $params) {
+		$preliminaryOutput =& $params[0];
+		$request = Application::getRequest();
+		$context = $request->getContext();
+		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
+		$funderDAO = DAORegistry::getDAO('FunderDAO');
+
+		$crossrefFRNS = 'http://www.crossref.org/fundref.xsd';
+		$rootNode=$preliminaryOutput->documentElement;
+		$rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:fr', $crossrefFRNS);
+		$articleNodes = $preliminaryOutput->getElementsByTagName('journal_article');
+		foreach ($articleNodes as $articleNode) {
+			$doiDataNode = $articleNode->getElementsByTagName('doi_data')->item(0);
+			$doiNode = $doiDataNode->getElementsByTagName('doi')->item(0);
+			$doi = $doiNode->nodeValue;
+
+			$programNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:program');
+			$programNode->setAttribute('name', 'fundref');
+
+			$publishedArticle = $publishedArticleDAO->getPublishedArticleByPubId('doi', $doi, $context->getId());
+			assert($publishedArticle);
+			$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+			while ($funder = $funders->next()) {
+				$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
+				$groupNode->setAttribute('name', 'fundgroup');
+				$funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderName());
+				$funderNameNode->setAttribute('name', 'funder_name');
+				$funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderIdentification());
+				$funderIdNode->setAttribute('name', 'funder_identifier');
+				$funderNameNode->appendChild($funderIdNode);
+				$groupNode->appendChild($funderNameNode);
+				$funderGrantsString = $funder->getFunderGrants();
+				if (!empty($funderGrantsString)) {
+					$funderGrants = explode(';', $funderGrantsString);
+					foreach ($funderGrants as $funderGrant) {
+						$awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderGrant);
+						$awardNumberNode->setAttribute('name', 'award_number');
+						$groupNode->appendChild($awardNumberNode);
+					}
+				}
+				$programNode->appendChild($groupNode);
+			}
+			$articleNode->insertBefore($programNode, $doiDataNode);
+		}
+		return false;
+	}
 
 	/**
 	 * @copydoc Plugin::getTemplatePath()

@@ -1,36 +1,54 @@
 <?php
 
 /**
- * @file fundRefPlugin.inc.php
+ * @file plugins/generic/fundRef/FundRefPlugin.inc.php
  *
+ * Copyright (c) 2014-2017 Simon Fraser University
+ * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @class fundRefPlugin
+ * @class FundRefPlugin
  * @ingroup plugins_generic_fundRef
- * @brief fundRef plugin class
- *
+
+ * @brief Add funding data to the article metadata, consider them in Crossref export,
+ * and display them on the article page.
  *
  */
 
 import('lib.pkp.classes.plugins.GenericPlugin');
-class fundRefPlugin extends GenericPlugin {
 
-   function getName() {
-        return 'fundRefPlugin';
+class FundRefPlugin extends GenericPlugin {
+
+	/**
+	 * @copydoc Plugin::getName()
+	 */
+	function getName() {
+		return 'FundRefPlugin';
     }
 
+	/**
+	 * @copydoc Plugin::getDisplayName()
+	 */
     function getDisplayName() {
-        return "fundRef";
+		return __('plugins.generic.fundRef.displayName');
     }
 
+	/**
+	 * @copydoc Plugin::getDescription()
+	 */
     function getDescription() {
-        return "Plugin for searching and saving funder name, funder id, and grant number";
+		return __('plugins.importexport.fundRef.description');
     }
 
+	/**
+	 * Register the plugin, if enabled.
+	 * @param $category string
+	 * @param $path string
+	 * @return boolean
+	 */
     function register($category, $path) {
 		$success = parent::register($category, $path);
 		if ($success && $this->getEnabled()) {
-
 			import('plugins.generic.fundRef.classes.FunderDAO');
 			$funderDao = new FunderDAO();
 			DAORegistry::registerDAO('FunderDAO', $funderDao);
@@ -44,7 +62,6 @@ class fundRefPlugin extends GenericPlugin {
 			HookRegistry::register('Templates::Article::Details', array($this, 'addArticleDisplay'));
 
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
-
         }
 		return $success;
 	}
@@ -57,7 +74,6 @@ class fundRefPlugin extends GenericPlugin {
 	 */
 	function setupGridHandler($hookName, $params) {
 		$component =& $params[0];
-
 		if ($component == 'plugins.generic.fundRef.controllers.grid.FunderGridHandler') {
 			import($component);
 			FunderGridHandler::setPlugin($this);
@@ -66,9 +82,8 @@ class fundRefPlugin extends GenericPlugin {
 		return false;
 	}
 
-
 	/**
-	 * Insert funder panel in the metadata form
+	 * Insert funder grid in the article metadata form
 	 */
 	function metadataFieldEdit($hookName, $params) {
 		$smarty =& $params[1];
@@ -87,11 +102,8 @@ class fundRefPlugin extends GenericPlugin {
 		$templateMgr->addJavaScript(
 			'FunderGridHandlerJs',
 			$gridHandlerJs,
-			array(
-					'contexts' => 'backend',
-				)
+			array('contexts' => 'backend')
 		);
-
 		return false;
 	}
 
@@ -109,16 +121,18 @@ class fundRefPlugin extends GenericPlugin {
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funders = $funderDao->getBySubmissionId($article->getId());
 		$funders = $funders->toArray();
-
 		if ($funders){
 			$templateMgr->assign('funders', $funders);
 			$output .= $templateMgr->fetch($this->getTemplatePath() . 'listFunders.tpl');
 		}
-
 		return false;
-
 	}
 
+	/**
+	 * Hook to articlecrossrefxmlfilter::execute and add funding data to the Crossref XML export
+	 * @param $hookName string
+	 * @param $params array
+	 */
 	function addCrossrefElement($hookName, $params) {
 		$preliminaryOutput =& $params[0];
 		$request = Application::getRequest();
@@ -187,6 +201,6 @@ class fundRefPlugin extends GenericPlugin {
 		return Request::getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
 	}
 
-
 }
+
 ?>

@@ -12,16 +12,14 @@
   *
   -->
 <locale name="en_US" full_name="U.S. English">
-	<message key="plugins.generic.fundRef.fundRef">Funding details</message>
+	<message key="plugins.generic.fundRef.displayName">Funding data</message>
+	<message key="plugins.generic.fundRef.description">This plugin adds article funding data using the Crossref funders registry, and considers the data in the Crossref XML export.</message>
+	<message key="plugins.generic.fundRef.fundingData">Funding data</message>
 	<message key="plugins.generic.fundRef.addFunder">Add funder</message>
-	<message key="plugins.generic.fundRef.funderName">Name</message>
-	<message key="plugins.generic.fundRef.funderIdentification">Funder id</message>	
+	<message key="plugins.generic.fundRef.funderName">Funder name</message>
+	<message key="plugins.generic.fundRef.funderIdentification">Funder ID</message>	
 	<message key="plugins.generic.fundRef.funderNameIdentification">Funder name and identification</message>
 	<message key="plugins.generic.fundRef.funderGrants">Grant numbers</message>
-	<message key="plugins.generic.fundRef.funderId">id</message>
 	<message key="plugins.generic.fundRef.noneCreated">No funders</message>	
 	<message key="plugins.generic.fundRef.funderNameIdentificationRequired">Funder name required</message>
-	
-	<message key="plugins.generic.fundRef.funding">Funding</message>
-	
 </locale>

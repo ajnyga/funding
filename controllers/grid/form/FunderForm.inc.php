@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file controllers/grid/form/FunderForm.inc.php
+ * @file plugins/generic/fundRef/controllers/grid/form/FunderForm.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
@@ -10,25 +10,28 @@
  * @class FunderForm
  * @ingroup controllers_grid_fundRef
  *
- * Form for 
+ * Form for adding/editing a funder
  *
  */
 
 import('lib.pkp.classes.form.Form');
 
 class FunderForm extends Form {
-	/** @var int Context (press / journal) ID */
+	/** @var int Context ID */
 	var $contextId;
+
+	/** @var int Submission ID */
 	var $submissionId;
-	
-	/** @var FundRefPlugin FundRef plugin */
+
+	/** @var FundRefPlugin */
 	var $plugin;
-	
+
 	/**
 	 * Constructor
-	 * @param $fundRefPlugin FundRefPlugin The fundRef plugin
+	 * @param $fundRefPlugin FundRefPlugin
 	 * @param $contextId int Context ID
-	 * @param $funderId int Funder ID (if any)
+	 * @param $submissionId int Submission ID
+	 * @param $funderId int (optional) Funder ID
 	 */
 	function __construct($fundRefPlugin, $contextId, $submissionId, $funderId = null) {
 		parent::__construct($fundRefPlugin->getTemplatePath() . 'editFunderForm.tpl');
@@ -37,45 +40,40 @@ class FunderForm extends Form {
 		$this->submissionId = $submissionId;
 		$this->funderId = $funderId;
 		$this->plugin = $fundRefPlugin;
-		
+
 		// Add form checks
 		$this->addCheck(new FormValidator($this, 'funderNameIdentification', 'required', 'plugins.generic.fundRef.funderNameIdentificationRequired'));
 		$this->addCheck(new FormValidatorPost($this));
 		$this->addCheck(new FormValidatorCSRF($this));
 
-	}	
+	}
 
 	/**
-	 * Initialize form data from current group group.
+	 * @copydoc Form::initData()
 	 */
 	function initData() {
-		$templateMgr = TemplateManager::getManager();
-		
 		$this->setData('submissionId', $this->submissionId);
-		
 		if ($this->funderId) {
 			$funderDao = DAORegistry::getDAO('FunderDAO');
 			$funder = $funderDao->getById($this->funderId);
 			$this->setData('funderNameIdentification', $funder->getFunderNameIdentification());
 			$this->setData('funderGrants', $funder->getFunderGrants());
 		}
-
 	}
 
 	/**
-	 * Assign form data to user-submitted data.
+	 * @copydoc Form::readInputData()
 	 */
 	function readInputData() {
 		$this->readUserVars(array('funderNameIdentification', 'funderGrants'));
 	}
 
 	/**
-	 * @see Form::fetch
+	 * @copydoc Form::fetch
 	 */
 	function fetch($request) {
 		$templateMgr = TemplateManager::getManager();
 		$templateMgr->assign('funderId', $this->funderId);
-		$templateMgr->assign('pluginJavaScriptURL', $this->plugin->getJavaScriptURL($request));
 		return parent::fetch($request);
 	}
 
@@ -84,37 +82,36 @@ class FunderForm extends Form {
 	 */
 	function execute() {
 		$funderDao = DAORegistry::getDAO('FunderDAO');
-		
+
 		if ($this->funderId) {
-			// Load and update an existing
+			// Load and update an existing funder
 			$funder = $funderDao->getById($this->funderId, $this->submissionId);
 		} else {
-			// Create a new 
+			// Create a new
 			$funder = $funderDao->newDataObject();
 			$funder->setContextId($this->contextId);
 			$funder->setSubmissionId($this->submissionId);
 		}
-		
+
 		$funderName = "";
 		$funderIdentification = "";
 		$funderNameIdentification = $this->getData('funderNameIdentification');
-		
+
 		if ($funderNameIdentification != ""){
 			$funderName = trim(preg_replace('/\s*\[.*?\]\s*/ ', '', $funderNameIdentification));
 			if (preg_match("/\[(.*?)\]/", $funderNameIdentification, $output))
 				$funderIdentification = $output[1];
 		}
-				
+
 		$funder->setFunderName($funderName);
 		$funder->setFunderIdentification($funderIdentification);
 		$funder->setFunderGrants($this->getData('funderGrants'));
-		
+
 		if ($this->funderId) {
 			$funderDao->updateObject($funder);
 		} else {
 			$funderDao->insertObject($funder);
 		}
-				
 	}
 }
 

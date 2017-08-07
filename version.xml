@@ -4,8 +4,8 @@
 <!--
   * plugins/generic/fundRef/version.xml
   *
-  * Copyright (c) 2013-2016 Simon Fraser University Library
-  * Copyright (c) 2003-2016 John Willinsky
+  * Copyright (c) 2014-2017 Simon Fraser University
+  * Copyright (c) 2003-2017 John Willinsky
   * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
   *
   * Plugin version information.
@@ -13,8 +13,8 @@
 <version>
 	<application>fundRef</application>
 	<type>plugins.generic</type>
-	<release>2.0.0.2</release>
-	<date>2017-05-26</date>
+	<release>2.0.0.3</release>
+	<date>2017-08-01</date>
 	<lazy-load>1</lazy-load>
 	<class>FundRefPlugin</class>
 </version>

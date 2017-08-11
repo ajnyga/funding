@@ -1,5 +1,5 @@
 {**
- * plugins/generic/fundRef/templates/editFunderForm.tpl
+ * plugins/generic/funding/templates/editFunderForm.tpl
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
@@ -53,7 +53,7 @@
 
 </script>
 
-{url|assign:actionUrl router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.fundRef.controllers.grid.FunderGridHandler" op="updateFunder" submissionId=$submissionId escape=false}
+{url|assign:actionUrl router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="updateFunder" submissionId=$submissionId escape=false}
 <form class="pkp_form" id="funderForm" method="post" action="{$actionUrl}">
 	{csrf}
 	{if $funderId}
@@ -61,12 +61,12 @@
 	{/if}
 	{fbvFormArea id="funderFormArea" class="border"}
 		{fbvFormSection}
-			{fbvElement type="hidden" class="funderNameIdentification" label="plugins.generic.fundRef.funderNameIdentification" id="funderNameIdentification" value=$funderNameIdentification maxlength="255" inline=true size=$fbvStyles.size.LARGE}
-			<span>{translate key="plugins.generic.fundRef.funderNameIdentification"}</span>
+			{fbvElement type="hidden" class="funderNameIdentification" label="plugins.generic.funding.funderNameIdentification" id="funderNameIdentification" value=$funderNameIdentification maxlength="255" inline=true size=$fbvStyles.size.LARGE}
+			<span>{translate key="plugins.generic.funding.funderNameIdentification"}</span>
 		{/fbvFormSection}
 		{fbvFormSection}
-			{fbvElement type="hidden" class="funderGrants" label="plugins.generic.fundRef.funderGrants" id="funderGrants" value=$funderGrants maxlength="255" inline=true size=$fbvStyles.size.LARGE}
-			<span>{translate key="plugins.generic.fundRef.funderGrants"}</span>
+			{fbvElement type="hidden" class="funderGrants" label="plugins.generic.funding.funderGrants" id="funderGrants" value=$funderGrants maxlength="255" inline=true size=$fbvStyles.size.LARGE}
+			<span>{translate key="plugins.generic.funding.funderGrants"}</span>
 		{/fbvFormSection}				
 	{/fbvFormArea}
 	{fbvFormSection class="formButtons"}

@@ -1,5 +1,5 @@
 {**
- * plugins/generic/fundRef/templates/listFunders.tpl
+ * plugins/generic/funding/templates/listFunders.tpl
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
@@ -9,7 +9,7 @@
  *}
 <div class="item funders">
 	<div class="value">
-		<h3>{translate key="plugins.generic.fundRef.fundingData"}</h3>
+		<h3>{translate key="plugins.generic.funding.fundingData"}</h3>
 		<ul>
 			{foreach from=$funders item=funder}
 				<li>
@@ -20,7 +20,7 @@
 						{$funder->getFunderName()|escape}
 					{/if}
 					<br />
-					{if $funder->getFunderGrants()}{translate key="plugins.generic.fundRef.funderGrants"} {$funder->getFunderGrants()|escape}{/if}
+					{if $funder->getFunderGrants()}{translate key="plugins.generic.funding.funderGrants"} {$funder->getFunderGrants()|escape}{/if}
 				</li>
 			{/foreach}
 		</ul>

@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @file plugins/generic/fundRef/FundRefPlugin.inc.php
+ * @file plugins/generic/funding/FundingPlugin.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @class FundRefPlugin
- * @ingroup plugins_generic_fundRef
+ * @class FundingPlugin
+ * @ingroup plugins_generic_funding
 
  * @brief Add funding data to the article metadata, consider them in Crossref export,
  * and display them on the article page.
@@ -17,27 +17,27 @@
 
 import('lib.pkp.classes.plugins.GenericPlugin');
 
-class FundRefPlugin extends GenericPlugin {
+class FundingPlugin extends GenericPlugin {
 
 	/**
 	 * @copydoc Plugin::getName()
 	 */
 	function getName() {
-		return 'FundRefPlugin';
+		return 'FundingPlugin';
     }
 
 	/**
 	 * @copydoc Plugin::getDisplayName()
 	 */
     function getDisplayName() {
-		return __('plugins.generic.fundRef.displayName');
+		return __('plugins.generic.funding.displayName');
     }
 
 	/**
 	 * @copydoc Plugin::getDescription()
 	 */
     function getDescription() {
-		return __('plugins.importexport.fundRef.description');
+		return __('plugins.generic.funding.description');
     }
 
 	/**
@@ -49,7 +49,7 @@ class FundRefPlugin extends GenericPlugin {
     function register($category, $path) {
 		$success = parent::register($category, $path);
 		if ($success && $this->getEnabled()) {
-			import('plugins.generic.fundRef.classes.FunderDAO');
+			import('plugins.generic.funding.classes.FunderDAO');
 			$funderDao = new FunderDAO();
 			DAORegistry::registerDAO('FunderDAO', $funderDao);
 
@@ -74,7 +74,7 @@ class FundRefPlugin extends GenericPlugin {
 	 */
 	function setupGridHandler($hookName, $params) {
 		$component =& $params[0];
-		if ($component == 'plugins.generic.fundRef.controllers.grid.FunderGridHandler') {
+		if ($component == 'plugins.generic.funding.controllers.grid.FunderGridHandler') {
 			import($component);
 			FunderGridHandler::setPlugin($this);
 			return true;
@@ -146,6 +146,7 @@ class FundRefPlugin extends GenericPlugin {
 		$articleNodes = $preliminaryOutput->getElementsByTagName('journal_article');
 		foreach ($articleNodes as $articleNode) {
 			$doiDataNode = $articleNode->getElementsByTagName('doi_data')->item(0);
+			$aiProgramDataNode = $articleNode->getElementsByTagNameNS('http://www.crossref.org/AccessIndicators.xsd', 'program')->item(0);
 			$doiNode = $doiDataNode->getElementsByTagName('doi')->item(0);
 			$doi = $doiNode->nodeValue;
 
@@ -175,7 +176,11 @@ class FundRefPlugin extends GenericPlugin {
 				}
 				$programNode->appendChild($groupNode);
 			}
-			$articleNode->insertBefore($programNode, $doiDataNode);
+			if ($aiProgramDataNode) {
+				$articleNode->insertBefore($programNode, $aiProgramDataNode);
+			} else {
+				$articleNode->insertBefore($programNode, $doiDataNode);
+			}
 		}
 		return false;
 	}

@@ -1,28 +1,28 @@
 <?php
 
 /**
- * @file plugins/generic/fundRef/controllers/grid/FunderGridHandler.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridHandler.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * @class FunderGridHandler
- * @ingroup plugins_generic_fundRef
+ * @ingroup plugins_generic_funding
  *
  * @brief Handle Funder grid requests.
  */
 
 import('lib.pkp.classes.controllers.grid.GridHandler');
-import('plugins.generic.fundRef.controllers.grid.FunderGridRow');
-import('plugins.generic.fundRef.controllers.grid.FunderGridCellProvider');
+import('plugins.generic.funding.controllers.grid.FunderGridRow');
+import('plugins.generic.funding.controllers.grid.FunderGridCellProvider');
 
 class FunderGridHandler extends GridHandler {
 	static $plugin;
 
 	/**
 	 * Set the Funder plugin.
-	 * @param $plugin FundRefPlugin
+	 * @param $plugin FundingPlugin
 	 */
 	static function setPlugin($plugin) {
 		self::$plugin = $plugin;
@@ -71,8 +71,8 @@ class FunderGridHandler extends GridHandler {
 		$submissionId = $submission->getId();
 
 		// Set the grid details.
-		$this->setTitle('plugins.generic.fundRef.fundingData');
-		$this->setEmptyRowText('plugins.generic.fundRef.noneCreated');
+		$this->setTitle('plugins.generic.funding.fundingData');
+		$this->setEmptyRowText('plugins.generic.funding.noneCreated');
 
 		// Get the items and add the data to the grid
 		$funderDao = DAORegistry::getDAO('FunderDAO');
@@ -86,10 +86,10 @@ class FunderGridHandler extends GridHandler {
 				'addFunder',
 				new AjaxModal(
 					$router->url($request, null, null, 'addFunder', null, array('submissionId' => $submissionId)),
-					__('plugins.generic.fundRef.addFunder'),
+					__('plugins.generic.funding.addFunder'),
 					'modal_add_item'
 				),
-				__('plugins.generic.fundRef.addFunder'),
+				__('plugins.generic.funding.addFunder'),
 				'add_item'
 			)
 		);
@@ -98,21 +98,21 @@ class FunderGridHandler extends GridHandler {
 		$cellProvider = new FunderGridCellProvider();
 		$this->addColumn(new GridColumn(
 			'funderName',
-			'plugins.generic.fundRef.funderName',
+			'plugins.generic.funding.funderName',
 			null,
 			'controllers/grid/gridCell.tpl',
 			$cellProvider
 		));
 		$this->addColumn(new GridColumn(
 			'funderIdentification',
-			'plugins.generic.fundRef.funderIdentification',
+			'plugins.generic.funding.funderIdentification',
 			null,
 			'controllers/grid/gridCell.tpl',
 			$cellProvider
 		));
 		$this->addColumn(new GridColumn(
 			'funderGrants',
-			'plugins.generic.fundRef.funderGrants',
+			'plugins.generic.funding.funderGrants',
 			null,
 			'controllers/grid/gridCell.tpl',
 			$cellProvider
@@ -129,11 +129,12 @@ class FunderGridHandler extends GridHandler {
 	function getRowInstance() {
 		return new FunderGridRow();
 	}
+
 	/**
 	 * @copydoc GridHandler::getJSHandler()
 	 */
 	public function getJSHandler() {
-		return '$.pkp.controllers.grid.funders.FunderGridHandler';
+		return '$.pkp.plugins.generic.funding.FunderGridHandler';
 	}
 
 	//
@@ -165,7 +166,7 @@ class FunderGridHandler extends GridHandler {
 		$this->setupTemplate($request);
 
 		// Create and present the edit form
-		import('plugins.generic.fundRef.controllers.grid.form.FunderForm');
+		import('plugins.generic.funding.controllers.grid.form.FunderForm');
 		$funderForm = new FunderForm(self::$plugin, $context->getId(), $submissionId, $funderId);
 		$funderForm->initData();
 		$json = new JSONMessage(true, $funderForm->fetch($request));
@@ -187,7 +188,7 @@ class FunderGridHandler extends GridHandler {
 		$this->setupTemplate($request);
 
 		// Create and populate the form
-		import('plugins.generic.fundRef.controllers.grid.form.FunderForm');
+		import('plugins.generic.funding.controllers.grid.form.FunderForm');
 		$funderForm = new FunderForm(self::$plugin, $context->getId(), $submissionId, $funderId);
 		$funderForm->readInputData();
 		// Validate

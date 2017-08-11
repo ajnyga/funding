@@ -1,14 +1,14 @@
 <?php
 
 /**
- * @file plugins/generic/fundRef/controllers/grid/form/FunderForm.inc.php
+ * @file plugins/generic/funding/controllers/grid/form/FunderForm.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
  * @class FunderForm
- * @ingroup controllers_grid_fundRef
+ * @ingroup controllers_grid_funding
  *
  * Form for adding/editing a funder
  *
@@ -23,26 +23,26 @@ class FunderForm extends Form {
 	/** @var int Submission ID */
 	var $submissionId;
 
-	/** @var FundRefPlugin */
+	/** @var FundingPlugin */
 	var $plugin;
 
 	/**
 	 * Constructor
-	 * @param $fundRefPlugin FundRefPlugin
+	 * @param $fundingPlugin FundingPlugin
 	 * @param $contextId int Context ID
 	 * @param $submissionId int Submission ID
 	 * @param $funderId int (optional) Funder ID
 	 */
-	function __construct($fundRefPlugin, $contextId, $submissionId, $funderId = null) {
-		parent::__construct($fundRefPlugin->getTemplatePath() . 'editFunderForm.tpl');
+	function __construct($fundingPlugin, $contextId, $submissionId, $funderId = null) {
+		parent::__construct($fundingPlugin->getTemplatePath() . 'editFunderForm.tpl');
 
 		$this->contextId = $contextId;
 		$this->submissionId = $submissionId;
 		$this->funderId = $funderId;
-		$this->plugin = $fundRefPlugin;
+		$this->plugin = $fundingPlugin;
 
 		// Add form checks
-		$this->addCheck(new FormValidator($this, 'funderNameIdentification', 'required', 'plugins.generic.fundRef.funderNameIdentificationRequired'));
+		$this->addCheck(new FormValidator($this, 'funderNameIdentification', 'required', 'plugins.generic.funding.funderNameIdentificationRequired'));
 		$this->addCheck(new FormValidatorPost($this));
 		$this->addCheck(new FormValidatorCSRF($this));
 

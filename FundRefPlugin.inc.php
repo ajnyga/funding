@@ -16,18 +16,18 @@ import('lib.pkp.classes.plugins.GenericPlugin');
 class fundRefPlugin extends GenericPlugin {
 
    function getName() {
-        return 'fundRefPlugin';
-    }
+		return 'fundRefPlugin';
+	}
 
-    function getDisplayName() {
-        return "fundRef";
-    }
+	function getDisplayName() {
+		return "fundRef";
+	}
 
-    function getDescription() {
-        return "Plugin for searching and saving funder name, funder id, and grant number";
-    }
+	function getDescription() {
+		return "Plugin for searching and saving funder name, funder id, and grant number";
+	}
 
-    function register($category, $path) {
+	function register($category, $path) {
 		$success = parent::register($category, $path);
 		if ($success && $this->getEnabled()) {
 
@@ -43,7 +43,8 @@ class fundRefPlugin extends GenericPlugin {
 
 			HookRegistry::register('Templates::Article::Details', array($this, 'addArticleDisplay'));
 
-        }
+			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addMonographDisplay'));
+		}
 		return $success;
 	}
 
@@ -81,7 +82,8 @@ class fundRefPlugin extends GenericPlugin {
 	 */
 	function addGridhandlerJs($hookName, $params) {
 		$templateMgr = $params[0];
-		$gridHandlerJs = $this->getJavaScriptURL() . DIRECTORY_SEPARATOR . 'FunderGridHandler.js';
+		$request = $this->getRequest();
+		$gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'FunderGridHandler.js';
 		$templateMgr->addJavaScript(
 			'FunderGridHandlerJs',
 			$gridHandlerJs,
@@ -91,6 +93,30 @@ class fundRefPlugin extends GenericPlugin {
 		);
 
 		return false;
+	}
+
+	/**
+	 * Hook to 'Templates::Catalog::Book::Details and list funder information
+	 * @param $hookName string
+	 * @param $params array
+	 */
+	function addMonographDisplay($hookName, $params) {
+		$templateMgr = $params[1];
+		$output =& $params[2];
+
+		$submission = $templateMgr->get_template_vars('monograph');
+
+		$funderDao = DAORegistry::getDAO('FunderDAO');
+		$funders = $funderDao->getBySubmissionId($submission->getId());
+		$funders = $funders->toArray();
+
+		if ($funders){
+			$templateMgr->assign('funders', $funders);
+			$output .= $templateMgr->fetch($this->getTemplatePath() . 'listFunders.tpl');
+		}
+
+		return false;
+
 	}
 
 	/**
@@ -117,7 +143,6 @@ class fundRefPlugin extends GenericPlugin {
 
 	}
 
-
 	/**
 	 * @copydoc Plugin::getTemplatePath()
 	 */
@@ -138,7 +163,5 @@ class fundRefPlugin extends GenericPlugin {
 	function getJavaScriptURL() {
 		return Request::getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
 	}
-
-
 }
 ?>

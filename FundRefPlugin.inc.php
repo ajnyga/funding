@@ -15,7 +15,7 @@
 import('lib.pkp.classes.plugins.GenericPlugin');
 class fundRefPlugin extends GenericPlugin {
 
-   function getName() {
+	function getName() {
 		return 'fundRefPlugin';
 	}
 

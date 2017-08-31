@@ -59,8 +59,8 @@ class FundingPlugin extends GenericPlugin {
 
 			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
 
-			HookRegistry::register('Templates::Article::Details', array($this, 'addArticleDisplay'));
-			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addMonographDisplay'));
+			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));
+			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay'));
 
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
         }
@@ -110,16 +110,16 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	* Hook to Templates::Catalog::Book::Details and list funder information
+	* Hook to Templates::Article::Details and Templates::Catalog::Book::Details and list funder information
 	* @param $hookName string
 	* @param $params array
 	*/
-	function addMonographDisplay($hookName, $params) {
+	function addSubmissionDisplay($hookName, $params) {
 		$templateMgr = $params[1];
 		$output =& $params[2];
 
-		$submission = $templateMgr->get_template_vars('monograph');
-
+		$submission = isset($templateMgr->get_template_vars('monograph')) ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
+				
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funders = $funderDao->getBySubmissionId($submission->getId());
 		$funders = $funders->toArray();
@@ -131,28 +131,6 @@ class FundingPlugin extends GenericPlugin {
 
 		return false;
 
-	}	
-	
-	/**
-	 * Hook to Templates::Article::Details and list funder information
-	 * @param $hookName string
-	 * @param $params array
-	 */
-	function addArticleDisplay($hookName, $params) {
-		$templateMgr = $params[1];
-		$output =& $params[2];
-
-		$article = $templateMgr->get_template_vars('article');
-
-		$funderDao = DAORegistry::getDAO('FunderDAO');
-		$funders = $funderDao->getBySubmissionId($article->getId());
-		$funders = $funders->toArray();
-		
-		if ($funders){
-			$templateMgr->assign('funders', $funders);
-			$output .= $templateMgr->fetch($this->getTemplatePath() . 'listFunders.tpl');
-		}
-		return false;
 	}
 
 	/**

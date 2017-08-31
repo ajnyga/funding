@@ -1,28 +1,21 @@
 <?php
 
 /**
- * @file controllers/grid/FunderGridRow.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridRow.inc.php
  *
- * Copyright (c) 2014-2016 Simon Fraser University Library
- * Copyright (c) 2003-2016 John Willinsky
+ * Copyright (c) 2014-2017 Simon Fraser University
+ * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @class StaticPageGridRow
- * @ingroup controllers_grid_navigation
+ * @class FunderGridRow
+ * @ingroup plugins_generic_funding
  *
- * @brief Handle custom blocks grid row requests.
+ * @brief Handle funder grid row requests.
  */
 
 import('lib.pkp.classes.controllers.grid.GridRow');
 
 class FunderGridRow extends GridRow {
-		
-	/**
-	 * Constructor
-	 */
-	function __construct() {
-		parent::__construct();
-	}
 
 	//
 	// Overridden template methods
@@ -34,7 +27,7 @@ class FunderGridRow extends GridRow {
 		parent::initialize($request, $template);
 		$funderId = $this->getId();
 		$submissionId = $request->getUserVar('submissionId');
-		
+
 		if (!empty($funderId)) {
 			$router = $request->getRouter();
 

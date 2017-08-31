@@ -2,13 +2,13 @@
 <!DOCTYPE schema SYSTEM "../../../lib/pkp/dtd/xmlSchema.dtd">
 
 <!--
-  * schema.xml
+  * plugins/generic/funding/schema.xml
   *
   * Copyright (c) 2014-2017 Simon Fraser University
   * Copyright (c) 2003-2017 John Willinsky
   * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
   *
-  * FundRef plugin schema in XML.
+  * FundingPlugin DB XML schema.
   *
   -->
 
@@ -40,5 +40,4 @@
 		</field>
 		<descr>List of funders for each submission</descr>
 	</table>
-
 </schema>

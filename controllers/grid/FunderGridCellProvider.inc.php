@@ -1,28 +1,21 @@
 <?php
 
 /**
- * @file controllers/grid/FunderGridCellProvider.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridCellProvider.inc.php
  *
- * Copyright (c) 2014-2016 Simon Fraser University Library
- * Copyright (c) 2000-2016 John Willinsky
+ * Copyright (c) 2014-2017 Simon Fraser University
+ * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @class StaticPageGridCellProvider
- * @ingroup controllers_grid_navigation
+ * @class FunderGridCellProvider
+ * @ingroup plugins_generic_funding
  *
- * @brief Class for a cell provider to display information about navigation items
+ * @brief Class for a cell provider to display information about funder items
  */
 
 import('lib.pkp.classes.controllers.grid.GridCellProvider');
-import('lib.pkp.classes.linkAction.request.RedirectAction');
 
 class FunderGridCellProvider extends GridCellProvider {
-	/**
-	 * Constructor
-	 */
-	function __construct() {
-		parent::__construct();
-	}
 
 	//
 	// Template methods from GridCellProvider
@@ -31,16 +24,12 @@ class FunderGridCellProvider extends GridCellProvider {
 	/**
 	 * Extracts variables for a given column from a data element
 	 * so that they may be assigned to template before rendering.
-	 * @param $row GridRow
-	 * @param $column GridColumn
-	 * @return array
+	 *
+	 * @copydoc GridCellProvider::getTemplateVarsFromRowColumn()
 	 */
 	function getTemplateVarsFromRowColumn($row, $column) {
 		$funderItem = $row->getData();
-
 		switch ($column->getId()) {
-			case 'funderId':
-				return array('label' => $funderItem->getId());
 			case 'funderName':
 				return array('label' => $funderItem->getFunderName());
 			case 'funderIdentification':
@@ -50,9 +39,5 @@ class FunderGridCellProvider extends GridCellProvider {
 		}
 	}
 }
-
-
-
-
 
 ?>

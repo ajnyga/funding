@@ -1,36 +1,31 @@
 <?php
 
 /**
- * @file classes/FunderDAO.inc.php
+ * @file plugins/generic/funding/classes/classes/FunderDAO.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
  *
- * @package plugins.generic.fundRef
  * @class FunderDAO
+ * @ingroup plugins_generic_funding
+ *
  * Operations for retrieving and modifying Funder objects.
  */
 
 import('lib.pkp.classes.db.DAO');
-import('plugins.generic.fundRef.classes.Funder');
+import('plugins.generic.funding.classes.Funder');
 
 class FunderDAO extends DAO {
-	/**
-	 * Constructor
-	 */
-	function __construct() {
-		parent::__construct();
-	}
 
 	/**
 	 * Get a funder by ID
 	 * @param $funderId int Funder ID
-	 * @param $submissionId int Optional submission ID
+	 * @param $submissionId int (optional) Submission ID
 	 */
 	function getById($funderId, $submissionId = null) {
 		$params = array((int) $funderId);
-		if ($submissionId) $params[] = $submissionId;
+		if ($submissionId) $params[] = (int) $submissionId;
 
 		$result = $this->retrieve(
 			'SELECT * FROM funders WHERE funder_id = ?'
@@ -48,22 +43,23 @@ class FunderDAO extends DAO {
 
 
 	/**
-	 * Get funders by submission.
-	 * @param $contextId int Context ID
+	 * Get funders by submission ID.
 	 * @param $submissionId int Submission ID
+	 * @param $contextId int (optional) Context ID
 	 * @return Funder
 	 */
-	function getBySubmissionId($submissionId) {
+	function getBySubmissionId($submissionId, $contextId = null) {
+		$params = array((int) $submissionId);
+		if ($contextId) $params[] = (int) $contextId;
+
 		$result = $this->retrieve(
-			'SELECT * FROM funders WHERE submission_id = ?',
-			array((int) $submissionId)
+			'SELECT * FROM funders WHERE submission_id = ?'
+			. ($contextId?' AND context_id = ?':''),
+			$params
 		);
-		
-		#error_log(print_r($result, true));
+
 		return new DAOResultFactory($result, $this, '_fromRow');
-		
 	}
-	
 
 	/**
 	 * Insert a funder.
@@ -81,7 +77,6 @@ class FunderDAO extends DAO {
 				(int) $funder->getContextId()
 			)
 		);
-
 		$funder->setId($this->getInsertId());
 		return $funder->getId();
 	}
@@ -106,7 +101,6 @@ class FunderDAO extends DAO {
 				(int) $funder->getId()
 			)
 		);
-		
 	}
 
 	/**
@@ -118,8 +112,8 @@ class FunderDAO extends DAO {
 			'DELETE FROM funders WHERE funder_id = ?',
 			(int) $funderId
 		);
-	}	
-	
+	}
+
 	/**
 	 * Delete a funder object.
 	 * @param $funder Funder
@@ -137,7 +131,7 @@ class FunderDAO extends DAO {
 	}
 
 	/**
-	 * Return a new funders object from a given row.
+	 * Return a new funder object from a given row.
 	 * @return Funder
 	 */
 	function _fromRow($row) {

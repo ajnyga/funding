@@ -13,7 +13,7 @@
   -->
 <locale name="en_US" full_name="U.S. English">
 	<message key="plugins.generic.funding.displayName">Funding data</message>
-	<message key="plugins.generic.funding.description">This plugin adds article funding data using the Crossref funders registry, and considers the data in the Crossref XML export.</message>
+	<message key="plugins.generic.funding.description">This plugin adds submission funding data using the Crossref funders registry, and considers the data in the Crossref XML export.</message>
 	<message key="plugins.generic.funding.fundingData">Funding data</message>
 	<message key="plugins.generic.funding.addFunder">Add funder</message>
 	<message key="plugins.generic.funding.funderName">Funder name</message>

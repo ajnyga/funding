@@ -10,8 +10,8 @@
  * @class FundingPlugin
  * @ingroup plugins_generic_funding
 
- * @brief Add funding data to the article metadata, consider them in Crossref export,
- * and display them on the article page.
+ * @brief Add funding data to the submission metadata, consider them in the Crossref export,
+ * and display them on the submission view page.
  *
  */
 
@@ -84,7 +84,7 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert funder grid in the article metadata form
+	 * Insert funder grid in the submission metadata form
 	 */
 	function metadataFieldEdit($hookName, $params) {
 		$smarty =& $params[1];
@@ -119,7 +119,7 @@ class FundingPlugin extends GenericPlugin {
 		$output =& $params[2];
 
 		$submission = isset($templateMgr->get_template_vars('monograph')) ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
-				
+
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funders = $funderDao->getBySubmissionId($submission->getId());
 		$funders = $funders->toArray();

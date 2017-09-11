@@ -118,7 +118,7 @@ class FundingPlugin extends GenericPlugin {
 		$templateMgr = $params[1];
 		$output =& $params[2];
 
-		$submission = isset($templateMgr->get_template_vars('monograph')) ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
+		$submission = $templateMgr->get_template_vars('monograph') ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
 
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funders = $funderDao->getBySubmissionId($submission->getId());

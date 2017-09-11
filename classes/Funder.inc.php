@@ -19,7 +19,7 @@ class Funder extends DataObject {
 	// Get/set methods
 	//
 	/**
-	 * Get ID of journal.
+	 * Get context ID.
 	 * @return int
 	 */
 	function getContextId(){
@@ -27,7 +27,7 @@ class Funder extends DataObject {
 	}
 
 	/**
-	 * Set ID of journal.
+	 * Set context ID.
 	 * @param $contextId int
 	 */
 	function setContextId($contextId) {
@@ -35,7 +35,7 @@ class Funder extends DataObject {
 	}
 
 	/**
-	 * Get ID of article.
+	 * Get submission ID.
 	 * @return int
 	 */
 	function getSubmissionId(){
@@ -43,7 +43,7 @@ class Funder extends DataObject {
 	}
 
 	/**
-	 * Set ID of article.
+	 * Set submission ID.
 	 * @param $submissionId int
 	 */
 	function setSubmissionId($submissionId) {

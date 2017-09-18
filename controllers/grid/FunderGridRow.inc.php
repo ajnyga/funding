@@ -16,6 +16,16 @@
 import('lib.pkp.classes.controllers.grid.GridRow');
 
 class FunderGridRow extends GridRow {
+	/** @var boolean */
+	var $_readOnly;
+
+	/**
+	 * Constructor
+	 */
+	function __construct($readOnly = false) {
+		$this->_readOnly = $readOnly;
+		parent::__construct();
+	}
 
 	//
 	// Overridden template methods
@@ -28,7 +38,7 @@ class FunderGridRow extends GridRow {
 		$funderId = $this->getId();
 		$submissionId = $request->getUserVar('submissionId');
 
-		if (!empty($funderId)) {
+		if (!empty($funderId) && !$this->isReadOnly()) {
 			$router = $request->getRouter();
 
 			// Create the "edit" action
@@ -62,6 +72,14 @@ class FunderGridRow extends GridRow {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Determine if this grid row should be read only.
+	 * @return boolean
+	 */
+	function isReadOnly() {
+		return $this->_readOnly;
 	}
 }
 

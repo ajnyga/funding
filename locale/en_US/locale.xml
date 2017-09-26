@@ -17,6 +17,8 @@
 	<message key="plugins.generic.funding.fundingData">Funding data</message>
 	<message key="plugins.generic.funding.addFunder">Add funder</message>
 	<message key="plugins.generic.funding.funderName">Funder name</message>
+	<message key="plugins.generic.funding.funderSubOrganization">Sub-organization</message>
+	<message key="plugins.generic.funding.funderSubOrganization.select">Select a sub-organization</message>
 	<message key="plugins.generic.funding.funderIdentification">Funder ID</message>	
 	<message key="plugins.generic.funding.funderNameIdentification">Funder name and identification</message>
 	<message key="plugins.generic.funding.funderGrants">Grant numbers</message>

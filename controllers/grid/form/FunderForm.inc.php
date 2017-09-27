@@ -65,7 +65,7 @@ class FunderForm extends Form {
 	 * @copydoc Form::readInputData()
 	 */
 	function readInputData() {
-		$this->readUserVars(array('funderNameIdentification', 'funderGrants'));
+		$this->readUserVars(array('funderNameIdentification', 'funderGrants', 'subsidiaryOption'));
 	}
 
 	/**
@@ -74,6 +74,8 @@ class FunderForm extends Form {
 	function fetch($request) {
 		$templateMgr = TemplateManager::getManager();
 		$templateMgr->assign('funderId', $this->funderId);
+		$subsidiaryOptions = array('' => __('plugins.generic.funding.funderSubOrganization.select'));
+		$templateMgr->assign('subsidiaryOptions', $subsidiaryOptions);
 		return parent::fetch($request);
 	}
 
@@ -93,20 +95,30 @@ class FunderForm extends Form {
 			$funder->setSubmissionId($this->submissionId);
 		}
 
-		$funderName = "";
-		$funderIdentification = "";
+		$funderName = '';
+		$funderIdentification = '';
 		$funderNameIdentification = $this->getData('funderNameIdentification');
-
-		if ($funderNameIdentification != ""){
+		$subOrganizationNameIdentification = $this->getData('subsidiaryOption');
+		if ($funderNameIdentification != ''){
 			$funderName = trim(preg_replace('/\s*\[.*?\]\s*/ ', '', $funderNameIdentification));
-			if (preg_match("/\[(.*?)\]/", $funderNameIdentification, $output))
+			if (preg_match('/\[(.*?)\]/', $funderNameIdentification, $output)) {
 				$funderIdentification = $output[1];
+				if ($subOrganizationNameIdentification != ''){
+					$funderName = trim(preg_replace('/\s*\[.*?\]\s*/ ', '', $subOrganizationNameIdentification	));
+					$doiPrefix = '';
+					if (preg_match('/(http:\/\/dx\.doi\.org\/10\.\d{5}\/)(.+)/', $funderIdentification, $output)) {
+						$doiPrefix = $output[1];
+					}
+					if (preg_match('/\[(.*?)\]/', $subOrganizationNameIdentification, $output)) {
+						$funderIdentification = $doiPrefix . $output[1];
+					}
+				}
+			}
 		}
 
 		$funder->setFunderName($funderName);
 		$funder->setFunderIdentification($funderIdentification);
 		$funder->setFunderGrants($this->getData('funderGrants'));
-
 		if ($this->funderId) {
 			$funderDao->updateObject($funder);
 		} else {

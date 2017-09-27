@@ -16,6 +16,24 @@
 
 	$(document).ready(function(){ldelim}
 
+		function addSubsidiaryOptions(descendants, names) {ldelim}
+			var selectElement = document.getElementById("subsidiaryOption");
+			descendants.sort(function(a, b) {ldelim}
+				return names[a].localeCompare(names[b]);
+			{rdelim});
+			$.each(descendants, function(index, value) {ldelim}
+				var option = document.createElement("option");
+				option.text = names[value];
+				option.value = names[value] + '[' + value + ']';
+				selectElement.add(option);
+			{rdelim});
+		{rdelim};
+
+		function removeSubsidiaryOptions() {ldelim}
+			var selectElement = document.getElementById("subsidiaryOption");
+			$("#subsidiaryOption option[value!='']").remove();
+		{rdelim};
+
 		$(".funderNameIdentification").tagit({ldelim}
 			fieldName: 'funderNameIdentification[]',
 			allowSpaces: true,
@@ -28,7 +46,7 @@
 					data: {ldelim}
 						query: search.term + '*'
 					{rdelim},
-					success: 
+					success:
 						function( data ) {ldelim}
 							var output = data.message.items;
 							response($.map(output, function(item) {ldelim}
@@ -37,9 +55,32 @@
 									value: item.name + ' [' + item.uri + ']'
 								{rdelim}
 							{rdelim}));
+						{rdelim}
+				{rdelim});
+			{rdelim},
+			afterTagAdded: function(event, ui) {ldelim}
+				$.ajax({ldelim}
+					url: 'http://search.crossref.org/funders?descendants=true',
+					dataType: 'json',
+					cache: true,
+					data: {ldelim}
+						q: ui.tagLabel + '*'
+					{rdelim},
+					success:
+						function( data ) {ldelim}
+							if (data.length == 1) {ldelim}
+								if (data[0]['descendants'].length > 1) {ldelim}
+									addSubsidiaryOptions(data[0]['descendants'], data[0]['descendant_names']);
+									$("#subsidiarySelect").show();
+								{rdelim}
+							{rdelim}
 						{rdelim}	
 				{rdelim});
-			{rdelim}	
+			{rdelim},
+			afterTagRemoved: function(event, ui) {ldelim}
+				removeSubsidiaryOptions();
+				$("#subsidiarySelect").hide();
+			{rdelim}
 		{rdelim});
 
 		$(".funderGrants").tagit({ldelim}
@@ -49,8 +90,7 @@
 			singleFieldDelimiter: ";",
 		{rdelim});
 
-	{rdelim});	
-
+    {rdelim});
 </script>
 
 {url|assign:actionUrl router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="updateFunder" submissionId=$submissionId escape=false}
@@ -64,6 +104,10 @@
 			{fbvElement type="hidden" class="funderNameIdentification" label="plugins.generic.funding.funderNameIdentification" id="funderNameIdentification" value=$funderNameIdentification maxlength="255" inline=true size=$fbvStyles.size.LARGE}
 			<span>{translate key="plugins.generic.funding.funderNameIdentification"}</span>
 		{/fbvFormSection}
+		<div name="subsidiarySelect" id="subsidiarySelect" class="section" style="display:none">
+			{fbvElement type="select" name="subsidiaryOption" id="subsidiaryOption" from=$subsidiaryOptions size=$fbvStyles.size.LARGE translate=false}
+			<span>{translate key="plugins.generic.funding.funderSubOrganization"}</span>
+		</div>
 		{fbvFormSection}
 			{fbvElement type="hidden" class="funderGrants" label="plugins.generic.funding.funderGrants" id="funderGrants" value=$funderGrants maxlength="255" inline=true size=$fbvStyles.size.LARGE}
 			<span>{translate key="plugins.generic.funding.funderGrants"}</span>

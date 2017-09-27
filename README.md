@@ -22,13 +22,13 @@ Install
  
 Version History
 ---------------
-###Version 2.1
+### Version 2.1
 
 Added support for funder metadata exports to CrossRef
 Added support for OMP
 Added support for sub-organization selection
 
-###Version 2.0
+### Version 2.0
 
 Version 2.0 supports the combination of funder name, funder id and grant numbers used in the CrossRef Funder Registry (https://www.crossref.org/services/funder-registry/). The plugin adds a funder grid panel to the submission metatadata form.
 
@@ -42,7 +42,7 @@ The funding data is saved in the database table 'funders' and shown on the submi
 
 ![screenshot_4](https://cloud.githubusercontent.com/assets/16347527/26508495/a217f7e8-425d-11e7-89c7-0416a2267960.png)
 
-###Version 1.0
+### Version 1.0
 
 Version 1.0 adds an autocomplete to the Supporting Agencies field.
 

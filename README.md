@@ -24,9 +24,9 @@ Version History
 ---------------
 ### Version 2.1
 
-Added support for funder metadata exports to CrossRef
-Added support for OMP
-Added support for sub-organization selection
+- Added support for funder metadata exports to CrossRef
+- Added support for OMP
+- Added support for sub-organization selection
 
 ### Version 2.0
 

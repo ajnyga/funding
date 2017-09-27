@@ -27,6 +27,7 @@ Version History
 - Added support for funder metadata exports to CrossRef
 - Added support for OMP
 - Added support for sub-organization selection
+- General code cleanup to match PKP standards
 
 ### Version 2.0
 

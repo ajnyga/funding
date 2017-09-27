@@ -44,6 +44,5 @@ Version 1.0 adds an autocomplete to the Supporting Agencies field.
 
 TODO
 ---------------
-- Consider suborganizations
 - Add funding data to DataCite XML export
 - Add funding data to OAI-PMH, OpenAIRE?

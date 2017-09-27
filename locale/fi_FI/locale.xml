@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE locale SYSTEM "../../../../../lib/pkp/dtd/locale.dtd">
+
+<!--
+  * plugins/generic/funding/locale/fi_FI/locale.xml
+  *
+  * Copyright (c) 2014-2017 Simon Fraser University
+  * Copyright (c) 2003-2017 John Willinsky
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * Localization strings for this plugin.
+  *
+  -->
+<locale name="fi_FI" full_name="Suomi">
+	<message key="plugins.generic.funding.displayName">Rahoittajat</message>
+	<message key="plugins.generic.funding.description">Tämä lisäosa mahdollistaa käsikirjoituksen rahoittajia koskevan metadatan lisäyksen. Rahoittajien nimet ja tunnisteet haetaan CrossRefin Funder Registrys -palvelusta.</message>
+	<message key="plugins.generic.funding.fundingData">Rahoittajat</message>
+	<message key="plugins.generic.funding.addFunder">Lisää rahoittaja</message>
+	<message key="plugins.generic.funding.funderName">Rahoittajan nimi</message>
+	<message key="plugins.generic.funding.funderSubOrganization">Aliorganisaatio</message>
+	<message key="plugins.generic.funding.funderSubOrganization.select">Valitse aliorganisaatio</message>
+	<message key="plugins.generic.funding.funderIdentification">Rahoittajan tunniste</message>	
+	<message key="plugins.generic.funding.funderNameIdentification">Rahoittajan nimi ja tunniste</message>
+	<message key="plugins.generic.funding.funderGrants">Apurahojen tunnistenumerot</message>
+	<message key="plugins.generic.funding.noneCreated">Ei rahoittajia</message>	
+	<message key="plugins.generic.funding.funderNameIdentificationRequired">Rahoittajan nimi vaaditaan</message>
+</locale>

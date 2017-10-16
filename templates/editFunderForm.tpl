@@ -17,12 +17,12 @@
 	$(document).ready(function(){ldelim}
 
 		function addSubsidiaryOptions(descendants, names) {ldelim}
-			var selectElement = document.getElementById("subsidiaryOption");
+			var selectElement = document.getElementById('subsidiaryOption');
 			descendants.sort(function(a, b) {ldelim}
 				return names[a].localeCompare(names[b]);
 			{rdelim});
 			$.each(descendants, function(index, value) {ldelim}
-				var option = document.createElement("option");
+				var option = document.createElement('option');
 				option.text = names[value];
 				option.value = names[value] + '[' + value + ']';
 				selectElement.add(option);
@@ -30,8 +30,7 @@
 		{rdelim};
 
 		function removeSubsidiaryOptions() {ldelim}
-			var selectElement = document.getElementById("subsidiaryOption");
-			$("#subsidiaryOption option[value!='']").remove();
+			$('#subsidiaryOption option[value!=\'\']').remove();
 		{rdelim};
 
 		$(".funderNameIdentification").tagit({ldelim}
@@ -59,6 +58,10 @@
 				{rdelim});
 			{rdelim},
 			afterTagAdded: function(event, ui) {ldelim}
+				if (!(/http:\/\/dx.doi.org\//.test(ui.tagLabel))) {ldelim}
+					$('#funderError').css('display', 'block');
+					$('#funderNameIdentification').val('');
+				{rdelim} else {ldelim}
 				$.ajax({ldelim}
 					url: 'http://search.crossref.org/funders?descendants=true',
 					dataType: 'json',
@@ -76,10 +79,15 @@
 							{rdelim}
 						{rdelim}	
 				{rdelim});
+				{rdelim}
 			{rdelim},
 			afterTagRemoved: function(event, ui) {ldelim}
-				removeSubsidiaryOptions();
-				$("#subsidiarySelect").hide();
+				if ($('#funderError').css('display') == 'block') {ldelim}
+					$('#funderError').css('display', 'none');
+				{rdelim} else {ldelim}
+					removeSubsidiaryOptions();
+					$('#subsidiarySelect').hide();
+				{rdelim}
 			{rdelim}
 		{rdelim});
 
@@ -101,6 +109,7 @@
 	{/if}
 	{fbvFormArea id="funderFormArea" class="border"}
 		{fbvFormSection}
+			<span id="funderError" class="error" style="display:none">{translate key="plugins.generic.funding.funderNameIdentificationRequired.registry"}</span>
 			{fbvElement type="hidden" class="funderNameIdentification" label="plugins.generic.funding.funderNameIdentification" id="funderNameIdentification" value=$funderNameIdentification maxlength="255" inline=true size=$fbvStyles.size.LARGE}
 			<span>{translate key="plugins.generic.funding.funderNameIdentification"}</span>
 		{/fbvFormSection}

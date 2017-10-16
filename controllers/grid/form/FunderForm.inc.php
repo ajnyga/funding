@@ -74,6 +74,7 @@ class FunderForm extends Form {
 	function fetch($request) {
 		$templateMgr = TemplateManager::getManager();
 		$templateMgr->assign('funderId', $this->funderId);
+		$templateMgr->assign('submissionId', $this->submissionId);
 		$subsidiaryOptions = array('' => __('plugins.generic.funding.funderSubOrganization.select'));
 		$templateMgr->assign('subsidiaryOptions', $subsidiaryOptions);
 		return parent::fetch($request);

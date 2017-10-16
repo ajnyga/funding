@@ -24,4 +24,5 @@
 	<message key="plugins.generic.funding.funderGrants">Grant numbers</message>
 	<message key="plugins.generic.funding.noneCreated">No funders</message>	
 	<message key="plugins.generic.funding.funderNameIdentificationRequired">Funder name required</message>
+	<message key="plugins.generic.funding.funderNameIdentificationRequired.registry">Only funders from the Crossref registry are allowed</message>
 </locale>

@@ -49,9 +49,14 @@ class FundingPlugin extends GenericPlugin {
     function register($category, $path) {
 		$success = parent::register($category, $path);
 		if ($success && $this->getEnabled()) {
+
 			import('plugins.generic.funding.classes.FunderDAO');
 			$funderDao = new FunderDAO();
 			DAORegistry::registerDAO('FunderDAO', $funderDao);
+
+			import('plugins.generic.funding.classes.FunderAwardDAO');
+			$funderAwardDao = new FunderAwardDAO();
+			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);			
 
 			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
 
@@ -121,11 +126,23 @@ class FundingPlugin extends GenericPlugin {
 		$submission = $templateMgr->get_template_vars('monograph') ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
 
 		$funderDao = DAORegistry::getDAO('FunderDAO');
-		$funders = $funderDao->getBySubmissionId($submission->getId());
-		$funders = $funders->toArray();
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 
-		if ($funders){
-			$templateMgr->assign('funders', $funders);
+		$funders = $funderDao->getBySubmissionId($submission->getId());
+
+		$funderData = array();
+		while ($funder = $funders->next()) {
+			$funderId = $funder->getId();
+			$funderAwards = $funderAwardDao->getByFunderId($funderId);			
+			$funderData[$funderId] = array(
+				'funderName' => $funder->getFunderName(null),
+				'funderIdentification' => $funder->getFunderIdentification(),
+				'funderAwards' => implode(";", $funderAwards)
+			);
+		}
+
+		if ($funderData){
+			$templateMgr->assign('funderData', $funderData);
 			$output .= $templateMgr->fetch($this->getTemplatePath() . 'listFunders.tpl');
 		}
 

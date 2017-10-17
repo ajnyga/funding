@@ -28,7 +28,7 @@ class FunderDAO extends DAO {
 		if ($submissionId) $params[] = (int) $submissionId;
 
 		$result = $this->retrieve(
-			'SELECT * FROM funders WHERE funder_id = ?'
+			'SELECT * FROM funder WHERE funder_id = ?'
 			. ($submissionId?' AND submission_id = ?':''),
 			$params
 		);
@@ -53,11 +53,11 @@ class FunderDAO extends DAO {
 		if ($contextId) $params[] = (int) $contextId;
 
 		$result = $this->retrieve(
-			'SELECT * FROM funders WHERE submission_id = ?'
+			'SELECT * FROM funder WHERE submission_id = ?'
 			. ($contextId?' AND context_id = ?':''),
 			$params
 		);
-
+		
 		return new DAOResultFactory($result, $this, '_fromRow');
 	}
 
@@ -68,16 +68,15 @@ class FunderDAO extends DAO {
 	 */
 	function insertObject($funder) {
 		$this->update(
-			'INSERT INTO funders (funder_name, funder_identification, funder_grants, submission_id, context_id) VALUES (?, ?, ?, ?, ?)',
+			'INSERT INTO funder (funder_identification, submission_id, context_id) VALUES (?, ?, ?)',
 			array(
-				$funder->getFunderName(),
 				$funder->getFunderIdentification(),
-				$funder->getFunderGrants(),
 				(int) $funder->getSubmissionId(),
 				(int) $funder->getContextId()
 			)
 		);
 		$funder->setId($this->getInsertId());
+		$this->updateLocaleFields($funder);
 		return $funder->getId();
 	}
 
@@ -87,20 +86,17 @@ class FunderDAO extends DAO {
 	 */
 	function updateObject($funder) {
 		$this->update(
-			'UPDATE	funders
+			'UPDATE	funder
 			SET	context_id = ?,
-				funder_name = ?,
-				funder_identification = ?,
-				funder_grants = ?
+				funder_identification = ?
 			WHERE funder_id = ?',
 			array(
 				(int) $funder->getContextId(),
-				$funder->getFunderName(),
 				$funder->getFunderIdentification(),
-				$funder->getFunderGrants(),
 				(int) $funder->getId()
 			)
 		);
+		$this->updateLocaleFields($funder);
 	}
 
 	/**
@@ -109,7 +105,15 @@ class FunderDAO extends DAO {
 	 */
 	function deleteById($funderId) {
 		$this->update(
-			'DELETE FROM funders WHERE funder_id = ?',
+			'DELETE FROM funder WHERE funder_id = ?',
+			(int) $funderId
+		);
+		$this->update(
+			'DELETE FROM funder_settings WHERE funder_id = ?',
+			(int) $funderId
+		);
+		$this->update(
+			'DELETE FROM funder_award WHERE funder_id = ?',
 			(int) $funderId
 		);
 	}
@@ -137,10 +141,11 @@ class FunderDAO extends DAO {
 	function _fromRow($row) {
 		$funder = $this->newDataObject();
 		$funder->setId($row['funder_id']);
-		$funder->setFunderName($row['funder_name']);
 		$funder->setFunderIdentification($row['funder_identification']);
-		$funder->setFunderGrants($row['funder_grants']);
 		$funder->setContextId($row['context_id']);
+
+		$this->getDataObjectSettings('funder_settings', 'funder_id', $row['funder_id'], $funder);
+
 		return $funder;
 	}
 
@@ -149,7 +154,16 @@ class FunderDAO extends DAO {
 	 * @return int
 	 */
 	function getInsertId() {
-		return $this->_getInsertId('funders', 'funder_id');
+		return $this->_getInsertId('funder', 'funder_id');
+	}
+
+	/**
+	 * Update the settings for this object
+	 * @param $funder object
+	 */
+	function updateLocaleFields($funder) {
+		error_log(print_r($funder, true)); # debug: for some reason funder_settings table is not getting updated?
+		$this->updateDataObjectSettings('funder_settings', $funder, array('funder_id' => $funder->getId()));
 	}
 
 }

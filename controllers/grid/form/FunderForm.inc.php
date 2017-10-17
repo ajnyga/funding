@@ -55,9 +55,13 @@ class FunderForm extends Form {
 		$this->setData('submissionId', $this->submissionId);
 		if ($this->funderId) {
 			$funderDao = DAORegistry::getDAO('FunderDAO');
+			$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+
 			$funder = $funderDao->getById($this->funderId);
 			$this->setData('funderNameIdentification', $funder->getFunderNameIdentification());
-			$this->setData('funderGrants', $funder->getFunderGrants());
+
+			$funderAwards = $funderAwardDao->getByFunderId($this->funderId);
+			$this->setData('funderAwards', implode(";", $funderAwards));
 		}
 	}
 
@@ -65,7 +69,7 @@ class FunderForm extends Form {
 	 * @copydoc Form::readInputData()
 	 */
 	function readInputData() {
-		$this->readUserVars(array('funderNameIdentification', 'funderGrants', 'subsidiaryOption'));
+		$this->readUserVars(array('funderNameIdentification', 'funderAwards', 'subsidiaryOption'));
 	}
 
 	/**
@@ -84,9 +88,11 @@ class FunderForm extends Form {
 	 * Save form values into the database
 	 */
 	function execute() {
+		$funderId = $this->funderId;
 		$funderDao = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 
-		if ($this->funderId) {
+		if ($funderId) {
 			// Load and update an existing funder
 			$funder = $funderDao->getById($this->funderId, $this->submissionId);
 		} else {
@@ -117,14 +123,24 @@ class FunderForm extends Form {
 			}
 		}
 
-		$funder->setFunderName($funderName);
+		$funder->setFunderName($funderName, null); # No locale at the moment
 		$funder->setFunderIdentification($funderIdentification);
-		$funder->setFunderGrants($this->getData('funderGrants'));
-		if ($this->funderId) {
+
+		if ($funderId) {
 			$funderDao->updateObject($funder);
+			$funderAwardDao->deleteByFunderId($funderId);
 		} else {
-			$funderDao->insertObject($funder);
+			$funderId = $funderDao->insertObject($funder);
 		}
+
+		$funderAwards = explode(";", $this->getData('funderAwards'));
+		foreach ($funderAwards as $funderAwardNumber){
+			$funderAward = $funderAwardDao->newDataObject();
+			$funderAward->setFunderId($funderId);
+			$funderAward->setFunderAwardNumber($funderAwardNumber);
+			$funderAwardDao->insertObject($funderAward);
+		}
+
 	}
 }
 

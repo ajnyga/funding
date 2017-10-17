@@ -11,16 +11,16 @@
 	<div class="value">
 		<h3>{translate key="plugins.generic.funding.fundingData"}</h3>
 		<ul>
-			{foreach from=$funders item=funder}
+			{foreach from=$funderData item=funder}
 				<li>
-					{if $funder->getFunderIdentification()}
-						{assign var="funderSearch" value=$funder->getFunderIdentification()|explode:"/"}
-						<a href="https://search.crossref.org/funding?q={$funderSearch[4]|escape}">{$funder->getFunderName()|escape}</a>
+					{if $funder.funderIdentification}
+						{assign var="funderSearch" value=$funder.funderIdentification|explode:"/"}
+						<a href="https://search.crossref.org/funding?q={$funderSearch[4]|escape}">{$funder.funderName|escape}</a>
 					{else}
-						{$funder->getFunderName()|escape}
+						{$funder.funderName|escape}
 					{/if}
 					<br />
-					{if $funder->getFunderGrants()}{translate key="plugins.generic.funding.funderGrants"} {$funder->getFunderGrants()|escape}{/if}
+					{if $funder.funderAwards}{translate key="plugins.generic.funding.funderGrants"} {$funder.funderAwards|escape}{/if}
 				</li>
 			{/foreach}
 		</ul>

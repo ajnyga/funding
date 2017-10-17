@@ -15,21 +15,15 @@
 <schema version="0.2">
 	<!--
 	 *
-	 * TABLE funders
+	 * TABLE funder
 	 *
 	 -->
-	<table name="funders">
+	<table name="funder">
 		<field name="funder_id" type="I8">
 			<KEY/>
 			<AUTOINCREMENT/>
 		</field>
-		<field name="funder_name" type="C2" size="255">
-			<NOTNULL/>
-		</field>
 		<field name="funder_identification" type="C2" size="255">
-			<NOTNULL/>
-		</field>
-		<field name="funder_grants" type="C2" size="255">
 			<NOTNULL/>
 		</field>
 		<field name="submission_id" type="I8">
@@ -38,6 +32,92 @@
 		<field name="context_id" type="I8">
 			<NOTNULL/>
 		</field>
-		<descr>List of funders for each submission</descr>
+		<descr>List of funder items for each context</descr>
 	</table>
+
+	<!--
+	  *
+	  * TABLE funder_settings
+	  *
+	  -->
+	<table name="funder_settings">
+		<field name="funder_id" type="I8">
+			<NOTNULL/>
+		</field>
+		<field name="locale" type="C2" size="5">
+			<NOTNULL/>
+			<DEFAULT VALUE=""/>
+		</field>
+		<field name="setting_name" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<field name="setting_value" type="XL"/>
+		<field name="setting_type" type="C2" size="6">
+			<NOTNULL/>
+			<descr>(bool|int|float|string|object)</descr>
+		</field>
+		<descr>Funder settings.</descr>
+		<index name="funder_settings_id">
+			<col>funder_id</col>
+		</index>
+		<index name="funder_settings_pkey">
+			<col>funder_id</col>
+			<col>locale</col>
+			<col>setting_name</col>
+			<UNIQUE />
+		</index>
+	</table>	
+
+	<!--
+	 *
+	 * TABLE funder_award
+	 *
+	 -->
+	<table name="funder_award">
+		<field name="funder_award_id" type="I8">
+			<KEY/>
+			<AUTOINCREMENT/>
+		</field>
+		<field name="funder_id" type="I8">
+			<NOTNULL/>
+		</field>
+		<field name="funder_award_number" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<descr>List of funder_award items for each funder</descr>
+	</table>
+
+	<!--
+	  *
+	  * TABLE funder_award_settings
+	  *
+	  -->
+	<table name="funder_award_settings">
+		<field name="funder_award_id" type="I8">
+			<NOTNULL/>
+		</field>
+		<field name="locale" type="C2" size="5">
+			<NOTNULL/>
+			<DEFAULT VALUE=""/>
+		</field>
+		<field name="setting_name" type="C2" size="255">
+			<NOTNULL/>
+		</field>
+		<field name="setting_value" type="XL"/>
+		<field name="setting_type" type="C2" size="6">
+			<NOTNULL/>
+			<descr>(bool|int|float|string|object)</descr>
+		</field>
+		<descr>Funder_award settings.</descr>
+		<index name="funder_award_settings_id">
+			<col>funder_award_id</col>
+		</index>
+		<index name="funder_award_settings_pkey">
+			<col>funder_award_id</col>
+			<col>locale</col>
+			<col>setting_name</col>
+			<UNIQUE />
+		</index>
+	</table>
+
 </schema>

@@ -18,6 +18,7 @@ class Funder extends DataObject {
 	//
 	// Get/set methods
 	//
+
 	/**
 	 * Get context ID.
 	 * @return int
@@ -51,35 +52,6 @@ class Funder extends DataObject {
 	}
 
 	/**
-	 * Get name and identification.
-	 * @return string
-	 */
-	function getFunderNameIdentification() {
-		if ($this->getData('funderIdentification')){
-			return $this->getData('funderName') .' [' .$this->getData('funderIdentification') .']';
-		}
-		else{
-			return $this->getData('funderName');
-		}
-	}
-
-	/**
-	 * Get name.
-	 * @return string
-	 */
-	function getFunderName() {
-		return $this->getData('funderName');
-	}
-
-	/**
-	 * Set name.
-	 * @param $funderName string
-	 */
-	function setFunderName($funderName) {
-		return $this->setData('funderName', $funderName);
-	}
-
-	/**
 	 * Get identification.
 	 * @return string
 	 */
@@ -96,20 +68,44 @@ class Funder extends DataObject {
 	}
 
 	/**
-	 * Get semicolon separated grant numbers.
+	 * Get name.
+	 * @param $locale string	 
 	 * @return string
 	 */
-	function getFunderGrants() {
-		return $this->getData('funderGrants');
+	function getFunderName($locale) {
+		return $this->getLocalizedData('funderName', $locale);
+	}	
+
+	/**
+	 * Get localized name.
+	 * @return string
+	 */
+	function getLocalizedFunderName() {
+		return $this->getLocalizedData('funderName');
 	}
 
 	/**
-	 * Set semicolon separated grant numbers.
-	 * @param $funderGrants string
+	 * Set name.
+	 * @param $funderName string
+	 * @param $locale string
 	 */
-	function setFunderGrants($funderGrants) {
-		return $this->setData('funderGrants', $funderGrants);
+	function setFunderName($funderName, $locale) {
+		return $this->setData('funderName', $funderName, $locale);
 	}
+
+	/**
+	 * Get name and identification.
+	 * @return string
+	 */
+	function getFunderNameIdentification() {
+		if ($this->getData('funderIdentification')){
+			return $this->getLocalizedData('funderName') .' [' .$this->getData('funderIdentification') .']';
+		}
+		else{
+			return $this->getLocalizedData('funderName');
+		}
+	}
+
 }
 
 ?>

@@ -98,8 +98,22 @@ class FunderGridHandler extends GridHandler {
 
 		// Get the items and add the data to the grid
 		$funderDao = DAORegistry::getDAO('FunderDAO');
-		$this->setGridDataElements($funderDao->getBySubmissionId($submissionId));
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+		$sectionIterator = $funderDao->getBySubmissionId($submissionId);
 
+		$gridData = array();
+		while ($funder = $sectionIterator->next()) {
+			$funderId = $funder->getId();
+			$funderAwards = $funderAwardDao->getByFunderId($funderId);			
+			$gridData[$funderId] = array(
+				'funderName' => $funder->getFunderName(null),
+				'funderIdentification' => $funder->getFunderIdentification(),
+				'funderGrants' => implode(";", $funderAwards)
+			);
+		}
+				
+		$this->setGridDataElements($gridData);		
+		
 		if ($this->canAdminister($request->getUser())) {
 			$this->setReadOnly(false);
 			// Add grid-level actions

@@ -91,8 +91,8 @@
 			{rdelim}
 		{rdelim});
 
-		$(".funderGrants").tagit({ldelim}
-			fieldName: 'funderGrants[]',
+		$(".funderAwards").tagit({ldelim}
+			fieldName: 'funderAwards[]',
 			allowSpaces: true,
 			singleField: true,
 			singleFieldDelimiter: ";",
@@ -118,7 +118,7 @@
 			<span>{translate key="plugins.generic.funding.funderSubOrganization"}</span>
 		</div>
 		{fbvFormSection}
-			{fbvElement type="hidden" class="funderGrants" label="plugins.generic.funding.funderGrants" id="funderGrants" value=$funderGrants maxlength="255" inline=true size=$fbvStyles.size.LARGE}
+			{fbvElement type="hidden" class="funderAwards" label="plugins.generic.funding.funderGrants" id="funderAwards" value=$funderAwards maxlength="255" inline=true size=$fbvStyles.size.LARGE}
 			<span>{translate key="plugins.generic.funding.funderGrants"}</span>
 		{/fbvFormSection}				
 	{/fbvFormArea}

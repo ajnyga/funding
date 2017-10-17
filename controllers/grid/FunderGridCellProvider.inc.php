@@ -31,11 +31,11 @@ class FunderGridCellProvider extends GridCellProvider {
 		$funderItem = $row->getData();
 		switch ($column->getId()) {
 			case 'funderName':
-				return array('label' => $funderItem->getFunderName());
+				return array('label' => $funderItem['funderName']);
 			case 'funderIdentification':
-				return array('label' => $funderItem->getFunderIdentification());
+				return array('label' => $funderItem['funderIdentification']);
 			case 'funderGrants':
-				return array('label' => $funderItem->getFunderGrants());
+				return array('label' => $funderItem['funderGrants']);
 		}
 	}
 }

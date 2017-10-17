@@ -73,7 +73,7 @@ class Funder extends DataObject {
 	 * @return string
 	 */
 	function getFunderName($locale) {
-		return $this->getLocalizedData('funderName', $locale);
+		return $this->getData('funderName', $locale);
 	}	
 
 	/**

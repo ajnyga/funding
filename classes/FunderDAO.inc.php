@@ -28,7 +28,7 @@ class FunderDAO extends DAO {
 		if ($submissionId) $params[] = (int) $submissionId;
 
 		$result = $this->retrieve(
-			'SELECT * FROM funder WHERE funder_id = ?'
+			'SELECT * FROM funders WHERE funder_id = ?'
 			. ($submissionId?' AND submission_id = ?':''),
 			$params
 		);
@@ -53,7 +53,7 @@ class FunderDAO extends DAO {
 		if ($contextId) $params[] = (int) $contextId;
 
 		$result = $this->retrieve(
-			'SELECT * FROM funder WHERE submission_id = ?'
+			'SELECT * FROM funders WHERE submission_id = ?'
 			. ($contextId?' AND context_id = ?':''),
 			$params
 		);
@@ -68,7 +68,7 @@ class FunderDAO extends DAO {
 	 */
 	function insertObject($funder) {
 		$this->update(
-			'INSERT INTO funder (funder_identification, submission_id, context_id) VALUES (?, ?, ?)',
+			'INSERT INTO funders (funder_identification, submission_id, context_id) VALUES (?, ?, ?)',
 			array(
 				$funder->getFunderIdentification(),
 				(int) $funder->getSubmissionId(),
@@ -86,7 +86,7 @@ class FunderDAO extends DAO {
 	 */
 	function updateObject($funder) {
 		$this->update(
-			'UPDATE	funder
+			'UPDATE	funders
 			SET	context_id = ?,
 				funder_identification = ?
 			WHERE funder_id = ?',
@@ -106,7 +106,7 @@ class FunderDAO extends DAO {
 	function deleteById($funderId) {
 
 		$this->update(
-			'DELETE FROM funder WHERE funder_id = ?',
+			'DELETE FROM funders WHERE funder_id = ?',
 			(int) $funderId
 		);
 
@@ -156,7 +156,7 @@ class FunderDAO extends DAO {
 	 * @return int
 	 */
 	function getInsertId() {
-		return $this->_getInsertId('funder', 'funder_id');
+		return $this->_getInsertId('funders', 'funder_id');
 	}
 
 	/**

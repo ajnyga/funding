@@ -25,7 +25,7 @@ class FunderAwardDAO extends DAO {
 	 */
 	function getFunderAwardNumbersByFunderId($funderId) {
 		$result = $this->retrieve(
-			'SELECT * FROM funder_award WHERE funder_id = ?',
+			'SELECT * FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
 		);
 
@@ -48,13 +48,13 @@ class FunderAwardDAO extends DAO {
 	function deleteByFunderId($funderId) {		
 
 		$result = $this->retrieve(
-			'SELECT funder_award_id FROM funder_award WHERE funder_id = ?',
+			'SELECT funder_award_id FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
 		);
 		$funder_award_id = $result->fields[0];		
 
 		$this->update(
-			'DELETE FROM funder_award WHERE funder_id = ?',
+			'DELETE FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
 		);
 
@@ -72,7 +72,7 @@ class FunderAwardDAO extends DAO {
 	 */
 	function insertObject($funderAward) {
 		$this->update(
-			'INSERT INTO funder_award (funder_id, funder_award_number) VALUES (?, ?)',
+			'INSERT INTO funder_awards (funder_id, funder_award_number) VALUES (?, ?)',
 			array(
 				$funderAward->getFunderId(),
 				$funderAward->getFunderAwardNumber()
@@ -91,7 +91,7 @@ class FunderAwardDAO extends DAO {
 	 */
 	function deleteById($funderAwardId) {
 		$this->update(
-			'DELETE FROM funder_award WHERE funder_award_id = ?',
+			'DELETE FROM funder_awards WHERE funder_award_id = ?',
 			(int) $funderAwardId
 		);
 	}
@@ -132,7 +132,7 @@ class FunderAwardDAO extends DAO {
 	 * @return int
 	 */
 	function getInsertId() {
-		return $this->_getInsertId('funder_award', 'funder_award_id');
+		return $this->_getInsertId('funder_awards', 'funder_award_id');
 	}
 
 	/**

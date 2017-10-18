@@ -15,10 +15,10 @@
 <schema version="0.2">
 	<!--
 	 *
-	 * TABLE funder
+	 * TABLE funders
 	 *
 	 -->
-	<table name="funder">
+	<table name="funders">
 		<field name="funder_id" type="I8">
 			<KEY/>
 			<AUTOINCREMENT/>
@@ -73,7 +73,7 @@
 	 * TABLE funder_award
 	 *
 	 -->
-	<table name="funder_award">
+	<table name="funder_awards">
 		<field name="funder_award_id" type="I8">
 			<KEY/>
 			<AUTOINCREMENT/>

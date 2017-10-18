@@ -104,7 +104,7 @@ class FunderGridHandler extends GridHandler {
 		$gridData = array();
 		while ($funder = $sectionIterator->next()) {
 			$funderId = $funder->getId();
-			$funderAwards = $funderAwardDao->getByFunderId($funderId);			
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);			
 			$gridData[$funderId] = array(
 				'funderName' => $funder->getFunderName(null),
 				'funderIdentification' => $funder->getFunderIdentification(),

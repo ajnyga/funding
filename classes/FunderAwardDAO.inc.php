@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/classes/classes/FunderAwardDAO.inc.php
+ * @file plugins/generic/funding/classes/FunderAwardDAO.inc.php
  *
  * Copyright (c) 2014-2017 Simon Fraser University
  * Copyright (c) 2003-2017 John Willinsky
@@ -23,7 +23,7 @@ class FunderAwardDAO extends DAO {
 	 * @param $funderId int Funder ID
 	 * @return Array
 	 */
-	function getByFunderId($funderId) {
+	function getFunderAwardNumbersByFunderId($funderId) {
 		$result = $this->retrieve(
 			'SELECT * FROM funder_award WHERE funder_id = ?',
 			(int) $funderId

@@ -60,19 +60,10 @@ class FunderAwardDAO extends DAO {
 	 * @return Array
 	 */
 	function deleteByFunderId($funderId) {		
-
 		$funderAwards = $this->getByFunderId($funderId);
 		while ($funderAward = $funderAwards->next()) {
-			$this->update(
-				'DELETE FROM funder_award_settings WHERE funder_award_id = ?', 
-				(int) $funderAward->getId()
-			);
+			$this->deleteObject($funderAward);
 		}
-		$this->update(
-			'DELETE FROM funder_awards WHERE funder_id = ?',
-			(int) $funderId
-		);
-
 	}
 
 	/**
@@ -103,6 +94,10 @@ class FunderAwardDAO extends DAO {
 		$this->update(
 			'DELETE FROM funder_awards WHERE funder_award_id = ?',
 			(int) $funderAwardId
+		);
+		$this->update(
+			'DELETE FROM funder_award_settings WHERE funder_award_id = ?', 
+			(int) $funderAward->getId()
 		);
 	}
 

@@ -66,6 +66,9 @@ class FunderAwardDAO extends DAO {
 			)
 		);
 		$funderAward->setId($this->getInsertId());
+
+		$this->updateLocaleFields($funderAward);
+
 		return $funderAward->getId();
 	}
 
@@ -105,6 +108,8 @@ class FunderAwardDAO extends DAO {
 		$funderAward->setId($row['funder_award_id']);
 		$funderAward->setFunderId($row['funder_id']);
 		$funderAward->setFunderAwardNumber($row['funder_award_number']);
+
+		$this->getDataObjectSettings('funder_award_settings', 'funder_award_id', $row['funder_award_id'], $funderAward);
 
 		return $funderAward;
 	}

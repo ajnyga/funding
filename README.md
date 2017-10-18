@@ -29,6 +29,7 @@ Version History
 - Added support for sub-organization selection
 - Fix problem with author's editing permissions upon initial submission, add support for readonly setting
 - General code cleanup to match PKP standards
+- Change database schema to support richer data
 
 ### Version 2.0
 

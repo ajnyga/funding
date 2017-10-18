@@ -97,7 +97,7 @@ class FunderAwardDAO extends DAO {
 		);
 		$this->update(
 			'DELETE FROM funder_award_settings WHERE funder_award_id = ?', 
-			(int) $funderAward->getId()
+			(int) $funderAwardId()
 		);
 	}
 

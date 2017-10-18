@@ -46,16 +46,29 @@ class FunderAwardDAO extends DAO {
 	 * @return Array
 	 */
 	function deleteByFunderId($funderId) {		
+
+		$result = $this->retrieve(
+			'SELECT funder_award_id FROM funder_award WHERE funder_id = ?',
+			(int) $funderId
+		);
+		$funder_award_id = $result->fields[0];		
+
 		$this->update(
 			'DELETE FROM funder_award WHERE funder_id = ?',
 			(int) $funderId
 		);
+
+		$this->update(
+			'DELETE FROM funder_award_settings WHERE funder_award_id = ?',
+			(int) $funder_award_id
+		);
+
 	}
 
 	/**
-	 * Insert a funder award.
+	 * Insert a funderAward.
 	 * @param $funderAward FunderAward
-	 * @return int Inserted funder award ID
+	 * @return int Inserted funderAwardID
 	 */
 	function insertObject($funderAward) {
 		$this->update(
@@ -73,7 +86,7 @@ class FunderAwardDAO extends DAO {
 	}
 
 	/**
-	 * Delete a funder award by ID.
+	 * Delete a funderAward by ID.
 	 * @param $funderAwardId int
 	 */
 	function deleteById($funderAwardId) {
@@ -92,16 +105,16 @@ class FunderAwardDAO extends DAO {
 	}
 
 	/**
-	 * Generate a new funder award object.
-	 * @return Funder
+	 * Generate a new funderAward object.
+	 * @return funderAward
 	 */
 	function newDataObject() {
 		return new FunderAward();
 	}
 
 	/**
-	 * Return a new funder award object from a given row.
-	 * @return Funder
+	 * Return a new funderAward object from a given row.
+	 * @return funderAward
 	 */
 	function _fromRow($row) {
 		$funderAward = $this->newDataObject();
@@ -132,7 +145,7 @@ class FunderAwardDAO extends DAO {
 
 	/**
 	 * Update the settings for this object
-	 * @param $funder object
+	 * @param $funderAward object
 	 */
 	function updateLocaleFields($funderAward) {
 		$this->updateDataObjectSettings('funder_award_settings', $funderAward, array('funder_award_id' => (int) $funderAward->getId()));

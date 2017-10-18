@@ -104,18 +104,20 @@ class FunderDAO extends DAO {
 	 * @param $funderId int
 	 */
 	function deleteById($funderId) {
+
 		$this->update(
 			'DELETE FROM funder WHERE funder_id = ?',
 			(int) $funderId
 		);
+
 		$this->update(
 			'DELETE FROM funder_settings WHERE funder_id = ?',
 			(int) $funderId
 		);
-		$this->update(
-			'DELETE FROM funder_award WHERE funder_id = ?',
-			(int) $funderId
-		);
+
+		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
+		$funderAwardDAO->deleteByFunderId($funderId);
+
 	}
 
 	/**

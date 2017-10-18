@@ -115,6 +115,22 @@ class FunderAwardDAO extends DAO {
 	 */
 	function getInsertId() {
 		return $this->_getInsertId('funder_award', 'funder_award_id');
+	}
+
+	/**
+	 * Get the additional field names.
+	 * @return array
+	 */
+	function getAdditionalFieldNames() {
+		return array();
+	}
+
+	/**
+	 * Update the settings for this object
+	 * @param $funder object
+	 */
+	function updateLocaleFields($funderAward) {
+		$this->updateDataObjectSettings('funder_award_settings', $funderAward, array('funder_award_id' => (int) $funderAward->getId()));
 	}	
 
 }

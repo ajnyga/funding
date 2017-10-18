@@ -21,6 +21,20 @@ class FunderAwardDAO extends DAO {
 	/**
 	 * Get a funderAward by Funder ID
 	 * @param $funderId int Funder ID
+	 * @return DAOResultFactory
+	 */
+	function getByFunderId($funderId) {
+		$result = $this->retrieve(
+			'SELECT * FROM funder_awards WHERE funder_id = ?',
+			(int) $funderId
+		);
+
+		return new DAOResultFactory($result, $this, '_fromRow', array('id'));
+	}
+
+	/**
+	 * Get funder award numbers by Funder ID
+	 * @param $funderId int Funder ID
 	 * @return Array
 	 */
 	function getFunderAwardNumbersByFunderId($funderId) {
@@ -47,20 +61,16 @@ class FunderAwardDAO extends DAO {
 	 */
 	function deleteByFunderId($funderId) {		
 
-		$result = $this->retrieve(
-			'SELECT funder_award_id FROM funder_awards WHERE funder_id = ?',
-			(int) $funderId
-		);
-		$funder_award_id = $result->fields[0];		
-
+		$funderAwards = $this->getByFunderId($funderId);
+		while ($funderAward = $funderAwards->next()) {
+			$this->update(
+				'DELETE FROM funder_award_settings WHERE funder_award_id = ?', 
+				(int) $funderAward->getId()
+			);
+		}
 		$this->update(
 			'DELETE FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
-		);
-
-		$this->update(
-			'DELETE FROM funder_award_settings WHERE funder_award_id = ?',
-			(int) $funder_award_id
 		);
 
 	}

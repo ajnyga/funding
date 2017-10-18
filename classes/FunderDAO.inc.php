@@ -170,7 +170,6 @@ class FunderDAO extends DAO {
 	 * @param $funder object
 	 */
 	function updateLocaleFields($funder) {
-		error_log(print_r($funder, true)); # debug: for some reason funder_settings table is not getting updated?
 		$this->updateDataObjectSettings('funder_settings', $funder, array('funder_id' => (int) $funder->getId()));
 	}
 

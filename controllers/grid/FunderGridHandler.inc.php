@@ -99,10 +99,10 @@ class FunderGridHandler extends GridHandler {
 		// Get the items and add the data to the grid
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
-		$sectionIterator = $funderDao->getBySubmissionId($submissionId);
+		$funderIterator = $funderDao->getBySubmissionId($submissionId);
 
 		$gridData = array();
-		while ($funder = $sectionIterator->next()) {
+		while ($funder = $funderIterator->next()) {
 			$funderId = $funder->getId();
 			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);			
 			$gridData[$funderId] = array(

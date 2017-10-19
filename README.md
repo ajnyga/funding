@@ -2,7 +2,7 @@
 
 About
 -----
-This plugin adds submission funding data using the Crossref funders registry, considers the data in the Crossref XML export and displays them on the submission view page.
+This plugin adds submission funding data using the Crossref funders registry, considers the data in the Crossref and DataCite XML export and displays them on the submission view page.
 
 License
 -------
@@ -10,7 +10,7 @@ This plugin is licensed under the GNU General Public License v2. See the file LI
 
 System Requirements
 -------------------
-OJS 3.0.2 i.e. OMP 3.1 or greater.
+OJS 3.1 i.e. OMP 3.1 or greater.
 PHP 5.4 or greater.
 
 Install
@@ -25,6 +25,7 @@ Version History
 ### Version 2.1
 
 - Added support for funder metadata exports to CrossRef
+- Added support for funder metadata exports to DataCite
 - Added support for OMP
 - Added support for sub-organization selection
 - Fix problem with author's editing permissions upon initial submission, add support for readonly setting
@@ -51,5 +52,4 @@ Version 1.0 adds an autocomplete to the Supporting Agencies field.
 
 TODO
 ---------------
-- Add funding data to DataCite XML export
 - Add funding data to OAI-PMH, OpenAIRE?

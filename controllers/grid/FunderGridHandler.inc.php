@@ -104,16 +104,16 @@ class FunderGridHandler extends GridHandler {
 		$gridData = array();
 		while ($funder = $funderIterator->next()) {
 			$funderId = $funder->getId();
-			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);			
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
 			$gridData[$funderId] = array(
-				'funderName' => $funder->getFunderName(null),
+				'funderName' => $funder->getFunderName(),
 				'funderIdentification' => $funder->getFunderIdentification(),
 				'funderGrants' => implode(";", $funderAwards)
 			);
 		}
-				
-		$this->setGridDataElements($gridData);		
-		
+
+		$this->setGridDataElements($gridData);
+
 		if ($this->canAdminister($request->getUser())) {
 			$this->setReadOnly(false);
 			// Add grid-level actions

@@ -69,28 +69,18 @@ class Funder extends DataObject {
 
 	/**
 	 * Get name.
-	 * @param $locale string	 
 	 * @return string
 	 */
-	function getFunderName($locale) {
-		return $this->getData('funderName', $locale);
-	}	
-
-	/**
-	 * Get localized name.
-	 * @return string
-	 */
-	function getLocalizedFunderName() {
-		return $this->getLocalizedData('funderName');
+	function getFunderName() {
+		return $this->getData('funderName');
 	}
 
 	/**
 	 * Set name.
 	 * @param $funderName string
-	 * @param $locale string
 	 */
-	function setFunderName($funderName, $locale) {
-		return $this->setData('funderName', $funderName, $locale);
+	function setFunderName($funderName) {
+		return $this->setData('funderName', $funderName);
 	}
 
 	/**
@@ -98,11 +88,11 @@ class Funder extends DataObject {
 	 * @return string
 	 */
 	function getFunderNameIdentification() {
-		if ($this->getData('funderIdentification')){
-			return $this->getLocalizedData('funderName') .' [' .$this->getData('funderIdentification') .']';
+		if ($this->getFunderIdentification()){
+			return $this->getFunderName() . '[' . $this->getFunderIdentification() . ']';
 		}
 		else{
-			return $this->getLocalizedData('funderName');
+			return $this->getFunderName();
 		}
 	}
 

@@ -61,7 +61,7 @@ class FunderForm extends Form {
 			$this->setData('funderNameIdentification', $funder->getFunderNameIdentification());
 
 			$funderAwards = $funderAwardDao->getByFunderId($this->funderId);
-			$this->setData('funderAwards', implode(";", $funderAwards));
+			$this->setData('funderAwards', implode(';', $funderAwards->toArray()));
 		}
 	}
 
@@ -123,7 +123,7 @@ class FunderForm extends Form {
 			}
 		}
 
-		$funder->setFunderName($funderName, null); # No locale at the moment
+		$funder->setFunderName($funderName);
 		$funder->setFunderIdentification($funderIdentification);
 
 		if ($funderId) {
@@ -133,14 +133,16 @@ class FunderForm extends Form {
 			$funderId = $funderDao->insertObject($funder);
 		}
 
-		$funderAwards = explode(";", $this->getData('funderAwards'));
+		$funderAwards = array();
+		if (!empty($this->getData('funderAwards'))) {
+			$funderAwards = explode(';', $this->getData('funderAwards'));
+		}
 		foreach ($funderAwards as $funderAwardNumber){
 			$funderAward = $funderAwardDao->newDataObject();
 			$funderAward->setFunderId($funderId);
 			$funderAward->setFunderAwardNumber($funderAwardNumber);
 			$funderAwardDao->insertObject($funderAward);
 		}
-
 	}
 }
 

@@ -19,7 +19,7 @@ import('plugins.generic.funding.classes.FunderAward');
 class FunderAwardDAO extends DAO {
 
 	/**
-	 * Get a funderAward by Funder ID
+	 * Get FunderAwards by Funder ID
 	 * @param $funderId int Funder ID
 	 * @return DAOResultFactory
 	 */
@@ -28,7 +28,6 @@ class FunderAwardDAO extends DAO {
 			'SELECT * FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
 		);
-
 		return new DAOResultFactory($result, $this, '_fromRow', array('id'));
 	}
 
@@ -42,7 +41,6 @@ class FunderAwardDAO extends DAO {
 			'SELECT * FROM funder_awards WHERE funder_id = ?',
 			(int) $funderId
 		);
-
 		$awards = array();
 		while (!$result->EOF) {
 			$row = $result->GetRowAssoc(false);
@@ -51,25 +49,12 @@ class FunderAwardDAO extends DAO {
 		}
 		$result->Close();
 		return $awards;
-
-	}
-	
-	/**
-	 * Delete funderAwards by Funder ID
-	 * @param $funderId int Funder ID
-	 * @return Array
-	 */
-	function deleteByFunderId($funderId) {		
-		$funderAwards = $this->getByFunderId($funderId);
-		while ($funderAward = $funderAwards->next()) {
-			$this->deleteObject($funderAward);
-		}
 	}
 
 	/**
-	 * Insert a funderAward.
+	 * Insert a FunderAward.
 	 * @param $funderAward FunderAward
-	 * @return int Inserted funderAwardID
+	 * @return int Inserted FunderAward ID
 	 */
 	function insertObject($funderAward) {
 		$this->update(
@@ -87,7 +72,7 @@ class FunderAwardDAO extends DAO {
 	}
 
 	/**
-	 * Delete a funderAward by ID.
+	 * Delete FunderAward by ID.
 	 * @param $funderAwardId int
 	 */
 	function deleteById($funderAwardId) {
@@ -96,21 +81,32 @@ class FunderAwardDAO extends DAO {
 			(int) $funderAwardId
 		);
 		$this->update(
-			'DELETE FROM funder_award_settings WHERE funder_award_id = ?', 
+			'DELETE FROM funder_award_settings WHERE funder_award_id = ?',
 			(int) $funderAwardId
 		);
 	}
 
 	/**
 	 * Delete a funder award object.
-	 * @param $funder Funder
+	 * @param $funderAward FunderAward
 	 */
 	function deleteObject($funderAward) {
 		$this->deleteById($funderAward->getId());
 	}
 
 	/**
-	 * Generate a new funderAward object.
+	 * Delete FunderAwards by Funder ID
+	 * @param $funderId int Funder ID
+	 */
+	function deleteByFunderId($funderId) {
+		$funderAwards = $this->getByFunderId($funderId);
+		while ($funderAward = $funderAwards->next()) {
+			$this->deleteObject($funderAward);
+		}
+	}
+
+	/**
+	 * Generate a new FunderAward object.
 	 * @return funderAward
 	 */
 	function newDataObject() {
@@ -118,8 +114,8 @@ class FunderAwardDAO extends DAO {
 	}
 
 	/**
-	 * Return a new funderAward object from a given row.
-	 * @return funderAward
+	 * Return a new FunderAward object from a given row.
+	 * @return FunderAward
 	 */
 	function _fromRow($row) {
 		$funderAward = $this->newDataObject();
@@ -133,7 +129,7 @@ class FunderAwardDAO extends DAO {
 	}
 
 	/**
-	 * Get the insert ID for the last inserted funder.
+	 * Get the insert ID for the last inserted funder award.
 	 * @return int
 	 */
 	function getInsertId() {
@@ -154,7 +150,7 @@ class FunderAwardDAO extends DAO {
 	 */
 	function updateLocaleFields($funderAward) {
 		$this->updateDataObjectSettings('funder_award_settings', $funderAward, array('funder_award_id' => (int) $funderAward->getId()));
-	}	
+	}
 
 }
 

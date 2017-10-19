@@ -56,7 +56,7 @@ class FundingPlugin extends GenericPlugin {
 
 			import('plugins.generic.funding.classes.FunderAwardDAO');
 			$funderAwardDao = new FunderAwardDAO();
-			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);			
+			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
 
 			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
 
@@ -68,7 +68,8 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay'));
 
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
-        }
+			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
+		}
 		return $success;
 	}
 
@@ -133,9 +134,9 @@ class FundingPlugin extends GenericPlugin {
 		$funderData = array();
 		while ($funder = $funders->next()) {
 			$funderId = $funder->getId();
-			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);			
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
 			$funderData[$funderId] = array(
-				'funderName' => $funder->getFunderName(null),
+				'funderName' => $funder->getFunderName(),
 				'funderIdentification' => $funder->getFunderIdentification(),
 				'funderAwards' => implode(";", $funderAwards)
 			);
@@ -161,6 +162,7 @@ class FundingPlugin extends GenericPlugin {
 		$context = $request->getContext();
 		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
 		$crossrefFRNS = 'http://www.crossref.org/fundref.xsd';
 		$rootNode=$preliminaryOutput->documentElement;
@@ -181,20 +183,18 @@ class FundingPlugin extends GenericPlugin {
 			while ($funder = $funders->next()) {
 				$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
 				$groupNode->setAttribute('name', 'fundgroup');
-				$funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderName());
+				$funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8'));
 				$funderNameNode->setAttribute('name', 'funder_name');
 				$funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderIdentification());
 				$funderIdNode->setAttribute('name', 'funder_identifier');
 				$funderNameNode->appendChild($funderIdNode);
 				$groupNode->appendChild($funderNameNode);
-				$funderGrantsString = $funder->getFunderGrants();
-				if (!empty($funderGrantsString)) {
-					$funderGrants = explode(';', $funderGrantsString);
-					foreach ($funderGrants as $funderGrant) {
-						$awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderGrant);
-						$awardNumberNode->setAttribute('name', 'award_number');
-						$groupNode->appendChild($awardNumberNode);
-					}
+				// Append funder awards nodes
+				$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
+				while ($funderAward = $funderAwards->next()) {
+					$awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderAward->getFunderAwardNumber());
+					$awardNumberNode->setAttribute('name', 'award_number');
+					$groupNode->appendChild($awardNumberNode);
 				}
 				$programNode->appendChild($groupNode);
 			}
@@ -202,6 +202,61 @@ class FundingPlugin extends GenericPlugin {
 				$articleNode->insertBefore($programNode, $aiProgramDataNode);
 			} else {
 				$articleNode->insertBefore($programNode, $doiDataNode);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Hook to datacitexmlfilter::execute and add funding data to the DataCite XML export
+	 * @param $hookName string
+	 * @param $params array
+	 */
+	function addDataCiteElement($hookName, $params) {
+		$preliminaryOutput =& $params[0];
+		$request = Application::getRequest();
+		$context = $request->getContext();
+		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
+		$funderDAO = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
+
+		$dataciteFRNS = 'http://datacite.org/schema/kernel-4';
+		$rootNode=$preliminaryOutput->documentElement;
+
+		// Get the alternateIdendifier element to get the article ID
+		$alternateIdentifierNodes = $preliminaryOutput->getElementsByTagName('alternateIdentifier');
+		foreach ($alternateIdentifierNodes as $alternateIdentifierNode) {
+			$alternateIdentifierType = $alternateIdentifierNode->getAttribute('alternateIdentifierType');
+			if ($alternateIdentifierType == 'publisherId') {
+				$publisherId = $alternateIdentifierNode->nodeValue;
+				$idsArray = explode('-', $publisherId);
+				if (count($idsArray) >= 3 ) {
+					$articleId = $idsArray[2];
+					// Add the parent fundingReferences element
+					$fundingReferencesNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReferences');
+					$publishedArticle = $publishedArticleDAO->getByArticleId($articleId, $context->getId());
+					assert($publishedArticle);
+					$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+					while ($funder = $funders->next()) {
+						$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
+						if ($funderAwards->wasEmpty) {
+							$funderReferenceNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReference');
+							$funderReferenceNode->appendChild($funderNameNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderName', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8')));
+							$funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', $funder->getFunderIdentification()));
+							$funderIdNode->setAttribute('funderIdentifierType', 'Crossref Funder ID');
+							$fundingReferencesNode->appendChild($funderReferenceNode);
+						}
+						while ($funderAward = $funderAwards->next()) {
+							$funderReferenceNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReference');
+							$funderReferenceNode->appendChild($funderNameNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderName', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8')));
+							$funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', $funder->getFunderIdentification()));
+							$funderIdNode->setAttribute('funderIdentifierType', 'Crossref Funder ID');
+							$funderReferenceNode->appendChild($awardNumberNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'awardNumber', $funderAward->getFunderAwardNumber()));
+							$fundingReferencesNode->appendChild($funderReferenceNode);
+						}
+					}
+					$rootNode->appendChild($fundingReferencesNode);
+				}
 			}
 		}
 		return false;

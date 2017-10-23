@@ -50,6 +50,9 @@ The funding data is saved in the database table 'funders' and shown on the submi
 
 Version 1.0 adds an autocomplete to the Supporting Agencies field.
 
+
+Crossref provides funding to support the development of the version 2.1 of this plugin and other Crossref-related plugins.
+
 TODO
 ---------------
 - Add funding data to OAI-PMH, OpenAIRE?

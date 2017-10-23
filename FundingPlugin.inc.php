@@ -230,7 +230,7 @@ class FundingPlugin extends GenericPlugin {
 			if ($alternateIdentifierType == 'publisherId') {
 				$publisherId = $alternateIdentifierNode->nodeValue;
 				$idsArray = explode('-', $publisherId);
-				if (count($idsArray) >= 3 ) {
+				if (count($idsArray) == 3 ) {
 					$articleId = $idsArray[2];
 					// Add the parent fundingReferences element
 					$fundingReferencesNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReferences');

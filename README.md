@@ -53,6 +53,8 @@ Version 1.0 adds an autocomplete to the Supporting Agencies field.
 
 Crossref provides funding to support the development of the version 2.1 of this plugin and other Crossref-related plugins.
 
+Versions 1.0 and 2.0 of the plugin were created by The Federation of Finnish Learned Societies (https://tsv.fi) with funding provided by OpenAIRE Alternative Funding Mechanism for APC-free Open Access journals and platforms. 
+
 TODO
 ---------------
 - Add funding data to OAI-PMH, OpenAIRE?

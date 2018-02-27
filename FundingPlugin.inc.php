@@ -41,14 +41,11 @@ class FundingPlugin extends GenericPlugin {
     }
 
 	/**
-	 * Register the plugin, if enabled.
-	 * @param $category string
-	 * @param $path string
-	 * @return boolean
+	 * @copydoc Plugin::register()
 	 */
-    function register($category, $path) {
-		$success = parent::register($category, $path);
-		if ($success && $this->getEnabled()) {
+    function register($category, $path, $mainContextId = null) {
+		$success = parent::register($category, $path, $mainContextId);
+		if ($success && $this->getEnabled($mainContextId)) {
 
 			import('plugins.generic.funding.classes.FunderDAO');
 			$funderDao = new FunderDAO();

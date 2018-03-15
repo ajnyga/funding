@@ -60,8 +60,8 @@ class FunderForm extends Form {
 			$funder = $funderDao->getById($this->funderId);
 			$this->setData('funderNameIdentification', $funder->getFunderNameIdentification());
 
-			$funderAwards = $funderAwardDao->getByFunderId($this->funderId);
-			$this->setData('funderAwards', implode(';', $funderAwards->toArray()));
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($this->funderId);
+			$this->setData('funderAwards', implode(';', $funderAwards));
 		}
 	}
 

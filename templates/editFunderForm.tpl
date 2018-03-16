@@ -38,7 +38,7 @@
 			tagLimit: 1,
 			tagSource: function(search, response){ldelim}
 				$.ajax({ldelim}
-					url: 'http://api.crossref.org/funders',
+					url: 'https://api.crossref.org/funders',
 					dataType: 'json',
 					cache: true,
 					data: {ldelim}
@@ -62,7 +62,7 @@
 					$('#funderNameIdentification').val('');
 				{rdelim} else {ldelim}
 				$.ajax({ldelim}
-					url: 'http://search.crossref.org/funders?descendants=true',
+					url: 'https://search.crossref.org/funders?descendants=true',
 					dataType: 'json',
 					cache: true,
 					data: {ldelim}

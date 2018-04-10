@@ -13,7 +13,7 @@
 <version>
 	<application>funding</application>
 	<type>plugins.generic</type>
-	<release>2.1.1.1</release>
+	<release>2.1.1.2</release>
 	<date>2017-10-18</date>
 	<lazy-load>1</lazy-load>
 	<class>FundingPlugin</class>

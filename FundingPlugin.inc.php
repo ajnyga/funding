@@ -66,6 +66,7 @@ class FundingPlugin extends GenericPlugin {
 
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
 			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
+			HookRegistry::register('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
 		}
 		return $success;
 	}
@@ -257,6 +258,39 @@ class FundingPlugin extends GenericPlugin {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Hook to OAIMetadataFormat_OpenAIRE::findFunders and add funding data to the OpenAIRE OAI
+	 * @param $hookName string
+	 * @param $params array
+	 */
+	function addOpenAIREFunderElement($hookName, $params) {
+		$articleId =& $params[0];
+		$fundingReferences =& $params[1];
+		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
+		$funderDAO = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
+
+		$publishedArticle = $publishedArticleDAO->getByArticleId($articleId);
+		assert($publishedArticle);
+		$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+		while ($funder = $funders->next()) {
+			$fundingReferences .= "\t\t\t<award-group id=\"group-" . $funder->getId() . "\">\n";
+			$fundingReferences .= "\t\t\t\t<funding-source id=\"source-" . $funder->getId() . "\">\n";
+			$fundingReferences .= "\t\t\t\t\t<institution-wrap>\n";
+			$fundingReferences .= "\t\t\t\t\t\t<institution-id institution-id-type=\"funder-id\">" . $funder->getFunderIdentification() . "</institution-id>\n";
+			$fundingReferences .= "\t\t\t\t\t\t<institution>" . htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8') . "</institution>\n";
+			$fundingReferences .= "\t\t\t\t\t</institution-wrap>\n";
+			$fundingReferences .= "\t\t\t\t</funding-source>\n";
+
+			$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
+			while ($funderAward = $funderAwards->next()) {
+				$fundingReferences .= "\t\t\t\t<award-id>" . $funderAward->getFunderAwardNumber() . "</award-id>\n";
+			}
+			$fundingReferences .= "\t\t\t</award-group>\n";
+		}
+		return $fundingReferences;
 	}
 
 	/**

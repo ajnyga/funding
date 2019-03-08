@@ -271,33 +271,26 @@ class FundingPlugin extends GenericPlugin {
 		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
-
 		$publishedArticle = $publishedArticleDAO->getByArticleId($articleId);
 		assert($publishedArticle);
 		$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
 		while ($funder = $funders->next()) {
-			$fundingReferences .= "\t\t\t<award-group id=\"group-" . $funder->getId() . "\">\n";
-			$fundingReferences .= "\t\t\t\t<funding-source id=\"source-" . $funder->getId() . "\">\n";
-			$fundingReferences .= "\t\t\t\t\t<institution-wrap>\n";
-			$fundingReferences .= "\t\t\t\t\t\t<institution-id institution-id-type=\"funder-id\">" . $funder->getFunderIdentification() . "</institution-id>\n";
-			$fundingReferences .= "\t\t\t\t\t\t<institution>" . htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8') . "</institution>\n";
-			$fundingReferences .= "\t\t\t\t\t</institution-wrap>\n";
-			$fundingReferences .= "\t\t\t\t</funding-source>\n";
-
+			$fundingReferences .= "\t\t\t\t<award-group id=\"group-" . $funder->getId() . "\">\n";
+			$fundingReferences .= "\t\t\t\t\t<funding-source id=\"source-" . $funder->getId() . "\">\n";
+			$fundingReferences .= "\t\t\t\t\t\t<institution-wrap>\n";
+			$fundingReferences .= "\t\t\t\t\t\t\t<institution>" . htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8') . "</institution>\n";
+			$fundingReferences .= "\t\t\t\t\t\t\t<institution-id institution-id-type=\"doi\" vocab=\"open-funder-registry\" vocab-identifier=\"" . $funder->getFunderIdentification() . "\">" . $funder->getFunderIdentification() . "</institution-id>\n";
+			$fundingReferences .= "\t\t\t\t\t\t</institution-wrap>\n";
+			$fundingReferences .= "\t\t\t\t\t</funding-source>\n";
 			$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
 			while ($funderAward = $funderAwards->next()) {
-				$fundingReferences .= "\t\t\t\t<award-id>" . $funderAward->getFunderAwardNumber() . "</award-id>\n";
+				$fundingReferences .= "\t\t\t\t\t<award-id>" . $funderAward->getFunderAwardNumber() . "</award-id>\n";
 			}
-			$fundingReferences .= "\t\t\t</award-group>\n";
+			$fundingReferences .= "\t\t\t\t</award-group>\n";
 		}
+		if ($fundingReferences)
+			$fundingReferences = "\t\t\t<funding-group specific-use=\"crossref\">\n" . $fundingReferences . "\t\t\t</funding-group>\n";
 		return $fundingReferences;
-	}
-
-	/**
-	 * @copydoc Plugin::getTemplatePath()
-	 */
-	function getTemplatePath($inCore = false) {
-		return parent::getTemplatePath($inCore) . 'templates/';
 	}
 
 	/**

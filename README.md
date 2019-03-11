@@ -1,5 +1,8 @@
 # Funding Plugin
 
+** NOTE! OJS 3.1.2 support not yet tested because Crossref API is currently broken, see http://status.crossref.org/incidents/gncjcx48dvmn **
+
+
 About
 -----
 This plugin adds submission funding data using the Crossref funders registry, considers the data in the Crossref and DataCite XML export and displays them on the submission view page.
@@ -10,7 +13,7 @@ This plugin is licensed under the GNU General Public License v2. See the file LI
 
 System Requirements
 -------------------
-OJS 3.1 i.e. OMP 3.1 or greater.
+OJS 3.1.2 i.e. OMP 3.1.2 or greater.
 PHP 5.4 or greater.
 
 Install

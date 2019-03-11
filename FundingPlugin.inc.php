@@ -94,7 +94,7 @@ class FundingPlugin extends GenericPlugin {
 		$smarty =& $params[1];
 		$output =& $params[2];
 		$request = $this->getRequest();
-		$output .= $smarty->fetch($this->getTemplatePath() . 'metadataForm.tpl');
+		$output .= $smarty->fetch($this->getTemplateResource('metadataForm.tpl'));
 		return false;
 	}
 
@@ -142,7 +142,7 @@ class FundingPlugin extends GenericPlugin {
 
 		if ($funderData){
 			$templateMgr->assign('funderData', $funderData);
-			$output .= $templateMgr->fetch($this->getTemplatePath() . 'listFunders.tpl');
+			$output .= $templateMgr->fetch($this->getTemplateResource('listFunders.tpl'));
 		}
 
 		return false;

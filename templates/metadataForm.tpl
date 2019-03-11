@@ -10,7 +10,7 @@
  
 {if array_intersect(array(ROLE_ID_MANAGER, ROLE_ID_SUB_EDITOR, ROLE_ID_ASSISTANT, ROLE_ID_AUTHOR), (array)$userRoles)}
 <div id="fundref">
-	{url|assign:funderGridUrl router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="fetchGrid" submissionId=$submissionId escape=false}
-	{load_url_in_div id="funderGridContainer"|uniqid url=$funderGridUrl}	
+	{capture assign=funderGridUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="fetchGrid" submissionId=$submissionId escape=false}{/capture}
+	{load_url_in_div id="funderGridContainer"|uniqid url=$funderGridUrl}
 </div>
 {/if}

@@ -34,7 +34,7 @@ class FunderForm extends Form {
 	 * @param $funderId int (optional) Funder ID
 	 */
 	function __construct($fundingPlugin, $contextId, $submissionId, $funderId = null) {
-		parent::__construct($fundingPlugin->getTemplatePath() . 'editFunderForm.tpl');
+		parent::__construct($fundingPlugin->getTemplateResource('editFunderForm.tpl'));
 
 		$this->contextId = $contextId;
 		$this->submissionId = $submissionId;

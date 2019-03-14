@@ -1,8 +1,5 @@
 # Funding Plugin
 
-** NOTE! OJS 3.1.2 support not yet tested because Crossref API is currently broken, see http://status.crossref.org/incidents/gncjcx48dvmn **
-
-
 About
 -----
 This plugin adds submission funding data using the Crossref funders registry, considers the data in the Crossref and DataCite XML export and displays them on the submission view page.
@@ -14,17 +11,20 @@ This plugin is licensed under the GNU General Public License v2. See the file LI
 System Requirements
 -------------------
 OJS 3.1.2 i.e. OMP 3.1.2 or greater.
-PHP 5.4 or greater.
+PHP 7.0 or greater.
 
 Install
 -------
 
  * Copy the release source or unpack the release package into the OJS i.e. OMP plugins/generic/funding/ folder.
- * Run `php tools/upgrade.php upgrade` from the OJS i.e. OMP folder.
+ * Run `php tools/upgrade.php upgrade` from the OJS i.e. OMP folder. This creates the needed database tables.
  * Go to Settings -> Website -> Plugins -> Generic Plugin -> Funding Plugin and enable the plugin.
  
 Version History
 ---------------
+### Version 2.1.1.4
+- Added support for funder metadata export to OpenAIRE OAI plugin
+
 ### Version 2.1
 
 - Added support for funder metadata exports to CrossRef

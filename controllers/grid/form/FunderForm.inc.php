@@ -75,7 +75,7 @@ class FunderForm extends Form {
 	/**
 	 * @copydoc Form::fetch
 	 */
-	function fetch($request) {
+	function fetch($request, $template = null, $display = false) {
 		$templateMgr = TemplateManager::getManager();
 		$templateMgr->assign('funderId', $this->funderId);
 		$templateMgr->assign('submissionId', $this->submissionId);

@@ -294,6 +294,13 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
+	 * @copydoc Plugin::getTemplatePath()
+	 */
+	function getTemplatePath($inCore = false) {
+		return parent::getTemplatePath($inCore) . 'templates/';
+	}
+
+	/**
 	 * @copydoc Plugin::getInstallSchemaFile()
 	 */
 	function getInstallSchemaFile() {

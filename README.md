@@ -23,7 +23,7 @@ Install
 Version History
 ---------------
 
-### Version 2.1.1.4
+### Version 2.1.1.5
 
 - Added support for funder metadata export to OpenAIRE OAI plugin
 

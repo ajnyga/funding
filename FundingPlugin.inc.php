@@ -56,6 +56,7 @@ class FundingPlugin extends GenericPlugin {
 			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
 
 			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
+			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
 
 			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
 
@@ -93,8 +94,27 @@ class FundingPlugin extends GenericPlugin {
 	function metadataFieldEdit($hookName, $params) {
 		$smarty =& $params[1];
 		$output =& $params[2];
-		$request = $this->getRequest();
 		$output .= $smarty->fetch($this->getTemplateResource('metadataForm.tpl'));
+		return false;
+	}
+
+	/**
+	 * Insert funder grid in the publication tabs
+	 */
+	function addToPublicationForms($hookName, $params) {
+		$smarty =& $params[1];
+		$output =& $params[2];
+		$submission = $smarty->get_template_vars('submission');
+		$smarty->assign([
+			'submissionId' => $submission->getId(),
+		]);
+
+		$output .= sprintf(
+			'<tab id="fundingGridInWorkflow" label="%s">%s</tab>',
+			__('plugins.generic.funding.fundingData'),
+			$smarty->fetch($this->getTemplateResource('metadataForm.tpl'))
+		);
+
 		return false;
 	}
 
@@ -109,6 +129,14 @@ class FundingPlugin extends GenericPlugin {
 			'FunderGridHandlerJs',
 			$gridHandlerJs,
 			array('contexts' => 'backend')
+		);
+		$templateMgr->addStylesheet(
+			'FunderGridHandlerStyles',
+			'#fundingGridInWorkflow { margin-top: 32px; }',
+			[
+				'inline' => true,
+				'contexts' => 'backend',
+			]
 		);
 		return false;
 	}
@@ -304,7 +332,7 @@ class FundingPlugin extends GenericPlugin {
 	 * Get the JavaScript URL for this plugin.
 	 */
 	function getJavaScriptURL() {
-		return Request::getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
+		return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
 	}
 
 }

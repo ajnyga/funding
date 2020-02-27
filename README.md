@@ -6,11 +6,11 @@ This plugin adds submission funding data using the Crossref funders registry, co
 
 License
 -------
-This plugin is licensed under the GNU General Public License v2. See the file LICENSE for the complete terms of this license.
+This plugin is licensed under the GNU General Public License v3. See the file LICENSE for the complete terms of this license.
 
 System Requirements
 -------------------
-OJS 3.1.2 i.e. OMP 3.1.2 or greater.
+OJS 3.2.0, OMP 3.2.0 or greater.
 PHP 7.0 or greater.
 
 Install
@@ -22,6 +22,10 @@ Install
  
 Version History
 ---------------
+
+### Version 2.1.3.0
+- Support for 3.2
+
 ### Version 2.1.2.4
 - Added support for funder metadata export to OpenAIRE OAI plugin
 
@@ -59,7 +63,3 @@ Sponsors
 Crossref provides funding to support the development of the version 2.1 of this plugin and other Crossref-related plugins.
 
 Versions 1.0 and 2.0 of the plugin were created by The Federation of Finnish Learned Societies (https://tsv.fi) with funding provided by OpenAIRE Alternative Funding Mechanism for APC-free Open Access journals and platforms. 
-
-TODO
----------------
-- Add funding data to OAI-PMH, OpenAIRE?

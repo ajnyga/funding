@@ -1,9 +1,9 @@
 /**
  * @file plugins/generic/funding/js/FunderGridHandler.js
  *
- * Copyright (c) 2014-2017 Simon Fraser University
+ * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2000-2017 John Willinsky
- * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+ * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
  *
  * @class FunderGridHandler
  * @ingroup plugins_generic_funding
@@ -15,8 +15,6 @@
 	$.pkp.plugins.generic.funding =
 		$.pkp.plugins.generic.funding ||
 		{ js: { } };
-
-
 
 	/**
 	 * @constructor

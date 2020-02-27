@@ -186,7 +186,6 @@ class FundingPlugin extends GenericPlugin {
 		$preliminaryOutput =& $params[0];
 		$request = Application::getRequest();
 		$context = $request->getContext();
-		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
@@ -203,9 +202,9 @@ class FundingPlugin extends GenericPlugin {
 			$programNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:program');
 			$programNode->setAttribute('name', 'fundref');
 
-			$publishedArticle = $publishedArticleDAO->getPublishedArticleByPubId('doi', $doi, $context->getId());
-			assert($publishedArticle);
-			$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+			$publishedSubmission = Services::get('submission')->get(['pub-id::doi' => $doi]);
+			assert($publishedSubmission);
+			$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 			while ($funder = $funders->next()) {
 				$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
 				$groupNode->setAttribute('name', 'fundgroup');
@@ -242,7 +241,6 @@ class FundingPlugin extends GenericPlugin {
 		$preliminaryOutput =& $params[0];
 		$request = Application::getRequest();
 		$context = $request->getContext();
-		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
@@ -257,12 +255,12 @@ class FundingPlugin extends GenericPlugin {
 				$publisherId = $alternateIdentifierNode->nodeValue;
 				$idsArray = explode('-', $publisherId);
 				if (count($idsArray) == 3 ) {
-					$articleId = $idsArray[2];
+					$submissionId = $idsArray[2];
 					// Add the parent fundingReferences element
 					$fundingReferencesNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReferences');
-					$publishedArticle = $publishedArticleDAO->getByArticleId($articleId, $context->getId());
-					assert($publishedArticle);
-					$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+					$publishedSubmission = Services::get('submission')->get($submissionId);
+					assert($publishedSubmission);
+					$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 					while ($funder = $funders->next()) {
 						$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
 						if ($funderAwards->wasEmpty) {
@@ -294,14 +292,13 @@ class FundingPlugin extends GenericPlugin {
 	 * @param $params array
 	 */
 	function addOpenAIREFunderElement($hookName, $params) {
-		$articleId =& $params[0];
+		$submissionId =& $params[0];
 		$fundingReferences =& $params[1];
-		$publishedArticleDAO = DAORegistry::getDAO('PublishedArticleDAO');
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
-		$publishedArticle = $publishedArticleDAO->getByArticleId($articleId);
-		assert($publishedArticle);
-		$funders = $funderDAO->getBySubmissionId($publishedArticle->getId());
+		$publishedSubmission = Services::get('submission')->get($submissionId);
+		assert($publishedSubmission);
+		$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 		while ($funder = $funders->next()) {
 			$fundingReferences .= "\t\t\t\t<award-group id=\"group-" . $funder->getId() . "\">\n";
 			$fundingReferences .= "\t\t\t\t\t<funding-source id=\"source-" . $funder->getId() . "\">\n";

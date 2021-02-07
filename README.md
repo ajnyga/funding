@@ -10,7 +10,7 @@ This plugin is licensed under the GNU General Public License v3. See the file LI
 
 System Requirements
 -------------------
-OJS 3.2.0, OMP 3.2.0 or greater.
+OJS 3.3.0, OMP 3.3.0 or greater.
 PHP 7.0 or greater.
 
 Install
@@ -22,6 +22,9 @@ Install
  
 Version History
 ---------------
+
+### Version 2.1.4.0
+- Support for 3.3
 
 ### Version 2.1.3.0
 - Support for 3.2

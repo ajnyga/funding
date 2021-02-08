@@ -319,11 +319,13 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * @copydoc Plugin::getInstallSchemaFile()
+	 * @copydoc Plugin::getInstallMigration()
 	 */
-	function getInstallSchemaFile() {
-		return $this->getPluginPath() . '/schema.xml';
+	function getInstallMigration() {
+		$this->import('FundingSchemaMigration');
+		return new FundingSchemaMigration();
 	}
+
 
 	/**
 	 * Get the JavaScript URL for this plugin.

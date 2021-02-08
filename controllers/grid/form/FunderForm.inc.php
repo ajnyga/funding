@@ -87,7 +87,7 @@ class FunderForm extends Form {
 	/**
 	 * Save form values into the database
 	 */
-	function execute() {
+	function execute(...$functionArgs) {
 		$funderId = $this->funderId;
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');

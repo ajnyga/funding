@@ -24,7 +24,7 @@ class FunderDAO extends DAO {
 	 * @param $submissionId int (optional) Submission ID
 	 */
 	function getById($funderId, $submissionId = null) {
-		$params = array((int) $funderId);
+		$params = [(int) $funderId];
 		if ($submissionId) $params[] = (int) $submissionId;
 
 		$result = $this->retrieve(
@@ -33,12 +33,8 @@ class FunderDAO extends DAO {
 			$params
 		);
 
-		$returner = null;
-		if ($result->RecordCount() != 0) {
-			$returner = $this->_fromRow($result->GetRowAssoc(false));
-		}
-		$result->Close();
-		return $returner;
+		$row = $result->current();
+		return $row ? $this->_fromRow((array) $row) : null;
 	}
 
 
@@ -49,7 +45,7 @@ class FunderDAO extends DAO {
 	 * @return Funder
 	 */
 	function getBySubmissionId($submissionId, $contextId = null) {
-		$params = array((int) $submissionId);
+		$params = [(int) $submissionId];
 		if ($contextId) $params[] = (int) $contextId;
 
 		$result = $this->retrieve(
@@ -107,12 +103,12 @@ class FunderDAO extends DAO {
 
 		$this->update(
 			'DELETE FROM funders WHERE funder_id = ?',
-			(int) $funderId
+			[(int) $funderId]
 		);
 
 		$this->update(
 			'DELETE FROM funder_settings WHERE funder_id = ?',
-			(int) $funderId
+			[(int) $funderId]
 		);
 
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');

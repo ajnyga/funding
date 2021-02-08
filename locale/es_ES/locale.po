@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-02-07T21:25:15+01:00\n"
+"PO-Revision-Date: 2021-02-07T21:25:15+01:00\n"
+"Language: \n"
+
+msgid "plugins.generic.funding.displayName"
+msgstr "Datos de los fondos"
+
+msgid "plugins.generic.funding.description"
+msgstr "Este módulo añade los datos de financiación de las presentaciones utilizando el registro de financiadores de Crossref, y considera los datos en la exportación XML de Crossref."
+
+msgid "plugins.generic.funding.fundingData"
+msgstr "Datos de los fondos"
+
+msgid "plugins.generic.funding.addFunder"
+msgstr "Agregar financiador"
+
+msgid "plugins.generic.funding.funderName"
+msgstr "Nombre del financiador"
+
+msgid "plugins.generic.funding.funderSubOrganization"
+msgstr "Sub-organización"
+
+msgid "plugins.generic.funding.funderSubOrganization.select"
+msgstr "Seleccione una sub-organización"
+
+msgid "plugins.generic.funding.funderIdentification"
+msgstr "ID del financiador"
+
+msgid "plugins.generic.funding.funderNameIdentification"
+msgstr "Nombre del financiador e identificación"
+
+msgid "plugins.generic.funding.funderGrants"
+msgstr "Números de la subvención"
+
+msgid "plugins.generic.funding.noneCreated"
+msgstr "Sin financiadores"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired"
+msgstr "Es necesario el nombre del financiador"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
+msgstr "Solo los financiadores en el registro Crossref están autorizados"

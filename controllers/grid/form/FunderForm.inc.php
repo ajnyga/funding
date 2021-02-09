@@ -145,5 +145,3 @@ class FunderForm extends Form {
 		}
 	}
 }
-
-?>

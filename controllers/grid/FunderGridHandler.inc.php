@@ -291,5 +291,3 @@ class FunderGridHandler extends GridHandler {
 	}
 
 }
-
-?>

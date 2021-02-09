@@ -335,5 +335,3 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 }
-
-?>

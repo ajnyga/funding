@@ -52,5 +52,3 @@ class FunderAward extends DataObject {
 	}
 
 }
-
-?>

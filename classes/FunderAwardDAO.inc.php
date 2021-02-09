@@ -150,5 +150,3 @@ class FunderAwardDAO extends DAO {
 	}
 
 }
-
-?>

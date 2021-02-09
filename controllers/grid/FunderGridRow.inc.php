@@ -82,5 +82,3 @@ class FunderGridRow extends GridRow {
 		return $this->_readOnly;
 	}
 }
-
-?>

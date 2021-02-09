@@ -20,5 +20,3 @@
 require_once('FundingPlugin.inc.php');
 
 return new FundingPlugin();
-
-?>

@@ -39,5 +39,3 @@ class FunderGridCellProvider extends GridCellProvider {
 		}
 	}
 }
-
-?>

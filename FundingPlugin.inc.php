@@ -188,6 +188,7 @@ class FundingPlugin extends GenericPlugin {
 		$context = $request->getContext();
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
+		$submissionDao = DAORegistry::getDAO('SubmissionDAO');
 
 		$crossrefFRNS = 'http://www.crossref.org/fundref.xsd';
 		$rootNode=$preliminaryOutput->documentElement;
@@ -202,7 +203,7 @@ class FundingPlugin extends GenericPlugin {
 			$programNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:program');
 			$programNode->setAttribute('name', 'fundref');
 
-			$publishedSubmission = Services::get('submission')->get(['pub-id::doi' => $doi]);
+			$publishedSubmission = $submissionDao->getByPubId('doi', $doi);
 			assert($publishedSubmission);
 			$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 			while ($funder = $funders->next()) {

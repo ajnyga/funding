@@ -203,30 +203,31 @@ class FundingPlugin extends GenericPlugin {
 			$programNode->setAttribute('name', 'fundref');
 
 			$publishedSubmission = Services::get('submission')->get(['pub-id::doi' => $doi]);
-			assert($publishedSubmission);
-			$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
-			while ($funder = $funders->next()) {
-				$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
-				$groupNode->setAttribute('name', 'fundgroup');
-				$funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8'));
-				$funderNameNode->setAttribute('name', 'funder_name');
-				$funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderIdentification());
-				$funderIdNode->setAttribute('name', 'funder_identifier');
-				$funderNameNode->appendChild($funderIdNode);
-				$groupNode->appendChild($funderNameNode);
-				// Append funder awards nodes
-				$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
-				while ($funderAward = $funderAwards->next()) {
-					$awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderAward->getFunderAwardNumber());
-					$awardNumberNode->setAttribute('name', 'award_number');
-					$groupNode->appendChild($awardNumberNode);
+			if ($publishedSubmission) {
+				$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
+				while ($funder = $funders->next()) {
+					$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
+					$groupNode->setAttribute('name', 'fundgroup');
+					$funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8'));
+					$funderNameNode->setAttribute('name', 'funder_name');
+					$funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderIdentification());
+					$funderIdNode->setAttribute('name', 'funder_identifier');
+					$funderNameNode->appendChild($funderIdNode);
+					$groupNode->appendChild($funderNameNode);
+					// Append funder awards nodes
+					$funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
+					while ($funderAward = $funderAwards->next()) {
+						$awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderAward->getFunderAwardNumber());
+						$awardNumberNode->setAttribute('name', 'award_number');
+						$groupNode->appendChild($awardNumberNode);
+					}
+					$programNode->appendChild($groupNode);
 				}
-				$programNode->appendChild($groupNode);
-			}
-			if ($aiProgramDataNode) {
-				$articleNode->insertBefore($programNode, $aiProgramDataNode);
-			} else {
-				$articleNode->insertBefore($programNode, $doiDataNode);
+				if ($aiProgramDataNode) {
+					$articleNode->insertBefore($programNode, $aiProgramDataNode);
+				} else {
+					$articleNode->insertBefore($programNode, $doiDataNode);
+				}
 			}
 		}
 		return false;

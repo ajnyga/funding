@@ -62,8 +62,9 @@ class FundingPlugin extends GenericPlugin {
 
 			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
 
-			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));
-			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay'));
+			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));	//OJS
+			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay')); //OMP
+			HookRegistry::register('Templates::Preprint::Details', array($this, 'addSubmissionDisplay'));	//OPS
 
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
 			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
@@ -150,7 +151,18 @@ class FundingPlugin extends GenericPlugin {
 		$templateMgr = $params[1];
 		$output =& $params[2];
 
-		$submission = $templateMgr->get_template_vars('monograph') ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
+		$application = Application::getName();
+		switch($application) {
+			case 'ojs2':
+				$submission = $templateMgr->get_template_vars('article');
+				break;
+			case 'omp':
+				$submission = $templateMgr->get_template_vars('monograph');
+				break;
+			case 'ops':
+				$submission = $templateMgr->get_template_vars('preprint');
+				break;
+		}
 
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');

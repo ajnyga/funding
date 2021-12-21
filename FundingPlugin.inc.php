@@ -143,14 +143,9 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	* Hook to Templates::Article::Details and Templates::Catalog::Book::Details and list funder information
-	* @param $hookName string
-	* @param $params array
-	*/
-	function addSubmissionDisplay($hookName, $params) {
-		$templateMgr = $params[1];
-		$output =& $params[2];
-
+	 * Gets submission from template manager according to the current application
+	 */
+	function getSubmissionOfApplication($templateMgr) {
 		$application = Application::getName();
 		switch($application) {
 			case 'ojs2':
@@ -163,6 +158,19 @@ class FundingPlugin extends GenericPlugin {
 				$submission = $templateMgr->get_template_vars('preprint');
 				break;
 		}
+		return $submission;
+	}
+
+	/**
+	* Hook to Templates::Article::Details and Templates::Catalog::Book::Details and list funder information
+	* @param $hookName string
+	* @param $params array
+	*/
+	function addSubmissionDisplay($hookName, $params) {
+		$templateMgr = $params[1];
+		$output =& $params[2];
+
+		$submission = $this->getSubmissionOfApplication($templateMgr);
 
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');

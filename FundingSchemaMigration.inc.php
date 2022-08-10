@@ -12,9 +12,8 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Facades\Schema;
 
 class FundingSchemaMigration extends Migration {
         /**
@@ -24,7 +23,7 @@ class FundingSchemaMigration extends Migration {
         public function up() {
 
 			# funders
-			Capsule::schema()->create('funders', function (Blueprint $table) {
+			Schema::create('funders', function (Blueprint $table) {
 				$table->bigInteger('funder_id')->autoIncrement();
 				$table->string('funder_identification', 255);
 				$table->bigInteger('submission_id');
@@ -32,7 +31,7 @@ class FundingSchemaMigration extends Migration {
 			});
 
 			// funder_settings
-			Capsule::schema()->create('funder_settings', function (Blueprint $table) {
+			Schema::create('funder_settings', function (Blueprint $table) {
 				$table->bigInteger('funder_id');
 				$table->string('locale', 14)->default('');
 				$table->string('setting_name', 255);
@@ -43,14 +42,14 @@ class FundingSchemaMigration extends Migration {
 			});
 
 			# funder_awards
-			Capsule::schema()->create('funder_awards', function (Blueprint $table) {
+			Schema::create('funder_awards', function (Blueprint $table) {
 				$table->bigInteger('funder_award_id')->autoIncrement();
 				$table->bigInteger('funder_id');
 				$table->string('funder_award_number', 255);
 			});
 
 			// funder_award_settings
-			Capsule::schema()->create('funder_award_settings', function (Blueprint $table) {
+			Schema::create('funder_award_settings', function (Blueprint $table) {
 				$table->bigInteger('funder_award_id');
 				$table->string('locale', 14)->default('');
 				$table->string('setting_name', 255);

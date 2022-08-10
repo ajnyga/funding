@@ -14,7 +14,12 @@
  *
  */
 
-import('lib.pkp.classes.form.Form');
+use APP\template\TemplateManager;
+use PKP\db\DAORegistry;
+use PKP\form\Form;
+use PKP\form\validation\FormValidator;
+use PKP\form\validation\FormValidatorCSRF;
+use PKP\form\validation\FormValidatorPost;
 
 class FunderForm extends Form {
 	/** @var int Context ID */
@@ -143,5 +148,7 @@ class FunderForm extends Form {
 			$funderAward->setFunderAwardNumber($funderAwardNumber);
 			$funderAwardDao->insertObject($funderAward);
 		}
+
+		return $funderId;
 	}
 }

@@ -15,6 +15,12 @@
  *
  */
 
+use APP\core\Application;
+use APP\pages\submission\SubmissionHandler;
+use APP\submission\Submission;
+use APP\template\TemplateManager;
+use PKP\db\DAORegistry;
+
 import('lib.pkp.classes.plugins.GenericPlugin');
 
 class FundingPlugin extends GenericPlugin {
@@ -55,7 +61,10 @@ class FundingPlugin extends GenericPlugin {
 			$funderAwardDao = new FunderAwardDAO();
 			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
 
-			HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'metadataFieldEdit'));
+			HookRegistry::register('TemplateManager::display', array($this, 'addToSubmissionWizardSteps'));
+			HookRegistry::register('Template::SubmissionWizard::Section', array($this, 'addToSubmissionWizardTemplate'));
+			HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
+
 			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
 
 			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
@@ -89,12 +98,95 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert funder grid in the submission metadata form
+	 * Add funding section to the details step of the submission wizard
 	 */
-	function metadataFieldEdit($hookName, $params) {
-		$smarty =& $params[1];
+	function addToSubmissionWizardSteps($hookName, $params) {
+		$request = Application::get()->getRequest();
+
+		if ($request->getRequestedPage() !== 'submission') {
+			return;
+		}
+
+		$submission = $request
+			->getRouter()
+			->getHandler()
+			->getAuthorizedContextObject(Application::ASSOC_TYPE_SUBMISSION);
+
+		if (!$submission || !$submission->getData('submissionProgress')) {
+			return;
+		}
+
+		/** @var FunderDAO $funderDao */
+		$funderDao = DAORegistry::getDAO('FunderDAO');
+		$funderResult = $funderDao->getBySubmissionId($submission->getId());
+
+		$funders = [];
+		while ($funder = $funderResult->next()) {
+			$funders[] = $this->getFunderData($funder);
+		}
+
+		/** @var TemplateManager $templateMgr */
+		$templateMgr = $params[0];
+
+		$steps = $templateMgr->getState('steps');
+		$steps = array_map(function($step) {
+			if ($step['id'] === 'editors') {
+				$step['sections'][] = [
+					'id' => 'funding',
+					'name' => __('plugins.generic.funding.submissionWizard.name'),
+					'description' => __('plugins.generic.funding.submissionWizard.description'),
+					'type' => SubmissionHandler::SECTION_TYPE_TEMPLATE,
+				];
+			}
+			return $step;
+		}, $steps);
+
+		$templateMgr->setState([
+			'funders' => $funders,
+			'steps' => $steps,
+		]);
+
+		$templateMgr->addJavaScript(
+			'plugin-funder-submission-wizard',
+            $request->getBaseUrl() . '/' . $this->getPluginPath() . '/js/SubmissionWizard.js',
+            [
+				'contexts' => 'backend',
+				'priority' => TemplateManager::STYLE_SEQUENCE_LATE,
+			]
+		);
+
+		return false;
+	}
+
+	/**
+	 * Insert template to display funding grid in submission wizard
+	 */
+	function addToSubmissionWizardTemplate($hookName, $params) {
+		$smarty = $params[1];
 		$output =& $params[2];
-		$output .= $smarty->fetch($this->getTemplateResource('metadataForm.tpl'));
+
+		$output .= sprintf(
+			'<template v-else-if="section.id === \'funding\'">%s</template>',
+			$smarty->fetch($this->getTemplateResource('fundersGrid.tpl'))
+		);
+
+		return false;
+	}
+
+	/**
+	 * Insert template to review the funding data in the submission wizard
+	 * before completing the submission
+	 */
+	function addToSubmissionWizardReviewTemplate($hookName, $params) {
+		$submission = $params[0]['submission']; /** @var Submission $submission */
+		$step = $params[0]['step']; /** @var string $step */
+		$templateMgr = $params[1]; /** @var TemplateManager $templateMgr */
+		$output =& $params[2];
+
+		if ($step === 'editors') {
+			$output .= $templateMgr->fetch($this->getTemplateResource('reviewFunders.tpl'));
+		}
+
 		return false;
 	}
 
@@ -104,15 +196,11 @@ class FundingPlugin extends GenericPlugin {
 	function addToPublicationForms($hookName, $params) {
 		$smarty =& $params[1];
 		$output =& $params[2];
-		$submission = $smarty->get_template_vars('submission');
-		$smarty->assign([
-			'submissionId' => $submission->getId(),
-		]);
 
 		$output .= sprintf(
 			'<tab id="fundingGridInWorkflow" label="%s">%s</tab>',
 			__('plugins.generic.funding.fundingData'),
-			$smarty->fetch($this->getTemplateResource('metadataForm.tpl'))
+			$smarty->fetch($this->getTemplateResource('fundersGrid.tpl'))
 		);
 
 		return false;
@@ -150,7 +238,7 @@ class FundingPlugin extends GenericPlugin {
 		$templateMgr = $params[1];
 		$output =& $params[2];
 
-		$submission = $templateMgr->get_template_vars('monograph') ? $templateMgr->get_template_vars('monograph') : $templateMgr->get_template_vars('article');
+		$submission = $templateMgr->getTemplateVars('monograph') ? $templateMgr->getTemplateVars('monograph') : $templateMgr->getTemplateVars('article');
 
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
@@ -333,6 +421,20 @@ class FundingPlugin extends GenericPlugin {
 	 */
 	function getJavaScriptURL() {
 		return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
+	}
+
+	public function getFunderData(Funder $funder): array
+	{
+		/** @var FunderAwardDAO $funderAwardDao */
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+		$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funder->getId());
+
+		return [
+			'id' => $funder->getId(),
+			'name' => $funder->getFunderName(),
+			'identification' => $funder->getFunderIdentification(),
+			'awards' => implode(";", $funderAwards),
+		];
 	}
 
 }

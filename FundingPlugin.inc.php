@@ -184,7 +184,7 @@ class FundingPlugin extends GenericPlugin {
 	 */
 	function addCrossrefElement($hookName, $params) {
 		$preliminaryOutput =& $params[0];
-		$request = Application::getRequest();
+		$request = Application::get()->getRequest();
 		$context = $request->getContext();
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');

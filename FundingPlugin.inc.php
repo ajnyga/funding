@@ -107,6 +107,10 @@ class FundingPlugin extends GenericPlugin {
 			return;
 		}
 
+		if ($request->getRequestedOp() === 'saved') {
+			return;
+		}
+
 		$submission = $request
 			->getRouter()
 			->getHandler()

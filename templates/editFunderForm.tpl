@@ -66,7 +66,7 @@
 					dataType: 'json',
 					cache: true,
 					data: {ldelim}
-						q: ui.tagLabel + '*'
+						q: ui.tagLabel.replace(/\[.*?\]/g, '').trim() + '*'
 					{rdelim},
 					success:
 						function( data ) {ldelim}

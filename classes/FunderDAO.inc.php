@@ -150,14 +150,6 @@ class FunderDAO extends DAO {
 	}
 
 	/**
-	 * Get the insert ID for the last inserted funder.
-	 * @return int
-	 */
-	protected function getInsertId(): int {
-		return $this->_getInsertId('funders', 'funder_id');
-	}
-
-	/**
 	 * Get the additional field names.
 	 * @return array
 	 */

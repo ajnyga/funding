@@ -127,7 +127,6 @@ class FunderForm extends Form {
 				}
 			}
 		}
-
 		$funder->setFunderName($funderName);
 		$funder->setFunderIdentification($funderIdentification);
 
@@ -148,7 +147,6 @@ class FunderForm extends Form {
 			$funderAward->setFunderAwardNumber($funderAwardNumber);
 			$funderAwardDao->insertObject($funderAward);
 		}
-
 		return $funderId;
 	}
 }

@@ -241,13 +241,13 @@ class FundingPlugin extends GenericPlugin {
 		$application = Application::getName();
 		switch($application) {
 			case 'ojs2':
-				$submission = $templateMgr->get_template_vars('article');
+				$submission = $templateMgr->getTemplateVars('article');
 				break;
 			case 'omp':
-				$submission = $templateMgr->get_template_vars('monograph');
+				$submission = $templateMgr->getTemplateVars('monograph');
 				break;
 			case 'ops':
-				$submission = $templateMgr->get_template_vars('preprint');
+				$submission = $templateMgr->getTemplateVars('preprint');
 				break;
 		}
 		return $submission;

@@ -10,17 +10,20 @@ This plugin is licensed under the GNU General Public License v3. See the file LI
 
 System Requirements
 -------------------
-OJS 3.3.0, OPS 3.3.0, OMP 3.3.0 or greater.
+OJS 3.4.0, OPS 3.4.0, OMP 3.4.0 or greater.
 
 Install
 -------
 
- * Copy the release source or unpack the release package into the OJS i.e. OMP plugins/generic/funding/ folder.
- * Run `php tools/upgrade.php upgrade` from the OJS i.e. OMP folder. This creates the needed database tables.
+ * Copy the release source or unpack the release package into the OJS/OMP/OPS plugins/generic/funding/ folder.
+ * Run `php tools/upgrade.php upgrade` from the OJS/OMP/OPS folder. This creates the needed database tables.
  * Go to Settings -> Website -> Plugins -> Generic Plugin -> Funding Plugin and enable the plugin.
  
 Version History
 ---------------
+
+### Version 3.4.0.0
+- Support for 3.4
 
 ### Version 2.1.4.2
 - Support for OPS
@@ -35,7 +38,6 @@ Version History
 - Added support for funder metadata export to OpenAIRE OAI plugin
 
 ### Version 2.1
-
 - Added support for funder metadata exports to CrossRef
 - Added support for funder metadata exports to DataCite
 - Added support for OMP

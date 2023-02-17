@@ -13,7 +13,17 @@
  * @brief Handle Funder grid requests.
  */
 
-import('lib.pkp.classes.controllers.grid.GridHandler');
+use APP\core\Application;
+use PKP\controllers\grid\GridColumn;
+use PKP\controllers\grid\GridHandler;
+use PKP\core\JSONMessage;
+use PKP\db\DAO;
+use PKP\db\DAORegistry;
+use PKP\linkAction\LinkAction;
+use PKP\linkAction\request\AjaxModal;
+use PKP\security\authorization\SubmissionAccessPolicy;
+use PKP\security\Role;
+
 import('plugins.generic.funding.controllers.grid.FunderGridRow');
 import('plugins.generic.funding.controllers.grid.FunderGridCellProvider');
 
@@ -23,15 +33,18 @@ class FunderGridHandler extends GridHandler {
 	/** @var boolean */
 	var $_readOnly;
 
+	public FunderDAO $funderDao;
+
 	/**
 	 * Constructor
 	 */
 	function __construct() {
 		parent::__construct();
 		$this->addRoleAssignment(
-			array(ROLE_ID_MANAGER, ROLE_ID_SUB_EDITOR, ROLE_ID_ASSISTANT, ROLE_ID_AUTHOR),
+			array(Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT, Role::ROLE_ID_AUTHOR),
 			array('fetchGrid', 'fetchRow', 'addFunder', 'editFunder', 'updateFunder', 'deleteFunder')
 		);
+		$this->funderDao = DAORegistry::getDAO('FunderDAO');
 	}
 
 	//
@@ -50,7 +63,7 @@ class FunderGridHandler extends GridHandler {
 	 * @return Submission
 	 */
 	function getSubmission() {
-		return $this->getAuthorizedContextObject(ASSOC_TYPE_SUBMISSION);
+		return $this->getAuthorizedContextObject(Application::ASSOC_TYPE_SUBMISSION);
 	}
 
 	/**
@@ -78,7 +91,6 @@ class FunderGridHandler extends GridHandler {
 	 * @copydoc PKPHandler::authorize()
 	 */
 	function authorize($request, &$args, $roleAssignments) {
-		import('lib.pkp.classes.security.authorization.SubmissionAccessPolicy');
 		$this->addPolicy(new SubmissionAccessPolicy($request, $args, $roleAssignments));
 		return parent::authorize($request, $args, $roleAssignments);
 	}
@@ -118,7 +130,6 @@ class FunderGridHandler extends GridHandler {
 			$this->setReadOnly(false);
 			// Add grid-level actions
 			$router = $request->getRouter();
-			import('lib.pkp.classes.linkAction.request.AjaxModal');
 			$this->addAction(
 				new LinkAction(
 					'addFunder',
@@ -235,8 +246,15 @@ class FunderGridHandler extends GridHandler {
 		// Validate
 		if ($funderForm->validate()) {
 			// Save
-			$funder = $funderForm->execute();
- 			return DAO::getDataChangedEvent($submissionId);
+			$newFunderId = $funderForm->execute();
+			$funder = $this->funderDao->getById($newFunderId, $submissionId);
+ 			$json = DAO::getDataChangedEvent($submissionId);
+			if (!$funderId) {
+				$json->setGlobalEvent('plugin:funding:added', self::$plugin->getFunderData($funder));
+			} else {
+				$json->setGlobalEvent('plugin:funding:edited', self::$plugin->getFunderData($funder));
+			}
+			return $json;
 		} else {
 			// Present any errors
 			$json = new JSONMessage(true, $funderForm->fetch($request));
@@ -259,7 +277,11 @@ class FunderGridHandler extends GridHandler {
 		$funder = $funderDao->getById($funderId, $submissionId);
 
 		$funderDao->deleteObject($funder);
-		return DAO::getDataChangedEvent($submissionId);
+
+		$json = DAO::getDataChangedEvent($submissionId);
+		$json->setGlobalEvent('plugin:funding:deleted', self::$plugin->getFunderData($funder));
+
+		return $json;
 	}
 
 	/**
@@ -275,7 +297,7 @@ class FunderGridHandler extends GridHandler {
 
 		// Managers should always have access.
 		$userRoles = $this->getAuthorizedContextObject(ASSOC_TYPE_USER_ROLES);
-		if (array_intersect(array(ROLE_ID_MANAGER), $userRoles)) return true;
+		if (array_intersect(array(Role::ROLE_ID_MANAGER), $userRoles)) return true;
 
 		// Sub editors and assistants need to be assigned to the current stage.
 		$stageAssignmentDao = DAORegistry::getDAO('StageAssignmentDAO');
@@ -283,7 +305,7 @@ class FunderGridHandler extends GridHandler {
 		$userGroupDao = DAORegistry::getDAO('UserGroupDAO');
 		while ($stageAssignment = $stageAssignments->next()) {
 			$userGroup = $userGroupDao->getById($stageAssignment->getUserGroupId());
-			if (in_array($userGroup->getRoleId(), array(ROLE_ID_SUB_EDITOR, ROLE_ID_ASSISTANT))) return true;
+			if (in_array($userGroup->getRoleId(), array(Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT))) return true;
 		}
 
 		// Default: Read-only.

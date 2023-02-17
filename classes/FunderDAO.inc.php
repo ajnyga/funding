@@ -13,6 +13,8 @@
  * Operations for retrieving and modifying Funder objects.
  */
 
+use PKP\db\DAOResultFactory;
+
 import('lib.pkp.classes.db.DAO');
 import('plugins.generic.funding.classes.Funder');
 
@@ -53,7 +55,7 @@ class FunderDAO extends DAO {
 			. ($contextId?' AND context_id = ?':''),
 			$params
 		);
-		
+
 		return new DAOResultFactory($result, $this, '_fromRow');
 	}
 
@@ -151,7 +153,7 @@ class FunderDAO extends DAO {
 	 * Get the insert ID for the last inserted funder.
 	 * @return int
 	 */
-	function getInsertId() {
+	protected function getInsertId(): int {
 		return $this->_getInsertId('funders', 'funder_id');
 	}
 

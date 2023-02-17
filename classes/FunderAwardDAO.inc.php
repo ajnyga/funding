@@ -129,7 +129,7 @@ class FunderAwardDAO extends DAO {
 	 * Get the insert ID for the last inserted funder award.
 	 * @return int
 	 */
-	function getInsertId() {
+	protected function getInsertId(): int {
 		return $this->_getInsertId('funder_awards', 'funder_award_id');
 	}
 

@@ -32,6 +32,7 @@ class FundingSchemaMigration extends Migration {
 
 			// funder_settings
 			Schema::create('funder_settings', function (Blueprint $table) {
+				$table->bigIncrements('funder_setting_id');
 				$table->bigInteger('funder_id');
 				$table->string('locale', 14)->default('');
 				$table->string('setting_name', 255);
@@ -50,6 +51,7 @@ class FundingSchemaMigration extends Migration {
 
 			// funder_award_settings
 			Schema::create('funder_award_settings', function (Blueprint $table) {
+				$table->bigIncrements('funding_award_setting_id');
 				$table->bigInteger('funder_award_id');
 				$table->string('locale', 14)->default('');
 				$table->string('setting_name', 255);

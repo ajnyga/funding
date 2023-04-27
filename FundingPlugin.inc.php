@@ -78,6 +78,10 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
 			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
 			HookRegistry::register('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
+
+
+			HookRegistry::register("Submission::getProperties::values", array($this, 'modifyObjectPropertyValues'));
+			HookRegistry::register('Publication::getProperties', array($this, 'modifyObjectPropertyValues'));
 		}
 		return $success;
 	}
@@ -459,6 +463,55 @@ class FundingPlugin extends GenericPlugin {
 			'identification' => $funder->getFunderIdentification(),
 			'awards' => implode(";", $funderAwards),
 		];
+	}
+
+
+	/**
+	 * Add Funding submission, and publication values
+	 *
+	 * @param $hookName string <Object>::getProperties::values
+	 * @param $args array [
+	 * 		@option $values array Key/value store of property values
+	 * 		@option $object Submission|Issue|Galley
+	 * 		@option $props array Requested properties
+	 * 		@option $args array Request args
+	 * ]
+	 *
+	 * @return void
+	 */
+	public function modifyObjectPropertyValues($hookName, $args) {
+		$values =& $args[0];
+		$object = $args[1];
+		$props = $args[2];
+
+
+		if (get_class($object) === 'Publication') {
+			$submissionId = $object->getData('submissionId');
+		} else if (get_class($object) === 'Submission') {
+			$submissionId = $object->getId();
+		}
+
+		if (!isset($submissionId))
+			return;
+
+		$funderDao = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+
+		$funders = $funderDao->getBySubmissionId($submissionId);
+		$funderData = array();
+		while ($funder = $funders->next()) {
+			$funderId = $funder->getId();
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
+			$funderData[$funderId] = array(
+				'funderName' => $funder->getFunderName(),
+				'funderIdentification' => $funder->getFunderIdentification(),
+				'funderAwards' => array_values($funderAwards)
+			);
+		}
+
+		if ($funderData) {
+			$values['funding'] = $funderData ? $funderData : null;
+		}
 	}
 
 }

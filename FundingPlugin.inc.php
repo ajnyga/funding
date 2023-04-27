@@ -502,7 +502,7 @@ class FundingPlugin extends GenericPlugin {
 		while ($funder = $funders->next()) {
 			$funderId = $funder->getId();
 			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
-			$funderData[$funderId] = array(
+			$funderData[] = array(
 				'funderName' => $funder->getFunderName(),
 				'funderIdentification' => $funder->getFunderIdentification(),
 				'funderAwards' => array_values($funderAwards)

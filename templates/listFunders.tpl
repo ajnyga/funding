@@ -8,8 +8,8 @@
  * The included template that is hooked into Templates::Article::Details.
  *}
 <div class="item funders">
+	<h2 class="label">{translate key="plugins.generic.funding.fundingData"}</h2>
 	<div class="value">
-		<h3>{translate key="plugins.generic.funding.fundingData"}</h3>
 		<ul>
 			{foreach from=$funderData item=funder}
 				<li>

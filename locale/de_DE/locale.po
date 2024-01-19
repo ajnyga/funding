@@ -1,0 +1,51 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: Martin Brändle\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-02-07T21:25:11+01:00\n"
+"PO-Revision-Date: 2021-02-07T21:25:11+01:00\n"
+"Language: \n"
+
+msgid "plugins.generic.funding.displayName"
+msgstr "Fördererangaben"
+
+msgid "plugins.generic.funding.description"
+msgstr "Dieses Plugin fügt Daten zur Finanzierung von Einreichungen über die Crossref Funders Registry hinzu und schliesst die Daten im Crossref XML Export mit ein."
+
+msgid "plugins.generic.funding.fundingData"
+msgstr "Daten zur Förderung"
+
+msgid "plugins.generic.funding.addFunder"
+msgstr "Förderer hinzufügen"
+
+msgid "plugins.generic.funding.funderName"
+msgstr "Name des Förderers"
+
+msgid "plugins.generic.funding.funderSubOrganization"
+msgstr "Unterorganisation"
+
+msgid "plugins.generic.funding.funderSubOrganization.select"
+msgstr "Wählen Sie eine Unterorganisation"
+
+msgid "plugins.generic.funding.funderIdentification"
+msgstr "Förderer-ID"
+
+msgid "plugins.generic.funding.funderNameIdentification"
+msgstr "Name und Identifikation des Förderers"
+
+msgid "plugins.generic.funding.funderGrants"
+msgstr "Nummer der Förderung"
+
+msgid "plugins.generic.funding.noneCreated"
+msgstr "Keine Förderer"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired"
+msgstr "Name des Förderers erforderlich"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
+msgstr "Nur Förderer aus dem Crossref-Register sind zugelassen"

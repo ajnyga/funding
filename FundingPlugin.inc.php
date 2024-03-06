@@ -19,6 +19,7 @@ use APP\core\Application;
 use APP\pages\submission\SubmissionHandler;
 use APP\submission\Submission;
 use APP\template\TemplateManager;
+use APP\facades\Repo;
 use PKP\db\DAORegistry;
 
 import('lib.pkp.classes.plugins.GenericPlugin');
@@ -304,7 +305,6 @@ class FundingPlugin extends GenericPlugin {
 		$context = $request->getContext();
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
-		$submissionDao = DAORegistry::getDAO('SubmissionDAO');
 
 		$crossrefFRNS = 'http://www.crossref.org/fundref.xsd';
 		$rootNode=$preliminaryOutput->documentElement;
@@ -312,15 +312,18 @@ class FundingPlugin extends GenericPlugin {
 		$articleNodes = $preliminaryOutput->getElementsByTagName('journal_article');
 		foreach ($articleNodes as $articleNode) {
 			$doiDataNode = $articleNode->getElementsByTagName('doi_data')->item(0);
+			
 			$aiProgramDataNode = $articleNode->getElementsByTagNameNS('http://www.crossref.org/AccessIndicators.xsd', 'program')->item(0);
 			$doiNode = $doiDataNode->getElementsByTagName('doi')->item(0);
+
 			$doi = $doiNode->nodeValue;
 
 			$programNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:program');
 			$programNode->setAttribute('name', 'fundref');
 
-			$publishedSubmission = $submissionDao->getByPubId('doi', $doi);
+			$publishedSubmission = Repo::submission()->getByDoi($doi, $context->getId());
 			assert($publishedSubmission);
+
 			$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 			while ($funder = $funders->next()) {
 				$groupNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion');
@@ -375,7 +378,7 @@ class FundingPlugin extends GenericPlugin {
 					$submissionId = $idsArray[2];
 					// Add the parent fundingReferences element
 					$fundingReferencesNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReferences');
-					$publishedSubmission = Services::get('submission')->get($submissionId);
+					$publishedSubmission = Repo::submission()->get($submissionId);
 					assert($publishedSubmission);
 					$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 					while ($funder = $funders->next()) {
@@ -413,7 +416,7 @@ class FundingPlugin extends GenericPlugin {
 		$fundingReferences =& $params[1];
 		$funderDAO = DAORegistry::getDAO('FunderDAO');
 		$funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
-		$publishedSubmission = Services::get('submission')->get($submissionId);
+		$publishedSubmission = Repo::submission()->get($submissionId);
 		assert($publishedSubmission);
 		$funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
 		while ($funder = $funders->next()) {

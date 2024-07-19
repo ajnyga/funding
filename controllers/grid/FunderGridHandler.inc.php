@@ -14,6 +14,7 @@
  */
 
 use APP\core\Application;
+use APP\facades\Repo;
 use PKP\controllers\grid\GridColumn;
 use PKP\controllers\grid\GridHandler;
 use PKP\core\JSONMessage;
@@ -291,9 +292,11 @@ class FunderGridHandler extends GridHandler {
 	 */
 	function canAdminister($user) {
 		$submission = $this->getSubmission();
+		$contextId = $submission->getContextId();
 
 		// Incomplete submissions can be edited. (Presumably author.)
-		if ($submission->getDateSubmitted() == null) return true;
+		$submissionProgress = $submission->getData('submissionProgress');
+		if ($submissionProgress && $submissionProgress == "start") return true;
 
 		// Managers should always have access.
 		$userRoles = $this->getAuthorizedContextObject(ASSOC_TYPE_USER_ROLES);
@@ -302,9 +305,8 @@ class FunderGridHandler extends GridHandler {
 		// Sub editors and assistants need to be assigned to the current stage.
 		$stageAssignmentDao = DAORegistry::getDAO('StageAssignmentDAO');
 		$stageAssignments = $stageAssignmentDao->getBySubmissionAndStageId($submission->getId(), $submission->getStageId(), null, $user->getId());
-		$userGroupDao = DAORegistry::getDAO('UserGroupDAO');
 		while ($stageAssignment = $stageAssignments->next()) {
-			$userGroup = $userGroupDao->getById($stageAssignment->getUserGroupId());
+			$userGroup = Repo::userGroup()->get($stageAssignment->getUserGroupId(),$contextId);
 			if (in_array($userGroup->getRoleId(), array(Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT))) return true;
 		}
 

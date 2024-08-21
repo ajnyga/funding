@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-02-07T21:25:11+01:00\n"
+"PO-Revision-Date: 2021-02-07T21:25:11+01:00\n"
+"Language: \n"
+
+msgid "plugins.generic.funding.displayName"
+msgstr "Données de Fonds"
+
+msgid "plugins.generic.funding.description"
+msgstr "Ce plugin ajoute les données de financement des soumissions en utilisant le registre des financeurs de Crossref, et intègre les données dans l'exportation XML de Crossref."
+
+msgid "plugins.generic.funding.fundingData"
+msgstr "Données de Fonds"
+
+msgid "plugins.generic.funding.addFunder"
+msgstr "Ajouter un financeur"
+
+msgid "plugins.generic.funding.funderName"
+msgstr "Nom du bailleur de fonds"
+
+msgid "plugins.generic.funding.funderSubOrganization"
+msgstr "Sous-organisation"
+
+msgid "plugins.generic.funding.funderSubOrganization.select"
+msgstr "Choisir une sous-organisation"
+
+msgid "plugins.generic.funding.funderIdentification"
+msgstr "ID du bailleur de fonds"
+
+msgid "plugins.generic.funding.funderNameIdentification"
+msgstr "Nom et identification du bailleur de fonds"
+
+msgid "plugins.generic.funding.funderGrants"
+msgstr "Numéros de subventions"
+
+msgid "plugins.generic.funding.noneCreated"
+msgstr "Aucun bailleur de fonds"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired"
+msgstr "Nom du bailleur de fonds requis"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
+msgstr "Seuls les financeurs du registre Crossref sont autorisés."
+
+msgid "plugins.generic.funding.submissionWizard.name"
+msgstr "Financeurs"
+
+msgid "plugins.generic.funding.submissionWizard.description"
+msgstr "Veuillez fournir des informations sur les institutions qui ont financé la recherche à l'origine de ce travail. Seuls les financeurs figurant dans le registre Crossref sont pris en charge. Si vous avez reçu des fonds d'une institution et que vous ne pouvez pas les trouver pour les ajouter ici, veuillez fournir ces informations dans le champ Commentaires pour l'éditeur."

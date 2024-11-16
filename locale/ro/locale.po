@@ -12,46 +12,46 @@ msgstr ""
 "Language: \n"
 
 msgid "plugins.generic.funding.displayName"
-msgstr "Dati di finanziamento"
+msgstr "Date de finanțare"
 
 msgid "plugins.generic.funding.description"
-msgstr "Questo plugin aggiunge i dati di finanziamento delle submission utilizzando il registro dei finanziatori di Crossref e considera i dati nell'esportazione XML di Crossref."
+msgstr "Acest plugin adaugă date de finanțare a depunerii folosind registrul de finanțatori Crossref și ia în considerare datele în exportul Crossref XML."
 
 msgid "plugins.generic.funding.fundingData"
-msgstr "Dati di finanziamento"
+msgstr "Date de finanțare"
 
 msgid "plugins.generic.funding.addFunder"
-msgstr "Aggiungi finanziatore"
+msgstr "Adăugați finanțator"
 
 msgid "plugins.generic.funding.funderName"
-msgstr "Nome del finanziatore"
+msgstr "Numele finanțatorului"
 
 msgid "plugins.generic.funding.funderSubOrganization"
-msgstr "Sotto-organizzazione"
+msgstr "Sub-organizație"
 
 msgid "plugins.generic.funding.funderSubOrganization.select"
-msgstr "Selezionare una sotto-organizzazione"
+msgstr "Selectați o sub-organizație"
 
 msgid "plugins.generic.funding.funderIdentification"
-msgstr "ID del finanziatore"
+msgstr "ID-ul finanțatorului"
 
 msgid "plugins.generic.funding.funderNameIdentification"
-msgstr "Nome e identificazione del finanziatore"
+msgstr "Denumirea și identificarea finanțatorului"
 
 msgid "plugins.generic.funding.funderGrants"
-msgstr "Numeri delle sovvenzioni"
+msgstr "Numerele de granturi"
 
 msgid "plugins.generic.funding.noneCreated"
-msgstr "Nessun finanziatore"
+msgstr "Fără finanțatori"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired"
-msgstr "Nome del finanziatore richiesto"
+msgstr "Numele finanțatorului este necesar"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
-msgstr "Sono ammessi solo i finanziatori del registro Crossref."
+msgstr "Numai finanțatorii din registrul Crossref sunt autorizați."
 
 msgid "plugins.generic.funding.submissionWizard.name"
-msgstr "Finanziatori"
+msgstr "Finanțatori"
 
 msgid "plugins.generic.funding.submissionWizard.description"
-msgstr "Si prega di fornire informazioni su eventuali istituzioni che hanno finanziato la ricerca alla base di questo lavoro. Sono supportati solo i finanziatori del registro Crossref. Se si è ricevuto un finanziamento da un'istituzione e non si riesce a trovarla per aggiungerla qui, si prega di fornire tali informazioni nel campo Commenti per l'editore."
+msgstr "Vă rugăm să furnizați informații despre toate instituțiile care au finanțat cercetarea din spatele acestei lucrări. Sunt acceptate doar finanțatorii din registrul Crossref. Dacă ați primit finanțare de la o instituție și nu o puteți găsi pentru a o adăuga aici, vă rugăm să furnizați informațiile respective în câmpul Comentarii pentru editor."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"Last-Translator: \n"
+"Last-Translator: Martin Brändle\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,46 +12,46 @@ msgstr ""
 "Language: \n"
 
 msgid "plugins.generic.funding.displayName"
-msgstr "Dati di finanziamento"
+msgstr "Fördererangaben"
 
 msgid "plugins.generic.funding.description"
-msgstr "Questo plugin aggiunge i dati di finanziamento delle submission utilizzando il registro dei finanziatori di Crossref e considera i dati nell'esportazione XML di Crossref."
+msgstr "Dieses Plugin fügt Daten zur Finanzierung von Einreichungen über die Crossref Funders Registry hinzu und schliesst die Daten im Crossref XML Export mit ein."
 
 msgid "plugins.generic.funding.fundingData"
-msgstr "Dati di finanziamento"
+msgstr "Daten zur Förderung"
 
 msgid "plugins.generic.funding.addFunder"
-msgstr "Aggiungi finanziatore"
+msgstr "Förderer hinzufügen"
 
 msgid "plugins.generic.funding.funderName"
-msgstr "Nome del finanziatore"
+msgstr "Name des Förderers"
 
 msgid "plugins.generic.funding.funderSubOrganization"
-msgstr "Sotto-organizzazione"
+msgstr "Unterorganisation"
 
 msgid "plugins.generic.funding.funderSubOrganization.select"
-msgstr "Selezionare una sotto-organizzazione"
+msgstr "Wählen Sie eine Unterorganisation"
 
 msgid "plugins.generic.funding.funderIdentification"
-msgstr "ID del finanziatore"
+msgstr "Förderer-ID"
 
 msgid "plugins.generic.funding.funderNameIdentification"
-msgstr "Nome e identificazione del finanziatore"
+msgstr "Name und Identifikation des Förderers"
 
 msgid "plugins.generic.funding.funderGrants"
-msgstr "Numeri delle sovvenzioni"
+msgstr "Nummer der Förderung"
 
 msgid "plugins.generic.funding.noneCreated"
-msgstr "Nessun finanziatore"
+msgstr "Keine Förderer"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired"
-msgstr "Nome del finanziatore richiesto"
+msgstr "Name des Förderers erforderlich"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
-msgstr "Sono ammessi solo i finanziatori del registro Crossref."
+msgstr "Nur Förderer aus dem Crossref-Register sind zugelassen"
 
 msgid "plugins.generic.funding.submissionWizard.name"
-msgstr "Finanziatori"
+msgstr "Förderer"
 
 msgid "plugins.generic.funding.submissionWizard.description"
-msgstr "Si prega di fornire informazioni su eventuali istituzioni che hanno finanziato la ricerca alla base di questo lavoro. Sono supportati solo i finanziatori del registro Crossref. Se si è ricevuto un finanziamento da un'istituzione e non si riesce a trovarla per aggiungerla qui, si prega di fornire tali informazioni nel campo Commenti per l'editore."
+msgstr "Bitte machen Sie Angaben zu allen Institutionen, die die Forschung hinter dieser Arbeit finanziert haben. Es werden nur Förderer aus dem Crossref-Register unterstützt. Wenn Sie eine Finanzierung von einer Institution erhalten haben und diese hier nicht finden können, geben Sie diese Informationen bitte im Feld \"Kommentare für den Herausgeber\" an."

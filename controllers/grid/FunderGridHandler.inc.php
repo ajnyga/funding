@@ -270,6 +270,9 @@ class FunderGridHandler extends GridHandler {
 	 * @return string Serialized JSON object
 	 */
 	function deleteFunder($args, $request) {
+
+		if (!$request->checkCSRF()) return new JSONMessage(false);
+
 		$funderId = $request->getUserVar('funderId');
 		$submission = $this->getSubmission();
 		$submissionId = $submission->getId();

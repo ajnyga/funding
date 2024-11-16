@@ -22,6 +22,9 @@ Install
 Version History
 ---------------
 
+### Version 3.3.0.3
+- Adopt comparable version numbering with the PKP applications
+
 ### Version 2.1.4.2
 - Support for OPS
 

@@ -249,7 +249,7 @@ class FundingPlugin extends GenericPlugin {
 				$submission = $templateMgr->getTemplateVars('article');
 				break;
 			case 'omp':
-				$submission = $templateMgr->getTemplateVars('monograph');
+				$submission = $templateMgr->getTemplateVars('publishedSubmission');
 				break;
 			case 'ops':
 				$submission = $templateMgr->getTemplateVars('preprint');

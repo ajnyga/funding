@@ -39,7 +39,7 @@ class FundingSchemaMigration extends Migration {
 				$table->longText('setting_value')->nullable();
 				$table->string('setting_type', 6)->comment('(bool|int|float|string|object)');
 				$table->index(['funder_id'], 'funder_settings_id');
-				$table->unique(['funder_id', 'locale', 'setting_name'], 'funder_settings_pkey');
+				$table->unique(['funder_id', 'locale', 'setting_name'], 'funder_settings_f_l_s_pkey');
 			});
 
 			# funder_awards
@@ -58,7 +58,7 @@ class FundingSchemaMigration extends Migration {
 				$table->longText('setting_value')->nullable();
 				$table->string('setting_type', 6)->comment('(bool|int|float|string|object)');
 				$table->index(['funder_award_id'], 'funder_award_settings_id');
-				$table->unique(['funder_award_id', 'locale', 'setting_name'], 'funder_award_settings_pkey');
+				$table->unique(['funder_award_id', 'locale', 'setting_name'], 'funder_award_settings_f_l_s_pkey');
 			});
 
 		}

@@ -60,13 +60,13 @@
 		<index name="funder_settings_id">
 			<col>funder_id</col>
 		</index>
-		<index name="funder_settings_pkey">
+		<index name="funder_settings_f_l_s_pkey">
 			<col>funder_id</col>
 			<col>locale</col>
 			<col>setting_name</col>
 			<UNIQUE />
 		</index>
-	</table>	
+	</table>
 
 	<!--
 	 *
@@ -112,7 +112,7 @@
 		<index name="funder_award_settings_id">
 			<col>funder_award_id</col>
 		</index>
-		<index name="funder_award_settings_pkey">
+		<index name="funder_award_settings_f_l_s_pkey">
 			<col>funder_award_id</col>
 			<col>locale</col>
 			<col>setting_name</col>

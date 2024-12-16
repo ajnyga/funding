@@ -1,8 +1,8 @@
 {**
  * plugins/generic/funding/templates/editFunderForm.tpl
  *
- * Copyright (c) 2014-2020 Simon Fraser University
- * Copyright (c) 2003-2020 John Willinsky
+ * Copyright (c) 2014-2024 Simon Fraser University
+ * Copyright (c) 2003-2024 John Willinsky
  * Distributed under the GNU GPL v3. For full terms see the file docs/COPYING.
  *
  * Form for editing a funder item
@@ -23,7 +23,7 @@
 			$.each(descendants, function(index, value) {ldelim}
 				var option = document.createElement('option');
 				option.text = names[value];
-				option.value = names[value] + '[' + value + ']';
+				option.value = names[value] + '[https://doi.org/10.13039/' + value + ']';
 				selectElement.add(option);
 			{rdelim});
 		{rdelim};
@@ -57,22 +57,19 @@
 				{rdelim});
 			{rdelim},
 			afterTagAdded: function(event, ui) {ldelim}
-				if (!(/http:\/\/dx.doi.org\//.test(ui.tagLabel))) {ldelim}
+				if (!(/https:\/\/doi.org\//.test(ui.tagLabel))) {ldelim}
 					$('#funderError').css('display', 'block');
 					$('#funderNameIdentification').val('');
 				{rdelim} else {ldelim}
 				$.ajax({ldelim}
-					url: 'https://search.crossref.org/funders?descendants=true',
+					url: 'https://api.crossref.org/funders/' + ui.tagLabel.substring(ui.tagLabel.lastIndexOf('/')+1).replace(']',''),
 					dataType: 'json',
 					cache: true,
-					data: {ldelim}
-						q: ui.tagLabel.replace(/\[.*?\]/g, '').trim() + '*'
-					{rdelim},
 					success:
 						function( data ) {ldelim}
-							if (data.length == 1) {ldelim}
-								if (data[0]['descendants'].length > 1) {ldelim}
-									addSubsidiaryOptions(data[0]['descendants'], data[0]['descendant_names']);
+							if (data['status'] === 'ok')  {ldelim}
+								if (data['message']['descendants'].length > 1) {ldelim}
+									addSubsidiaryOptions(data['message']['descendants'], data['message']['hierarchy-names']);
 									$("#subsidiarySelect").show();
 								{rdelim}
 							{rdelim}

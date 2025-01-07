@@ -15,7 +15,7 @@
 				<li>
 					{if $funder.funderIdentification}
 						{assign var="funderSearch" value=$funder.funderIdentification|explode:"/"}
-						<a href="https://search.crossref.org/search/funders?id={$funderSearch[4]|escape}&from_ui=yes">{$funder.funderName|escape}</a>
+						<a target="_blank" href="https://search.crossref.org/search/funders?id={$funderSearch[4]|escape}&from_ui=yes">{$funder.funderName|escape}</a>
 					{else}
 						{$funder.funderName|escape}
 					{/if}

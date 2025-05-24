@@ -15,14 +15,23 @@
  *
  */
 
+namespace APP\plugins\generic\funding;
+
 use APP\core\Application;
 use APP\pages\submission\SubmissionHandler;
 use APP\submission\Submission;
+use APP\publication\Publication;
 use APP\template\TemplateManager;
 use APP\facades\Repo;
+use APP\plugins\generic\funding\classes\migration\install\SchemaMigration;
+use APP\plugins\generic\funding\classes\Funder;
+use APP\plugins\generic\funding\classes\FunderDAO;
+use APP\plugins\generic\funding\classes\FunderAward;
+use APP\plugins\generic\funding\classes\FunderAwardDAO;
+use APP\plugins\generic\funding\controllers\grid\FunderGridHandler;
 use PKP\db\DAORegistry;
-
-import('lib.pkp.classes.plugins.GenericPlugin');
+use PKP\plugins\GenericPlugin;
+use PKP\plugins\Hook;
 
 class FundingPlugin extends GenericPlugin {
 
@@ -54,57 +63,136 @@ class FundingPlugin extends GenericPlugin {
 		$success = parent::register($category, $path, $mainContextId);
 		if ($success && $this->getEnabled($mainContextId)) {
 
-			import('plugins.generic.funding.classes.FunderDAO');
 			$funderDao = new FunderDAO();
 			DAORegistry::registerDAO('FunderDAO', $funderDao);
 
-			import('plugins.generic.funding.classes.FunderAwardDAO');
 			$funderAwardDao = new FunderAwardDAO();
 			DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
+	
+			$this->setupGridHandler();
+			$this->extendMaps();
 
-			HookRegistry::register('TemplateManager::display', array($this, 'addToSubmissionWizardSteps'));
-			HookRegistry::register('Template::SubmissionWizard::Section', array($this, 'addToSubmissionWizardTemplate'));
-			HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
+			Hook::add('TemplateManager::display', array($this, 'addToSubmissionWizardSteps'));
+			Hook::add('Template::SubmissionWizard::Section', array($this, 'addToSubmissionWizardTemplate'));
+			Hook::add('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
 
-			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
+			Hook::add('TemplateManager::display',array($this, 'addGridhandlerJs'));
 
-			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
+			Hook::add('Templates::Article::Details', array($this, 'addSubmissionDisplay'));	//OJS
+			Hook::add('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay')); //OMP
+			Hook::add('Templates::Preprint::Details', array($this, 'addSubmissionDisplay'));	//OPS
 
-			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
+			Hook::add('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
+			Hook::add('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
+			Hook::add('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
 
-			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));	//OJS
-			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay')); //OMP
-			HookRegistry::register('Templates::Preprint::Details', array($this, 'addSubmissionDisplay'));	//OPS
+			// Registering build file for JS and CSS to be loaded
+			$request = Application::get()->getRequest();
+			$templateMgr = TemplateManager::getManager($request);
+			$this->addJavaScript($request, $templateMgr);
+			$templateMgr->addStyleSheet('backendUiExampleStyle',"{$request->getBaseUrl()}/{$this->getPluginPath()}/public/build/build.css", [
+				'contexts' => ['backend']
+			] );
 
-			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
-			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
-			HookRegistry::register('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
-
-
-			HookRegistry::register("Submission::getProperties::values", array($this, 'modifyObjectPropertyValues'));
-			HookRegistry::register('Publication::getProperties', array($this, 'modifyObjectPropertyValues'));
 		}
 		return $success;
 	}
 
+	/**
+	 * Add a JavaScript file to the backend interface.
+	 *
+	 * @param \PKP\core\Request $request The current request
+	 * @param TemplateManager $templateMgr Template manager instance
+	 *
+	 * @return void
+	 */
+    public function addJavaScript($request, $templateMgr)
+    {
+        $templateMgr->addJavaScript(
+            'funding',
+            "{$request->getBaseUrl()}/{$this->getPluginPath()}/public/build/build.iife.js",
+            [
+                'inline' => false,
+                'contexts' => ['backend'],
+                'priority' => TemplateManager::STYLE_SEQUENCE_LAST
+            ]
+        );
+    }
 
 	/**
-	 * Permit requests to the Funder grid handler
-	 * @param $hookName string The name of the hook being invoked
-	 * @param $args array The parameters to the invoked hook
+	 * Extend the submission and publication maps with funding metadata.
+	 *
+	 * @return void
 	 */
-	function setupGridHandler($hookName, $params) {
-		$component =& $params[0];
-		if ($component == 'plugins.generic.funding.controllers.grid.FunderGridHandler') {
-			import($component);
-			FunderGridHandler::setPlugin($this);
-			return true;
-		}
-		return false;
+	public function extendMaps() {
+		app('maps')->extend(\PKP\submission\maps\Schema::class, function($output, \APP\submission\Submission $item, \PKP\submission\maps\Schema $map) {
+			$submissionId = $item->getId();
+			$output['funding'] = $this->getFundingDataForMap($submissionId);
+			return $output;
+		});
+
+		app('maps')->extend(\PKP\publication\maps\Schema::class, function($output, \APP\publication\Publication $item, \PKP\publication\maps\Schema $map) {
+			$submissionId = $item->getData('submissionId');
+			$output['funding'] = $this->getFundingDataForMap($submissionId);
+			return $output;
+		});
 	}
 
 	/**
-	 * Add funding section to the details step of the submission wizard
+	 * Retrieve funding data for a given submission in an array format suitable for map output.
+	 *
+	 * @param int $submissionId The ID of the submission to retrieve funder data for
+	 *
+	 * @return array|null An array of funder data or null if no funders are found
+	 */
+	protected function getFundingDataForMap($submissionId) {
+		if (!$submissionId) return null;
+
+		$funderDao = \DAORegistry::getDAO('FunderDAO');
+		$funderAwardDao = \DAORegistry::getDAO('FunderAwardDAO');
+
+		$funders = $funderDao->getBySubmissionId($submissionId);
+		$funderData = [];
+
+		while ($funder = $funders->next()) {
+			$funderId = $funder->getId();
+			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
+			$funderData[] = [
+				'funderName' => $funder->getFunderName(),
+				'funderIdentification' => $funder->getFunderIdentification(),
+				'funderAwards' => array_values($funderAwards),
+			];
+		}
+
+		return !empty($funderData) ? $funderData : null;
+	}
+
+	/**
+	 * Register the FunderGridHandler component to be loaded via LoadComponentHandler.
+	 *
+	 * @return void
+	 */
+    public function setupGridHandler(): void
+    {
+        Hook::add('LoadComponentHandler', function (string $hookName, array $args): bool {
+            $component = $args[0];
+            if ($component !== 'plugins.generic.funding.controllers.grid.FunderGridHandler') {
+                return false;
+            }
+			
+            FunderGridHandler::setPlugin($this);
+            return true;
+        });
+    }
+
+
+	/**
+	 * Inject a funding section into the submission wizard steps UI.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addToSubmissionWizardSteps($hookName, $params) {
 		$request = Application::get()->getRequest();
@@ -169,7 +257,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert template to display funding grid in submission wizard
+	 * Render the funding section content inside the submission wizard.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addToSubmissionWizardTemplate($hookName, $params) {
 		$smarty = $params[1];
@@ -184,8 +277,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert template to review the funding data in the submission wizard
-	 * before completing the submission
+	 * Add a review panel for the funding data in the final step of the wizard.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addToSubmissionWizardReviewTemplate($hookName, $params) {
 		$submission = $params[0]['submission']; /** @var Submission $submission */
@@ -201,7 +298,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert funder grid in the publication tabs
+	 * Add a tab component to render the funder grid in publication workflow.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addToPublicationForms($hookName, $params) {
 		$smarty =& $params[1];
@@ -217,7 +319,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Add custom gridhandlerJS for backend
+	 * Inject JS and CSS needed for the custom grid UI.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addGridhandlerJs($hookName, $params) {
 		$templateMgr = $params[0];
@@ -240,7 +347,11 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Gets submission from template manager according to the current application
+	 * Determine the submission object depending on the current application (OJS/OMP/OPS).
+	 *
+	 * @param TemplateManager $templateMgr
+	 *
+	 * @return Submission|null
 	 */
 	function getSubmissionOfApplication($templateMgr) {
 		$application = Application::getName();
@@ -258,11 +369,15 @@ class FundingPlugin extends GenericPlugin {
 		return $submission;
 	}
 
+
 	/**
-	* Hook to Templates::Article::Details and Templates::Catalog::Book::Details and list funder information
-	* @param $hookName string
-	* @param $params array
-	*/
+	 * Add funder data block to the public-facing article/book/preprint display.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
+	 */
 	function addSubmissionDisplay($hookName, $params) {
 		$templateMgr = $params[1];
 		$output =& $params[2];
@@ -283,6 +398,7 @@ class FundingPlugin extends GenericPlugin {
 				'funderIdentification' => $funder->getFunderIdentification(),
 				'funderAwards' => implode(";", $funderAwards)
 			);
+
 		}
 
 		if ($funderData){
@@ -295,9 +411,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Hook to articlecrossrefxmlfilter::execute and add funding data to the Crossref XML export
-	 * @param $hookName string
-	 * @param $params array
+	 * Add <fr:program> XML node to Crossref export with funding info.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addCrossrefElement($hookName, $params) {
 		$preliminaryOutput =& $params[0];
@@ -353,9 +472,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Hook to datacitexmlfilter::execute and add funding data to the DataCite XML export
-	 * @param $hookName string
-	 * @param $params array
+	 * Add <fundingReference> XML nodes to DataCite export for submission.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return bool Hook return value
 	 */
 	function addDataCiteElement($hookName, $params) {
 		$preliminaryOutput =& $params[0];
@@ -407,9 +529,12 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Hook to OAIMetadataFormat_OpenAIRE::findFunders and add funding data to the OpenAIRE OAI
-	 * @param $hookName string
-	 * @param $params array
+	 * Add <funding-group> XML block to OpenAIRE OAI metadata export.
+	 *
+	 * @param string $hookName
+	 * @param array $params
+	 *
+	 * @return string Modified XML snippet with funding info
 	 */
 	function addOpenAIREFunderElement($hookName, $params) {
 		$submissionId =& $params[0];
@@ -442,18 +567,25 @@ class FundingPlugin extends GenericPlugin {
 	 * @copydoc Plugin::getInstallMigration()
 	 */
 	function getInstallMigration() {
-		$this->import('FundingSchemaMigration');
-		return new FundingSchemaMigration();
+		return new SchemaMigration();
 	}
 
-
 	/**
-	 * Get the JavaScript URL for this plugin.
+	 * Return the full JS URL path for this plugin.
+	 *
+	 * @return string
 	 */
 	function getJavaScriptURL() {
 		return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
 	}
 
+	/**
+	 * Format funder entity as an associative array for frontend or API use.
+	 *
+	 * @param Funder $funder
+	 *
+	 * @return array
+	 */
 	public function getFunderData(Funder $funder): array
 	{
 		/** @var FunderAwardDAO $funderAwardDao */
@@ -468,53 +600,8 @@ class FundingPlugin extends GenericPlugin {
 		];
 	}
 
+}
 
-	/**
-	 * Add Funding submission, and publication values
-	 *
-	 * @param $hookName string <Object>::getProperties::values
-	 * @param $args array [
-	 * 		@option $values array Key/value store of property values
-	 * 		@option $object Submission|Issue|Galley
-	 * 		@option $props array Requested properties
-	 * 		@option $args array Request args
-	 * ]
-	 *
-	 * @return void
-	 */
-	public function modifyObjectPropertyValues($hookName, $args) {
-		$values =& $args[0];
-		$object = $args[1];
-		$props = $args[2];
-
-
-		if (get_class($object) === 'Publication') {
-			$submissionId = $object->getData('submissionId');
-		} else if (get_class($object) === 'Submission') {
-			$submissionId = $object->getId();
-		}
-
-		if (!isset($submissionId))
-			return;
-
-		$funderDao = DAORegistry::getDAO('FunderDAO');
-		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
-
-		$funders = $funderDao->getBySubmissionId($submissionId);
-		$funderData = array();
-		while ($funder = $funders->next()) {
-			$funderId = $funder->getId();
-			$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funderId);
-			$funderData[] = array(
-				'funderName' => $funder->getFunderName(),
-				'funderIdentification' => $funder->getFunderIdentification(),
-				'funderAwards' => array_values($funderAwards)
-			);
-		}
-
-		if ($funderData) {
-			$values['funding'] = $funderData ? $funderData : null;
-		}
-	}
-
+if (!PKP_STRICT_MODE) {
+    class_alias('\APP\plugins\generic\funding\FundingPlugin', '\FundingPlugin');
 }

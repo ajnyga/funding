@@ -7,6 +7,7 @@
  *
  * Form for editing a funder item
  *}
+
 <script>
 	$(function() {ldelim}
 		// Attach the form handler.

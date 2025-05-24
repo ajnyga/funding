@@ -14,7 +14,7 @@
 			{foreach from=$funderData item=funder}
 				<li>
 					{if $funder.funderIdentification}
-						{assign var="funderSearch" value=$funder.funderIdentification|explode:"/"}
+						{assign var="funderSearch" value="/"|explode:$funder.funderIdentification}
 						<a href="https://search.crossref.org/search/funders?id={$funderSearch[4]|escape}&from_ui=yes">{$funder.funderName|escape}</a>
 					{else}
 						{$funder.funderName|escape}

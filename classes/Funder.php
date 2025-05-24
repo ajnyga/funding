@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/classes/Funder.inc.php
+ * @file plugins/generic/funding/classes/Funder.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -12,6 +12,10 @@
  *
  * Data object representing a funder.
  */
+
+namespace APP\plugins\generic\funding\classes;
+
+use PKP\core\DataObject;
 
 class Funder extends DataObject {
 

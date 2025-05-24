@@ -20,6 +20,9 @@ msgstr "This plugin adds submission funding data using the Crossref funders regi
 msgid "plugins.generic.funding.fundingData"
 msgstr "Funding data"
 
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Publication: Funding data"
+
 msgid "plugins.generic.funding.addFunder"
 msgstr "Add funder"
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/controllers/grid/form/FunderForm.inc.php
+ * @file plugins/generic/funding/controllers/grid/form/FunderForm.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -13,6 +13,8 @@
  * Form for adding/editing a funder
  *
  */
+
+namespace APP\plugins\generic\funding\controllers\grid\form;
 
 use APP\template\TemplateManager;
 use PKP\db\DAORegistry;
@@ -27,6 +29,9 @@ class FunderForm extends Form {
 
 	/** @var int Submission ID */
 	var $submissionId;
+
+	/** @var int|null Funder ID */
+	var $funderId;
 
 	/** @var FundingPlugin */
 	var $plugin;
@@ -86,6 +91,8 @@ class FunderForm extends Form {
 		$templateMgr->assign('submissionId', $this->submissionId);
 		$subsidiaryOptions = array('' => __('plugins.generic.funding.funderSubOrganization.select'));
 		$templateMgr->assign('subsidiaryOptions', $subsidiaryOptions);
+
+
 		return parent::fetch($request);
 	}
 

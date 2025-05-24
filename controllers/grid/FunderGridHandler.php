@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/controllers/grid/FunderGridHandler.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridHandler.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -13,8 +13,12 @@
  * @brief Handle Funder grid requests.
  */
 
+namespace APP\plugins\generic\funding\controllers\grid;
+
 use APP\core\Application;
 use APP\facades\Repo;
+use APP\plugins\generic\funding\classes\FunderDAO;
+use APP\plugins\generic\funding\controllers\grid\form\FunderForm;
 use PKP\controllers\grid\GridColumn;
 use PKP\controllers\grid\GridHandler;
 use PKP\core\JSONMessage;
@@ -24,9 +28,6 @@ use PKP\linkAction\LinkAction;
 use PKP\linkAction\request\AjaxModal;
 use PKP\security\authorization\SubmissionAccessPolicy;
 use PKP\security\Role;
-
-import('plugins.generic.funding.controllers.grid.FunderGridRow');
-import('plugins.generic.funding.controllers.grid.FunderGridCellProvider');
 
 class FunderGridHandler extends GridHandler {
 	static $plugin;
@@ -219,11 +220,9 @@ class FunderGridHandler extends GridHandler {
 		$this->setupTemplate($request);
 
 		// Create and present the edit form
-		import('plugins.generic.funding.controllers.grid.form.FunderForm');
 		$funderForm = new FunderForm(self::$plugin, $context->getId(), $submissionId, $funderId);
 		$funderForm->initData();
-		$json = new JSONMessage(true, $funderForm->fetch($request));
-		return $json->getString();
+		return new JSONMessage(true, $funderForm->fetch($request));
 	}
 
 	/**
@@ -241,7 +240,6 @@ class FunderGridHandler extends GridHandler {
 		$this->setupTemplate($request);
 
 		// Create and populate the form
-		import('plugins.generic.funding.controllers.grid.form.FunderForm');
 		$funderForm = new FunderForm(self::$plugin, $context->getId(), $submissionId, $funderId);
 		$funderForm->readInputData();
 		// Validate
@@ -250,16 +248,17 @@ class FunderGridHandler extends GridHandler {
 			$newFunderId = $funderForm->execute();
 			$funder = $this->funderDao->getById($newFunderId, $submissionId);
  			$json = DAO::getDataChangedEvent($submissionId);
+			$funderData = self::$plugin->getFunderData($funder);
+
 			if (!$funderId) {
-				$json->setGlobalEvent('plugin:funding:added', self::$plugin->getFunderData($funder));
+				$json->setGlobalEvent('plugin:funding:added', $funderData);
 			} else {
-				$json->setGlobalEvent('plugin:funding:edited', self::$plugin->getFunderData($funder));
+				$json->setGlobalEvent('plugin:funding:edited', $funderData);
 			}
 			return $json;
 		} else {
 			// Present any errors
-			$json = new JSONMessage(true, $funderForm->fetch($request));
-			return $json->getString();
+			return new JSONMessage(true, $funderForm->fetch($request));
 		}
 	}
 
@@ -295,7 +294,7 @@ class FunderGridHandler extends GridHandler {
 	 */
 	function canAdminister($user) {
 		$submission = $this->getSubmission();
-		$contextId = $submission->getContextId();
+		$contextId = $submission->getData('contextId');
 
 		// Incomplete submissions can be edited. (Presumably author.)
 		$submissionProgress = $submission->getData('submissionProgress');
@@ -317,4 +316,8 @@ class FunderGridHandler extends GridHandler {
 		return false;
 	}
 
+}
+
+if (!PKP_STRICT_MODE) {
+    class_alias('\APP\plugins\generic\funding\controllers\grid\FunderGridHandler', '\FunderGridHandler');
 }

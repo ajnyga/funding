@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/controllers/grid/FunderGridRow.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridRow.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -13,7 +13,12 @@
  * @brief Handle funder grid row requests.
  */
 
-import('lib.pkp.classes.controllers.grid.GridRow');
+namespace APP\plugins\generic\funding\controllers\grid;
+
+use PKP\controllers\grid\GridRow;
+use PKP\linkAction\LinkAction;
+use PKP\linkAction\request\AjaxModal;
+use PKP\linkAction\request\RemoteActionConfirmationModal;
 
 class FunderGridRow extends GridRow {
 	/** @var boolean */
@@ -42,7 +47,6 @@ class FunderGridRow extends GridRow {
 			$router = $request->getRouter();
 
 			// Create the "edit" action
-			import('lib.pkp.classes.linkAction.request.AjaxModal');
 			$this->addAction(
 				new LinkAction(
 					'editFunderItem',
@@ -57,7 +61,6 @@ class FunderGridRow extends GridRow {
 			);
 
 			// Create the "delete" action
-			import('lib.pkp.classes.linkAction.request.RemoteActionConfirmationModal');
 			$this->addAction(
 				new LinkAction(
 					'delete',

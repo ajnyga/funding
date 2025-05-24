@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/controllers/grid/FunderGridCellProvider.inc.php
+ * @file plugins/generic/funding/controllers/grid/FunderGridCellProvider.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -13,7 +13,9 @@
  * @brief Class for a cell provider to display information about funder items
  */
 
-import('lib.pkp.classes.controllers.grid.GridCellProvider');
+namespace APP\plugins\generic\funding\controllers\grid;
+
+use PKP\controllers\grid\GridCellProvider;
 
 class FunderGridCellProvider extends GridCellProvider {
 

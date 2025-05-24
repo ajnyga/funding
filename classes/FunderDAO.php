@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/funding/classes/classes/FunderDAO.inc.php
+ * @file plugins/generic/funding/classes/classes/FunderDAO.php
  *
  * Copyright (c) 2014-2020 Simon Fraser University
  * Copyright (c) 2003-2020 John Willinsky
@@ -13,10 +13,11 @@
  * Operations for retrieving and modifying Funder objects.
  */
 
-use PKP\db\DAOResultFactory;
+namespace APP\plugins\generic\funding\classes;
 
-import('lib.pkp.classes.db.DAO');
-import('plugins.generic.funding.classes.Funder');
+use PKP\db\DAO;
+use PKP\db\DAOResultFactory;
+use PKP\db\DAORegistry;
 
 class FunderDAO extends DAO {
 
@@ -153,8 +154,8 @@ class FunderDAO extends DAO {
 	 * Get the additional field names.
 	 * @return array
 	 */
-	function getAdditionalFieldNames() {
-		return array('funderName');
+	public function getAdditionalFieldNames(): array {
+		return ['funderName'];
 	}
 
 	/**

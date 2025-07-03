@@ -148,8 +148,8 @@ class FundingPlugin extends GenericPlugin {
 	protected function getFundingDataForMap($submissionId) {
 		if (!$submissionId) return null;
 
-		$funderDao = \DAORegistry::getDAO('FunderDAO');
-		$funderAwardDao = \DAORegistry::getDAO('FunderAwardDAO');
+		$funderDao = DAORegistry::getDAO('FunderDAO');
+		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 
 		$funders = $funderDao->getBySubmissionId($submissionId);
 		$funderData = [];

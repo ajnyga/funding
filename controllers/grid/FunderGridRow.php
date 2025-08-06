@@ -21,67 +21,67 @@ use PKP\linkAction\request\AjaxModal;
 use PKP\linkAction\request\RemoteActionConfirmationModal;
 
 class FunderGridRow extends GridRow {
-	/** @var boolean */
-	var $_readOnly;
+    /** @var boolean */
+    var $_readOnly;
 
-	/**
-	 * Constructor
-	 */
-	function __construct($readOnly = false) {
-		$this->_readOnly = $readOnly;
-		parent::__construct();
-	}
+    /**
+     * Constructor
+     */
+    function __construct($readOnly = false) {
+        $this->_readOnly = $readOnly;
+        parent::__construct();
+    }
 
-	//
-	// Overridden template methods
-	//
-	/**
-	 * @copydoc GridRow::initialize()
-	 */
-	function initialize($request, $template = null) {
-		parent::initialize($request, $template);
-		$funderId = $this->getId();
-		$submissionId = $request->getUserVar('submissionId');
+    //
+    // Overridden template methods
+    //
+    /**
+     * @copydoc GridRow::initialize()
+     */
+    function initialize($request, $template = null) {
+        parent::initialize($request, $template);
+        $funderId = $this->getId();
+        $submissionId = $request->getUserVar('submissionId');
 
-		if (!empty($funderId) && !$this->isReadOnly()) {
-			$router = $request->getRouter();
+        if (!empty($funderId) && !$this->isReadOnly()) {
+            $router = $request->getRouter();
 
-			// Create the "edit" action
-			$this->addAction(
-				new LinkAction(
-					'editFunderItem',
-					new AjaxModal(
-						$router->url($request, null, null, 'editFunder', null, array('funderId' => $funderId, 'submissionId' => $submissionId)),
-						__('grid.action.edit'),
-						'modal_edit',
-						true),
-					__('grid.action.edit'),
-					'edit'
-				)
-			);
+            // Create the "edit" action
+            $this->addAction(
+                new LinkAction(
+                    'editFunderItem',
+                    new AjaxModal(
+                        $router->url($request, null, null, 'editFunder', null, array('funderId' => $funderId, 'submissionId' => $submissionId)),
+                        __('grid.action.edit'),
+                        'modal_edit',
+                        true),
+                    __('grid.action.edit'),
+                    'edit'
+                )
+            );
 
-			// Create the "delete" action
-			$this->addAction(
-				new LinkAction(
-					'delete',
-					new RemoteActionConfirmationModal(
-						$request->getSession(),
-						__('common.confirmDelete'),
-						__('grid.action.delete'),
-						$router->url($request, null, null, 'deleteFunder', null, array('funderId' => $funderId, 'submissionId' => $submissionId)), 'modal_delete'
-					),
-					__('grid.action.delete'),
-					'delete'
-				)
-			);
-		}
-	}
+            // Create the "delete" action
+            $this->addAction(
+                new LinkAction(
+                    'delete',
+                    new RemoteActionConfirmationModal(
+                        $request->getSession(),
+                        __('common.confirmDelete'),
+                        __('grid.action.delete'),
+                        $router->url($request, null, null, 'deleteFunder', null, array('funderId' => $funderId, 'submissionId' => $submissionId)), 'modal_delete'
+                    ),
+                    __('grid.action.delete'),
+                    'delete'
+                )
+            );
+        }
+    }
 
-	/**
-	 * Determine if this grid row should be read only.
-	 * @return boolean
-	 */
-	function isReadOnly() {
-		return $this->_readOnly;
-	}
+    /**
+     * Determine if this grid row should be read only.
+     * @return boolean
+     */
+    function isReadOnly() {
+        return $this->_readOnly;
+    }
 }

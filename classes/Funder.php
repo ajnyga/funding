@@ -19,85 +19,85 @@ use PKP\core\DataObject;
 
 class Funder extends DataObject {
 
-	//
-	// Get/set methods
-	//
+    //
+    // Get/set methods
+    //
 
-	/**
-	 * Get context ID.
-	 * @return int
-	 */
-	function getContextId(){
-		return $this->getData('contextId');
-	}
+    /**
+     * Get context ID.
+     * @return int
+     */
+    function getContextId(){
+        return $this->getData('contextId');
+    }
 
-	/**
-	 * Set context ID.
-	 * @param $contextId int
-	 */
-	function setContextId($contextId) {
-		return $this->setData('contextId', $contextId);
-	}
+    /**
+     * Set context ID.
+     * @param $contextId int
+     */
+    function setContextId($contextId) {
+        return $this->setData('contextId', $contextId);
+    }
 
-	/**
-	 * Get submission ID.
-	 * @return int
-	 */
-	function getSubmissionId(){
-		return $this->getData('submissionId');
-	}
+    /**
+     * Get submission ID.
+     * @return int
+     */
+    function getSubmissionId(){
+        return $this->getData('submissionId');
+    }
 
-	/**
-	 * Set submission ID.
-	 * @param $submissionId int
-	 */
-	function setSubmissionId($submissionId) {
-		return $this->setData('submissionId', $submissionId);
-	}
+    /**
+     * Set submission ID.
+     * @param $submissionId int
+     */
+    function setSubmissionId($submissionId) {
+        return $this->setData('submissionId', $submissionId);
+    }
 
-	/**
-	 * Get identification.
-	 * @return string
-	 */
-	function getFunderIdentification() {
-		return $this->getData('funderIdentification');
-	}
+    /**
+     * Get identification.
+     * @return string
+     */
+    function getFunderIdentification() {
+        return $this->getData('funderIdentification');
+    }
 
-	/**
-	 * Set identification.
-	 * @param $funderIdentification string
-	 */
-	function setFunderIdentification($funderIdentification) {
-		return $this->setData('funderIdentification', $funderIdentification);
-	}
+    /**
+     * Set identification.
+     * @param $funderIdentification string
+     */
+    function setFunderIdentification($funderIdentification) {
+        return $this->setData('funderIdentification', $funderIdentification);
+    }
 
-	/**
-	 * Get name.
-	 * @return string
-	 */
-	function getFunderName() {
-		return $this->getData('funderName');
-	}
+    /**
+     * Get name.
+     * @return string
+     */
+    function getFunderName() {
+        return $this->getData('funderName');
+    }
 
-	/**
-	 * Set name.
-	 * @param $funderName string
-	 */
-	function setFunderName($funderName) {
-		return $this->setData('funderName', $funderName);
-	}
+    /**
+     * Set name.
+     * @param $funderName string
+     */
+    function setFunderName($funderName) {
+        return $this->setData('funderName', $funderName);
+    }
 
-	/**
-	 * Get name and identification.
-	 * @return string
-	 */
-	function getFunderNameIdentification() {
-		if ($this->getFunderIdentification()){
-			return $this->getFunderName() . '[' . $this->getFunderIdentification() . ']';
-		}
-		else{
-			return $this->getFunderName();
-		}
-	}
+    /**
+     * Get name and identification.
+     * @return string
+     */
+    function getFunderNameIdentification() {
+        if ($this->getFunderIdentification()){
+            return $this->getFunderName() . '[' . $this->getFunderIdentification() . ']';
+        }
+        else{
+            return $this->getFunderName();
+        }
+    }
 
 }

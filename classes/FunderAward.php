@@ -19,40 +19,40 @@ use PKP\core\DataObject;
 
 class FunderAward extends DataObject {
 
-	//
-	// Get/set methods
-	//
+    //
+    // Get/set methods
+    //
 
-	/**
-	 * Get Funder ID.
-	 * @return int
-	 */
-	function getFunderId(){
-		return $this->getData('funderId');
-	}
+    /**
+     * Get Funder ID.
+     * @return int
+     */
+    function getFunderId(){
+        return $this->getData('funderId');
+    }
 
-	/**
-	 * Set Funder ID.
-	 * @param $funderId int
-	 */
-	function setFunderId($funderId) {
-		return $this->setData('funderId', $funderId);
-	}	
+    /**
+     * Set Funder ID.
+     * @param $funderId int
+     */
+    function setFunderId($funderId) {
+        return $this->setData('funderId', $funderId);
+    }    
 
-	/**
-	 * Get Funder Award Number.
-	 * @return string
-	 */
-	function getFunderAwardNumber() {
-		return $this->getData('funderAwardNumber');
-	}
+    /**
+     * Get Funder Award Number.
+     * @return string
+     */
+    function getFunderAwardNumber() {
+        return $this->getData('funderAwardNumber');
+    }
 
-	/**
-	 * Set Funder Award Number.
-	 * @param $funderAwardNumber string
-	 */
-	function setFunderAwardNumber($funderAwardNumber) {
-		return $this->setData('funderAwardNumber', $funderAwardNumber);
-	}
+    /**
+     * Set Funder Award Number.
+     * @param $funderAwardNumber string
+     */
+    function setFunderAwardNumber($funderAwardNumber) {
+        return $this->setData('funderAwardNumber', $funderAwardNumber);
+    }
 
 }

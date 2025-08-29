@@ -9,6 +9,6 @@
  *}
 
 <div id="fundref">
-	{capture assign=funderGridUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="fetchGrid" submissionId=$submission->getId() escape=false}{/capture}
+	{capture assign=funderGridUrl}{url router=PKP\core\PKPApplication::ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="fetchGrid" submissionId=$submission->getId() escape=false}{/capture}
 	{load_url_in_div id="funderGridContainer"|uniqid url=$funderGridUrl inVueEl=true}
 </div>

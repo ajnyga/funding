@@ -98,7 +98,7 @@
     {rdelim});
 </script>
 
-{capture assign=actionUrl}{url router=$smarty.const.ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="updateFunder" submissionId=$submissionId escape=false}{/capture}
+{capture assign=actionUrl}{url router=PKP\core\PKPApplication::ROUTE_COMPONENT component="plugins.generic.funding.controllers.grid.FunderGridHandler" op="updateFunder" submissionId=$submissionId escape=false}{/capture}
 <form class="pkp_form" id="funderForm" method="post" action="{$actionUrl}">
 	{csrf}
 	{if $funderId}

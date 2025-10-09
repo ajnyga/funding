@@ -22,6 +22,7 @@ use APP\plugins\generic\funding\classes\FunderDAO;
 use APP\plugins\generic\funding\controllers\grid\form\FunderForm;
 use PKP\controllers\grid\GridColumn;
 use PKP\controllers\grid\GridHandler;
+use PKP\stageAssignment\StageAssignment;
 use PKP\core\JSONMessage;
 use PKP\db\DAO;
 use PKP\db\DAORegistry;
@@ -291,19 +292,20 @@ class FunderGridHandler extends GridHandler {
         $contextId = $submission->getData('contextId');
 
         // Incomplete submissions can be edited. (Presumably author.)
-        $submissionProgress = $submission->getData('submissionProgress');
-        if ($submissionProgress && $submissionProgress == "start") return true;
+        if ($submission->getData('submissionProgress') == 'start') return true;
 
         // Managers should always have access.
         $userRoles = $this->getAuthorizedContextObject(ASSOC_TYPE_USER_ROLES);
         if (array_intersect(array(Role::ROLE_ID_MANAGER), $userRoles)) return true;
 
         // Sub editors and assistants need to be assigned to the current stage.
-        $stageAssignmentDao = DAORegistry::getDAO('StageAssignmentDAO');
-        $stageAssignments = $stageAssignmentDao->getBySubmissionAndStageId($submission->getId(), $submission->getStageId(), null, $user->getId());
-        while ($stageAssignment = $stageAssignments->next()) {
-            $userGroup = Repo::userGroup()->get($stageAssignment->getUserGroupId(),$contextId);
-            if (in_array($userGroup->getRoleId(), array(Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT))) return true;
+        $stageAssignments = StageAssignment::withSubmissionIds([$submission->getId()])
+            ->withStageIds([$submission->getData('stageId')])
+            ->withUserId($user->getId())
+            ->get();
+        foreach ($stageAssignments as $stageAssignment) {
+            $userGroup = $stageAssignment->userGroup;
+            if (in_array($userGroup->roleId, array(Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT))) return true;
         }
 
         // Default: Read-only.

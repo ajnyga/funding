@@ -22,6 +22,9 @@ use APP\pages\submission\SubmissionHandler;
 use APP\submission\Submission;
 use APP\publication\Publication;
 use APP\template\TemplateManager;
+use PKP\core\JSONMessage;
+use PKP\linkAction\LinkAction;
+use PKP\linkAction\request\AjaxModal;
 use APP\facades\Repo;
 use APP\plugins\generic\funding\classes\migration\install\SchemaMigration;
 use APP\plugins\generic\funding\classes\Funder;
@@ -601,6 +604,54 @@ class FundingPlugin extends GenericPlugin {
         ];
     }
 
+    /**
+     * @copydoc Plugin::getActions()
+     */
+    public function getActions($request, $verb)
+    {
+        $router = $request->getRouter();
+        return array_merge(
+            $this->getEnabled() ? [
+                new LinkAction(
+                    'settings',
+                    new AjaxModal(
+                        $router->url($request, null, null, 'manage', null, ['verb' => 'settings', 'plugin' => $this->getName(), 'category' => 'generic']),
+                        $this->getDisplayName()
+                    ),
+                    __('manager.plugins.settings'),
+                    null
+                ),
+            ] : [],
+            parent::getActions($request, $verb)
+        );
+    }
+
+    /**
+     * @copydoc Plugin::manage()
+     */
+    public function manage($args, $request)
+    {
+        switch ($request->getUserVar('verb')) {
+            case 'settings':
+                $context = $request->getContext();
+                $templateMgr = TemplateManager::getManager($request);
+                $templateMgr->registerPlugin('function', 'plugin_url', $this->smartyPluginUrl(...));
+
+                $form = new FundingSettingsForm($this, $context->getId());
+
+                if ($request->getUserVar('save')) {
+                    $form->readInputData();
+                    if ($form->validate()) {
+                        $form->execute();
+                        return new JSONMessage(true);
+                    }
+                } else {
+                    $form->initData();
+                }
+                return new JSONMessage(true, $form->fetch($request));
+        }
+        return parent::manage($args, $request);
+    }
 }
 
 if (!PKP_STRICT_MODE) {

@@ -17,6 +17,15 @@ msgstr "Funding data"
 msgid "plugins.generic.funding.description"
 msgstr "This plugin adds submission funding data using the Crossref funders registry, and considers the data in the Crossref XML export."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "The following settings control the collection and use of funding information entered with each submission."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Enable grant ID validation for supported funders (using the Zenodo API)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "One or more of the fund IDs are not valid for the specified funder. Please check the fund IDs again."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Funding data"
 

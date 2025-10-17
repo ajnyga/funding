@@ -101,8 +101,7 @@ class FunderForm extends Form {
                     $awardResponse = $httpClient->request('GET', "https://zenodo.org/api/awards?funders={$ror}&q=" . urlencode($grantId));
                     $body = json_decode($awardResponse->getBody(), true);
                     $success = array_reduce($body['hits']['hits'] ?? [], function($carry, $item) use ($grantId) {
-                        error_log('Checking ' . $item['id'] . ' against ' . $grantId);
-                        return $carry || $item['id'] == $grantId;
+                        return $carry || $item['id'] === $grantId || ($item['number']  ?? null) === $grantId);
                     }, false);
                     if (!$success) return false;
                 }

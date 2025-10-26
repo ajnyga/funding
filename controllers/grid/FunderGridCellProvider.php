@@ -19,25 +19,25 @@ use PKP\controllers\grid\GridCellProvider;
 
 class FunderGridCellProvider extends GridCellProvider {
 
-	//
-	// Template methods from GridCellProvider
-	//
+    //
+    // Template methods from GridCellProvider
+    //
 
-	/**
-	 * Extracts variables for a given column from a data element
-	 * so that they may be assigned to template before rendering.
-	 *
-	 * @copydoc GridCellProvider::getTemplateVarsFromRowColumn()
-	 */
-	function getTemplateVarsFromRowColumn($row, $column) {
-		$funderItem = $row->getData();
-		switch ($column->getId()) {
-			case 'funderName':
-				return array('label' => $funderItem['funderName']);
-			case 'funderIdentification':
-				return array('label' => $funderItem['funderIdentification']);
-			case 'funderGrants':
-				return array('label' => $funderItem['funderGrants']);
-		}
-	}
+    /**
+     * Extracts variables for a given column from a data element
+     * so that they may be assigned to template before rendering.
+     *
+     * @copydoc GridCellProvider::getTemplateVarsFromRowColumn()
+     */
+    function getTemplateVarsFromRowColumn($row, $column) {
+        $funderItem = $row->getData();
+        switch ($column->getId()) {
+            case 'funderName':
+                return array('label' => $funderItem['funderName']);
+            case 'funderIdentification':
+                return array('label' => $funderItem['funderIdentification']);
+            case 'funderGrants':
+                return array('label' => $funderItem['funderGrants']);
+        }
+    }
 }

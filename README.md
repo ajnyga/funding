@@ -10,7 +10,7 @@ This plugin is licensed under the GNU General Public License v3. See the file LI
 
 System Requirements
 -------------------
-OJS 3.5.0, OPS 3.5.0, OMP 3.5.0 or greater.
+OJS/OMP/OPS 3.6 development version.
 
 Install
 -------
@@ -21,6 +21,8 @@ Install
  
 Version History
 ---------------
+### Version 3.6.0.0
+- 3.6 / in development
 
 ### Version 3.5.0.0
 - Support for 3.5

@@ -162,7 +162,7 @@ class FundingPlugin extends GenericPlugin {
 		$smarty = $params[1];
 		$output =& $params[2];
 
-		$output .= $smarty->fetch($this->getTemplateResource('fundersGrid.tpl'));
+		$output .= $smarty->fetch($this->getTemplateResource('fundersSubmissionWizard.tpl'));
 
 		return false;
 	}

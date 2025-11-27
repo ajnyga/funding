@@ -8,38 +8,42 @@ import('plugins.generic.funding.classes.FunderDAO');
 class FundersListPanel extends ListPanel
 {
     private $submission;
-    private $funders;
 
     public function __construct($id, $title, $submission, $args = [])
     {
         parent::__construct($id, $title, $args);
         $this->submission = $submission;
-        $this->funders = $this->getFunders($submission->getId());
+        $this->items = $this->getFundersItems($submission->getId());
     }
 
-    private function getFunders(int $submissionId): array
+    public function getConfig()
+    {
+        $config = parent::getConfig();
+
+        $config = array_merge(
+            $config,
+            [
+				'emptyLabel' => __('plugins.generic.funding.noneCreated')
+            ]
+        );
+
+        return $config;
+    }
+
+    private function getFundersItems(int $submissionId): array
     {
 		$funderDao = DAORegistry::getDAO('FunderDAO');
 		$funderResult = $funderDao->getBySubmissionId($submissionId);
 
 		$funders = [];
 		while ($funder = $funderResult->next()) {
-			$funders[] = $this->getFunderData($funder);
+			$funders[] = [
+				'id' => $funder->getId(),
+				'title' => $funder->getFunderName(),
+				'subtitle' => $funder->getFunderIdentification(),
+			];
 		}
 
         return $funders;
     }
-
-    public function getFunderData(Funder $funder): array
-	{
-		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
-		$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funder->getId());
-
-		return [
-			'id' => $funder->getId(),
-			'name' => $funder->getFunderName(),
-			'identification' => $funder->getFunderIdentification(),
-			'awards' => implode(";", $funderAwards),
-		];
-	}
 }

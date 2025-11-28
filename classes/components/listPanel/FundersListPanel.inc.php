@@ -31,6 +31,8 @@ class FundersListPanel extends ListPanel
                 'canEditPublication' => $canEditPublication,
                 'emptyLabel' => __('plugins.generic.funding.noneCreated'),
 				'i18nAddFunder' => __('plugins.generic.funding.addFunder'),
+                'i18nDeleteFunder' => __('plugins.generic.funding.deleteFunder'),
+                'i18nConfirmDeleteFunder' => __('plugins.generic.funding.deleteFunder.confirmationMessage'),
             ]
         );
 

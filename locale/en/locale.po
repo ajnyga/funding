@@ -23,6 +23,14 @@ msgstr "Funding data"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Add funder"
 
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Delete funder"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Are you sure you want to remove <strong>{$name}</strong> as a funder?"
+" This action can not be undone."
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Funder name"
 

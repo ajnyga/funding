@@ -23,6 +23,14 @@ msgstr "Rahoittajat"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Lisää rahoittaja"
 
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Poista rahoittaja"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Oletko varma, että haluat poistaa <strong>{$name}</strong> rahoittajana?"
+" Tätä toimintoa ei voi peruuttaa."
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Rahoittajan nimi"
 

@@ -23,6 +23,14 @@ msgstr "Date de finanțare"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Adăugați finanțator"
 
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Șterge finanțator"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Sigur doriți să eliminați <strong>{$name}</strong> ca finanțator?"
+" Această acțiune nu poate fi anulată."
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Numele finanțatorului"
 

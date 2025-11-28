@@ -23,6 +23,14 @@ msgstr "Données de Fonds"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Ajouter un financeur"
 
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Supprimer un financeur"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Êtes-vous sûr de vouloir supprimer <strong>{$name}</strong> en tant que financeur?"
+" Cette action ne peut pas être annulée."
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Nom du bailleur de fonds"
 

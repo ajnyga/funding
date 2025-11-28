@@ -23,6 +23,14 @@ msgstr "Datos de los fondos"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Agregar financiador"
 
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Eliminar financiador"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"¿Está seguro de que desea eliminar a <strong>{$name}</strong> como financiador?"
+" Esta acción no se puede deshacer."
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Nombre del financiador"
 

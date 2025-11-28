@@ -18,6 +18,11 @@ class FundersHandler extends APIHandler
                     'pattern' => $this->getEndpointPattern() . '/submission/{submissionId}',
                     'handler' => [$this, 'getBySubmission'],
                     'roles' => $roles
+                ],
+                [
+                    'pattern' => $this->getEndpointPattern() . '/suggestions',
+                    'handler' => [$this, 'getFundersSuggestions'],
+                    'roles' => $roles
                 ]
             ],
             'POST' => [
@@ -73,6 +78,13 @@ class FundersHandler extends APIHandler
 		}
 
         return $response->withJson(['items' => $funderItems], 200);
+    }
+
+    public function getFundersSuggestions($slimRequest, $response, $args)
+    {
+        $fundersSuggestions = [['label' => 'Example label', 'value' => 'Example value']];
+
+        return $response->withJson(['items' => $fundersSuggestions], 200);
     }
 
     public function deleteFunder($slimRequest, $response, $args)

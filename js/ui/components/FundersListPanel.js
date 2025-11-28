@@ -46,6 +46,19 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
                     </pkp-button>
                 </template>
             </list-panel-funders>
+			<modal-funders
+				:closeLabel="__('common.close')"
+				:name="formModal"
+				:title="formTitle"
+			>
+				<search-funders
+					:searchLabel="i18nSearchFunder"
+					@search-phrase-changed="refreshFormFundersList"
+				/>
+				<pkp-form
+					v-bind="form"
+				/>
+			</modal-funders>
         </slot>
     </div>
 `);
@@ -56,6 +69,7 @@ if (!SubmissionWizardPageFunders.hasOwnProperty('components')) {
 }
 
 const ListPanelFunders = pkp.controllers.Container.components.ListPanel;
+const SearchFunders = pkp.controllers.Container.components.SubmissionsListPanel.components.Search;
 const ModalFunders = SubmissionWizardPageFunders.components.Modal;
 const ajaxErrorFunders = SubmissionWizardPageFunders.mixins[0];
 const dialogFunders = SubmissionWizardPageFunders.mixins[2];
@@ -65,12 +79,17 @@ pkp.Vue.component('funders-list-panel', {
     name: 'FundersListPanel',
     components: {
         ListPanelFunders,
+		SearchFunders,
         ModalFunders,
     },
     mixins: [ajaxErrorFunders, dialogFunders],
     props: {
         canEditPublication: {
 			type: Boolean,
+			required: true,
+		},
+		form: {
+			type: Object,
 			required: true,
 		},
         id: {
@@ -110,18 +129,27 @@ pkp.Vue.component('funders-list-panel', {
 			type: String,
 			required: true,
 		},
+		i18nSearchFunder: {
+			type: String,
+			required: true,
+		}
     },
     data() {
 		return {
-			activeForm: null,
-			activeFormTitle: '',
+			formTitle: '',
 			resetFocusTo: null,
 			isLoading: false,
 		};
 	},
+	computed: {
+		formModal() {
+			return this.id + 'form';
+		},
+	},
     methods: {
         openAddModal() {
-			console.log('Open add funder modal');
+			this.formTitle = this.i18nAddFunder;
+			this.$modal.show(this.formModal);
 		},
         openDeleteModal(id) {
 			const funder = this.items.find((a) => a.id === id);
@@ -190,6 +218,17 @@ pkp.Vue.component('funders-list-panel', {
 				},
 			});
         },
+		refreshFormFundersList(){
+			let self = this;
+			$.ajax({
+				url: self.fundersApiUrl + '/suggestions',
+				type: 'GET',
+				success: function (r) {
+                    let funderOptions = self.form.fields.find(field => field.name === 'funderNameIdentification');
+					funderOptions.options = r.items;
+				},
+			});
+		}
     },
     render: function (h) {
         return fundersListPanelTemplate.render.call(this, h);

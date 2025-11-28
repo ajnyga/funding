@@ -31,8 +31,14 @@ msgstr ""
 "Are you sure you want to remove <strong>{$name}</strong> as a funder?"
 " This action can not be undone."
 
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Search funders"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Funder name"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Search for the funder name in the search field above. After that, select the desired funder organization from the suggestions list shown below."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Sub-organization"

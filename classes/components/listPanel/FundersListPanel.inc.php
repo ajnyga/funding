@@ -23,13 +23,18 @@ class FundersListPanel extends ListPanel
         $config = parent::getConfig();
 
         $request = Application::get()->getRequest();
+        $context = $request->getContext();
+        
+        $fundersApiUrl = $request->getDispatcher()->url($request, Application::ROUTE_API, $context->getPath(), 'funders');
         $canEditPublication = Repo::submission()->canEditPublication($this->submission->getId(), $request->getUser()->getId());
 
         $config = array_merge(
             $config,
             [
+                'submissionId' => $this->submission->getId(),
                 'canEditPublication' => $canEditPublication,
                 'emptyLabel' => __('plugins.generic.funding.noneCreated'),
+                'fundersApiUrl' => $fundersApiUrl,
 				'i18nAddFunder' => __('plugins.generic.funding.addFunder'),
                 'i18nDeleteFunder' => __('plugins.generic.funding.deleteFunder'),
                 'i18nConfirmDeleteFunder' => __('plugins.generic.funding.deleteFunder.confirmationMessage'),

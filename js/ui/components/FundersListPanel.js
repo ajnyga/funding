@@ -77,6 +77,10 @@ pkp.Vue.component('funders-list-panel', {
 			type: String,
 			required: true,
 		},
+        submissionId: {
+			type: Number,
+			required: true,
+		},
 		items: {
 			type: Array,
 			default() {
@@ -90,6 +94,10 @@ pkp.Vue.component('funders-list-panel', {
         emptyLabel: {
 			type: String,
 		},
+        fundersApiUrl: {
+            type: String,
+            required: true,
+        },
         i18nAddFunder: {
 			type: String,
 			required: true,
@@ -129,8 +137,6 @@ pkp.Vue.component('funders-list-panel', {
 						label: this.i18nDeleteFunder,
 						isWarnable: true,
 						callback: () => {
-							this.isLoading = true;
-
 							$.ajax({
 								url: this.fundersApiUrl + '/' + id,
 								type: 'POST',
@@ -141,19 +147,10 @@ pkp.Vue.component('funders-list-panel', {
 								},
 								error: this.ajaxErrorCallback,
 								success(r) {
+                                    this.refreshItems();
 									this.$modal.hide('delete');
 									this.setFocusIn(this.$el);
-
-									const newFunders = this.items.filter(
-										(funder) => {
-											return funder.id !== id;
-										}
-									);
-									this.$emit('updated:funders', newFunders);
-								},
-								complete(r) {
-									this.isLoading = false;
-								},
+								}
 							});
 						},
 					},
@@ -164,6 +161,35 @@ pkp.Vue.component('funders-list-panel', {
 				],
 			});
 		},
+        refreshItems() {
+            let self = this;
+            this.isLoading = true;
+            this.latestGetRequest = $.pkp.classes.Helper.uuid();
+
+            $.ajax({
+				url: this.fundersApiUrl + '/submission/' + this.submissionId,
+				type: 'GET',
+				_uuid: this.latestGetRequest,
+				error: function (response) {
+                    if (self.latestGetRequest !== this._uuid) {
+                        return;
+                    }
+                    self.ajaxErrorCallback(response);
+                },
+				success: function (response) {
+                    if (self.latestGetRequest !== this._uuid) {
+                        return;
+                    }
+                    self.items = response.items;
+				},
+				complete() {
+					if (self.latestGetRequest !== this._uuid) {
+                        return;
+                    }
+                    self.isLoading = false;
+				},
+			});
+        },
     },
     render: function (h) {
         return fundersListPanelTemplate.render.call(this, h);

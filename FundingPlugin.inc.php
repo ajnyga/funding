@@ -68,6 +68,7 @@ class FundingPlugin extends GenericPlugin {
 
 			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
 
+			HookRegistry::register('Dispatcher::dispatch', array($this, 'setupFunderAPIHandlers'));
 			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
 
 			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
@@ -87,6 +88,28 @@ class FundingPlugin extends GenericPlugin {
 		return $success;
 	}
 
+	public function setupFunderAPIHandlers($hookname, $params)
+    {
+        $request = $params[0];
+        $router = $request->getRouter();
+
+        if (!($router instanceof \PKP\core\APIRouter)) {
+            return;
+        }
+
+        if (str_contains($request->getRequestPath(), 'api/v1/funders')) {
+            import('plugins.generic.funding.api.v1.funders.FundersHandler');
+			$handler = new FundersHandler();
+        }
+
+        if (!isset($handler)) {
+            return;
+        }
+
+        $router->setHandler($handler);
+        $handler->getApp()->run();
+        exit;
+    }
 
 	/**
 	 * Permit requests to the Funder grid handler

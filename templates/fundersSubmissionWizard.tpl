@@ -7,8 +7,8 @@
  *
  *}
 
-<list-panel
+<funders-list-panel
     v-if="section.type === 'funding'"
     v-bind="components.funders"
     @set='set'
-></list-panel>
+></funders-list-panel>

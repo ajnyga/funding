@@ -147,6 +147,15 @@ class FundingPlugin extends GenericPlugin {
 			return $step;
 		}, $steps);
 
+		$templateMgr->addJavaScript(
+            'funders-list-panel',
+            $this->getJavaScriptURL() . DIRECTORY_SEPARATOR  . 'ui/components/FundersListPanel.js',
+            [
+                'priority' => TemplateManager::STYLE_SEQUENCE_LAST,
+                'contexts' => ['backend']
+            ]
+        );
+
 		$templateMgr->setState([
 			'steps' => $steps,
 			'components' => $wizardComponents

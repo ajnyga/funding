@@ -1,7 +1,9 @@
 <?php
 
-use PKP\db\DAORegistry;
 use PKP\components\listPanels\ListPanel;
+use PKP\db\DAORegistry;
+use APP\core\Application;
+use APP\facades\Repo;
 
 import('plugins.generic.funding.classes.FunderDAO');
 
@@ -20,10 +22,15 @@ class FundersListPanel extends ListPanel
     {
         $config = parent::getConfig();
 
+        $request = Application::get()->getRequest();
+        $canEditPublication = Repo::submission()->canEditPublication($this->submission->getId(), $request->getUser()->getId());
+
         $config = array_merge(
             $config,
             [
-				'emptyLabel' => __('plugins.generic.funding.noneCreated')
+                'canEditPublication' => $canEditPublication,
+                'emptyLabel' => __('plugins.generic.funding.noneCreated'),
+				'i18nAddFunder' => __('plugins.generic.funding.addFunder'),
             ]
         );
 
@@ -39,8 +46,8 @@ class FundersListPanel extends ListPanel
 		while ($funder = $funderResult->next()) {
 			$funders[] = [
 				'id' => $funder->getId(),
-				'title' => $funder->getFunderName(),
-				'subtitle' => $funder->getFunderIdentification(),
+				'name' => $funder->getFunderName(),
+				'identification' => $funder->getFunderIdentification(),
 			];
 		}
 

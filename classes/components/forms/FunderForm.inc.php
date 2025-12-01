@@ -2,11 +2,12 @@
 
 use PKP\components\forms\FormComponent;
 use PKP\components\forms\FieldRadioInput;
+use PKP\components\forms\FieldSelect;
 
 class FunderForm extends FormComponent
 {
     public $id = 'funder';
-    public $method = 'PUT';
+    public $method = 'POST';
 
     public function __construct($action, $submission)
     {
@@ -16,6 +17,11 @@ class FunderForm extends FormComponent
             'label' => __('plugins.generic.funding.funderName'),
             'description' => __('plugins.generic.funding.funderName.description'),
             'isRequired' => true
+        ]))
+        ->addField(new FieldSelect('funderSubOrganization', [
+            'label' => __('plugins.generic.funding.funderSubOrganization'),
+            'description' => __('plugins.generic.funding.funderSubOrganization.select'),
+            'showWhen' => ['funderNameIdentification']
         ]));
     }
 }

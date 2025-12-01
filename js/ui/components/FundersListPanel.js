@@ -55,7 +55,7 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 					:searchLabel="i18nSearchFunder"
 					@search-phrase-changed="refreshFormFundersList"
 				/>
-				<pkp-form
+				<funder-form
 					v-bind="form"
 				/>
 			</modal-funders>
@@ -220,6 +220,12 @@ pkp.Vue.component('funders-list-panel', {
         },
 		refreshFormFundersList(searchPhrase) {
 			let self = this;
+			const getFormField = (fieldName) => this.form.fields.find(field => field.name === fieldName);
+			const funderNameField = getFormField('funderNameIdentification');
+
+			funderNameField.options = [];
+			funderNameField.value = null;
+
 			$.ajax({
 				url: self.fundersApiUrl + '/suggestions',
 				type: 'GET',

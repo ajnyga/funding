@@ -25,7 +25,12 @@ class FundersHandler extends APIHandler
                     'pattern' => $this->getEndpointPattern() . '/suggestions',
                     'handler' => [$this, 'getFundersSuggestions'],
                     'roles' => $roles
-                ]
+                ],
+                [
+                    'pattern' => $this->getEndpointPattern() . '/subOrganizations',
+                    'handler' => [$this, 'getFundersSubOrganizations'],
+                    'roles' => $roles
+                ] 
             ],
             'POST' => [
                 [
@@ -117,6 +122,30 @@ class FundersHandler extends APIHandler
         return $response->withJson(['items' => $fundersSuggestions], 200);
     }
 
+    public function getFundersSubOrganizations($slimRequest, $response, $args)
+    {
+        $queryParams = $slimRequest->getQueryParams();
+        $funderName = $queryParams['funder'];
+
+        $funderIdentification = substr($funderName, strrpos($funderName, '/') + 1, -1); 
+        $url = self::CROSSREF_FUNDERS_API_URL . '/' . $funderIdentification;
+
+        try {
+            $responseData = $this->sendHttpRequest($url, 'GET');
+        } catch (\Exception $e) {
+            return $response->withStatus(500)->withJsonError('plugins.generic.funding.api.500.fundersSearchError');
+        }
+
+        $subsidiaryOptions = [];
+        if ($responseData['status'] == 'ok') {
+            foreach ($responseData['message']['descendants'] as $descendant) {
+                $subsidiaryOptions[] = $this->getSubsidiaryOption($descendant, $responseData['message']['hierarchy-names']);
+            }
+        }
+
+        return $response->withJson(['items' => $subsidiaryOptions], 200);
+    }
+
     public function deleteFunder($slimRequest, $response, $args)
     {
         $funderId = $args['funderId'];
@@ -152,5 +181,21 @@ class FundersHandler extends APIHandler
         curl_close($ch);
 
         return $result;
+    }
+
+    private function getSubsidiaryOption($subsidiaryId, $hierarchyNames) {
+        $optionLabel = '';
+        
+        foreach ($hierarchyNames as $id => $name) {
+            if ($id == $subsidiaryId) {
+                $optionLabel = $name;
+                break;
+            }
+        }
+
+        return [
+            'label' => $optionLabel,
+            'value' => $optionLabel . ' [https://doi.org/10.13039/' . $subsidiaryId . ']'
+        ];
     }
 }

@@ -170,14 +170,8 @@ class FundingPlugin extends GenericPlugin {
 			return $step;
 		}, $steps);
 
-		$templateMgr->addJavaScript(
-            'funders-list-panel',
-            $this->getJavaScriptURL() . DIRECTORY_SEPARATOR  . 'ui/components/FundersListPanel.js',
-            [
-                'priority' => TemplateManager::STYLE_SEQUENCE_LAST,
-                'contexts' => ['backend']
-            ]
-        );
+		$this->addJavaScriptFile($templateMgr, 'funder-form', 'ui/components/FunderForm.js');
+		$this->addJavaScriptFile($templateMgr, 'funders-list-panel', 'ui/components/FundersListPanel.js');
 
 		$templateMgr->setState([
 			'steps' => $steps,
@@ -468,6 +462,17 @@ class FundingPlugin extends GenericPlugin {
 	 */
 	function getJavaScriptURL() {
 		return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
+	}
+
+	private function addJavaScriptFile($templateMgr, $fileName, $filePath, $context = 'backend') {
+		$templateMgr->addJavaScript(
+			$fileName,
+			$this->getJavaScriptURL() . DIRECTORY_SEPARATOR . $filePath,
+			[
+				'priority' => TemplateManager::STYLE_SEQUENCE_LAST,
+				'contexts' => [$context]
+			]
+		);
 	}
 
 	/**

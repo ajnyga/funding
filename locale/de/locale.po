@@ -31,8 +31,15 @@ msgstr ""
 "Sind Sie sicher, dass Sie <strong>{$name}</strong> als Förderer entfernen möchten?"
 " Diese Aktion kann nicht rückgängig gemacht werden."
 
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Förderer suchen"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Name des Förderers"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Suchen Sie den Namen des Förderers im Suchfeld oben."
+" Wählen Sie anschließend die gewünschte Förderorganisation aus der unten angezeigten Vorschlagsliste aus."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Unterorganisation"
@@ -63,3 +70,7 @@ msgstr "Förderer"
 
 msgid "plugins.generic.funding.submissionWizard.description"
 msgstr "Bitte machen Sie Angaben zu allen Institutionen, die die Forschung hinter dieser Arbeit finanziert haben. Es werden nur Förderer aus dem Crossref-Register unterstützt. Wenn Sie eine Finanzierung von einer Institution erhalten haben und diese hier nicht finden können, geben Sie diese Informationen bitte im Feld \"Kommentare für den Herausgeber\" an."
+
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "Beim Suchen nach Förderern in Crossref ist ein Fehler aufgetreten."

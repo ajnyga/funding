@@ -38,7 +38,8 @@ msgid "plugins.generic.funding.funderName"
 msgstr "Funder name"
 
 msgid "plugins.generic.funding.funderName.description"
-msgstr "Search for the funder name in the search field above. After that, select the desired funder organization from the suggestions list shown below."
+msgstr "Search for the funder name in the search field above."
+" After that, select the desired funder organization from the suggestions list shown below."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Sub-organization"
@@ -69,3 +70,7 @@ msgstr "Funders"
 
 msgid "plugins.generic.funding.submissionWizard.description"
 msgstr "Please provide information about any institutions which funded the research behind this work. Only funders from the Crossref registry are supported. If you received funding from an institution and you can not find them to add here, please provide that information in the Comments for the Editor field."
+
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "An error occurred while searching for funders in Crossref."

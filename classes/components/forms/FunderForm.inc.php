@@ -15,6 +15,7 @@ class FunderForm extends FormComponent
         $this->addField(new FieldRadioInput('funderNameIdentification', [
             'label' => __('plugins.generic.funding.funderName'),
             'description' => __('plugins.generic.funding.funderName.description'),
+            'isRequired' => true
         ]));
     }
 }

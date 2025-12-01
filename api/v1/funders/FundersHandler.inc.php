@@ -8,6 +8,8 @@ use PKP\db\DAORegistry;
 
 class FundersHandler extends APIHandler
 {
+    private const CROSSREF_FUNDERS_API_URL = 'https://api.crossref.org/funders';
+    
     public function __construct()
     {
         $this->_handlerPath = 'funders';
@@ -82,7 +84,35 @@ class FundersHandler extends APIHandler
 
     public function getFundersSuggestions($slimRequest, $response, $args)
     {
-        $fundersSuggestions = [['label' => 'Example label', 'value' => 'Example value']];
+        $queryParams = $slimRequest->getQueryParams();
+        $searchPhrase = $queryParams['searchPhrase'] ?? '';
+
+        if (empty($searchPhrase)) {
+            return $response->withJson(['items' => []], 200);
+        }
+
+        $queryData = [
+            'query' => $searchPhrase . '*',
+            'rows' => 10
+        ];
+        $url = self::CROSSREF_FUNDERS_API_URL . '?' . http_build_query($queryData);
+
+        try {
+            $responseData = $this->sendHttpRequest($url, 'GET');
+        } catch (\Exception $e) {
+            return $response->withStatus(500)->withJsonError('plugins.generic.funding.api.500.fundersSearchError');
+        }
+
+        $fundersSuggestions = [];
+        if ($responseData['message']['total-results'] > 0) {
+            foreach ($responseData['message']['items'] as $item) {
+                $altNames = implode(', ', $item['alt-names']);
+                $fundersSuggestions[] = [
+                    'label' => $item['name'] . ' [' . $altNames . ']',
+                    'value' => $item['name'] . ' [' . $item['uri'] . ']'
+                ];
+            }
+        }
 
         return $response->withJson(['items' => $fundersSuggestions], 200);
     }
@@ -100,5 +130,27 @@ class FundersHandler extends APIHandler
         $funderDao->deleteObject($funder);
 
         return $response->withStatus(200);
+    }
+
+    private function sendHttpRequest($url, $method = 'GET') {
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $response = curl_exec($ch);
+        $result = json_decode($response, true);
+
+        if (curl_errno($ch)) {
+            throw new \Exception('cURL error: ' . curl_error($ch));
+        }
+
+        curl_close($ch);
+
+        return $result;
     }
 }

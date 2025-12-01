@@ -218,11 +218,14 @@ pkp.Vue.component('funders-list-panel', {
 				},
 			});
         },
-		refreshFormFundersList(){
+		refreshFormFundersList(searchPhrase) {
 			let self = this;
 			$.ajax({
 				url: self.fundersApiUrl + '/suggestions',
 				type: 'GET',
+				data: {
+					searchPhrase: searchPhrase,
+				},
 				success: function (r) {
                     let funderOptions = self.form.fields.find(field => field.name === 'funderNameIdentification');
 					funderOptions.options = r.items;

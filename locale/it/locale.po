@@ -31,8 +31,15 @@ msgstr ""
 "Sei sicuro di voler rimuovere <strong>{$name}</strong> come finanziatore?"
 " Questa azione non può essere annullata."
 
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Cerca finanziatore"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Nome del finanziatore"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Cerca il nome del finanziatore nel campo di ricerca sopra."
+" Successivamente, seleziona l'organizzazione finanziatrice desiderata dall'elenco dei suggerimenti mostrato di seguito."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Sotto-organizzazione"
@@ -63,3 +70,6 @@ msgstr "Finanziatori"
 
 msgid "plugins.generic.funding.submissionWizard.description"
 msgstr "Si prega di fornire informazioni su eventuali istituzioni che hanno finanziato la ricerca alla base di questo lavoro. Sono supportati solo i finanziatori del registro Crossref. Se si è ricevuto un finanziamento da un'istituzione e non si riesce a trovarla per aggiungerla qui, si prega di fornire tali informazioni nel campo Commenti per l'editore."
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "Si è verificato un errore durante la ricerca dei finanziatori in Crossref."

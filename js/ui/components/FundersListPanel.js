@@ -50,6 +50,7 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 				:closeLabel="__('common.close')"
 				:name="formModal"
 				:title="formTitle"
+				@closed="resetForm"
 			>
 				<search-funders
 					:searchLabel="i18nSearchFunder"
@@ -57,6 +58,7 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 				/>
 				<funder-form
 					v-bind="form"
+					@success="formSuccess"
 				/>
 			</modal-funders>
         </slot>
@@ -189,6 +191,10 @@ pkp.Vue.component('funders-list-panel', {
 				],
 			});
 		},
+		formSuccess() {
+			this.refreshItems();
+			this.$modal.hide(this.formModal);
+		},
         refreshItems() {
             let self = this;
             this.isLoading = true;
@@ -218,10 +224,12 @@ pkp.Vue.component('funders-list-panel', {
 				},
 			});
         },
+		getFormField(fieldName) {
+			return this.form.fields.find(field => field.name === fieldName);
+		},
 		refreshFormFundersList(searchPhrase) {
 			let self = this;
-			const getFormField = (fieldName) => this.form.fields.find(field => field.name === fieldName);
-			const funderNameField = getFormField('funderNameIdentification');
+			const funderNameField = this.getFormField('funderNameIdentification');
 
 			funderNameField.options = [];
 			funderNameField.value = null;
@@ -237,6 +245,21 @@ pkp.Vue.component('funders-list-panel', {
 					funderOptions.options = r.items;
 				},
 			});
+		},
+		resetForm() {
+			const funderNameField = this.getFormField('funderNameIdentification');
+			const funderSubOrganizationField = this.getFormField('funderSubOrganization');
+			const funderGrantsField = this.getFormField('funderGrants');
+
+			funderNameField.options = [];
+			funderNameField.value = null;
+
+			funderSubOrganizationField.options = [];
+			funderSubOrganizationField.value = null;
+			funderSubOrganizationField.showWhen = ['funderNameIdentification'];
+			funderSubOrganizationField.isRequired = false;
+
+			funderGrantsField.value = [];
 		}
     },
     render: function (h) {

@@ -32,5 +32,7 @@ class FunderForm extends FormComponent
             'isRequired' => true,
             'value' => []
         ]));
+
+        $this->addHiddenField('submissionId', $submission->getId());
     }
 }

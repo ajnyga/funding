@@ -10,8 +10,7 @@ class FundersHandler extends APIHandler
 {
     private const CROSSREF_FUNDERS_API_URL = 'https://api.crossref.org/funders';
     
-    public function __construct()
-    {
+    public function __construct() {
         $this->_handlerPath = 'funders';
         $roles = [Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_AUTHOR];
         $this->_endpoints = [
@@ -62,8 +61,7 @@ class FundersHandler extends APIHandler
         parent::__construct();
     }
 
-    public function authorize($request, &$args, $roleAssignments)
-    {
+    public function authorize($request, &$args, $roleAssignments) {
         $rolePolicy = new PolicySet(PolicySet::COMBINING_PERMIT_OVERRIDES);
 
         foreach ($roleAssignments as $role => $operations) {
@@ -74,8 +72,7 @@ class FundersHandler extends APIHandler
         return parent::authorize($request, $args, $roleAssignments);
     }
 
-    public function getBySubmission($slimRequest, $response, $args)
-    {
+    public function getBySubmission($slimRequest, $response, $args) {
         $submissionId = $args['submissionId'];
         $funderDao = DAORegistry::getDAO('FunderDAO');
 
@@ -92,8 +89,7 @@ class FundersHandler extends APIHandler
         return $response->withJson(['items' => $funderItems], 200);
     }
 
-    public function getFundersSuggestions($slimRequest, $response, $args)
-    {
+    public function getFundersSuggestions($slimRequest, $response, $args) {
         $queryParams = $slimRequest->getQueryParams();
         $searchPhrase = $queryParams['searchPhrase'] ?? '';
 
@@ -127,12 +123,11 @@ class FundersHandler extends APIHandler
         return $response->withJson(['items' => $fundersSuggestions], 200);
     }
 
-    public function getFundersSubOrganizations($slimRequest, $response, $args)
-    {
+    public function getFundersSubOrganizations($slimRequest, $response, $args) {
         $queryParams = $slimRequest->getQueryParams();
         $funderName = $queryParams['funder'];
 
-        $funderIdentification = substr($funderName, strrpos($funderName, '/') + 1, -1); 
+        $funderIdentification = substr($funderName, strrpos($funderName, '/') + 1, -1);
         $url = self::CROSSREF_FUNDERS_API_URL . '/' . $funderIdentification;
 
         try {
@@ -154,13 +149,44 @@ class FundersHandler extends APIHandler
     /**
 	 * Allows the author to insert any grant number using the FieldControlledVocab field.
 	 */
-    public function getGrantNumberVocab($slimRequest, $response, $args)
-    {
+    public function getGrantNumberVocab($slimRequest, $response, $args) {
         return $response->withJson('', 200);
     }
 
-    public function deleteFunder($slimRequest, $response, $args)
-    {
+    public function addFunder($slimRequest, $response, $args) {
+        $bodyParams = $slimRequest->getParsedBody();
+        
+        list($funderName, $funderIdentification) = $this->getFunderNameAndIdentification(
+            $bodyParams['funderNameIdentification'],
+            $bodyParams['funderSubOrganization']
+        );
+        $contextId = Application::get()->getRequest()->getContext()->getId();
+        $funderDao = DAORegistry::getDAO('FunderDAO');
+        $funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+        
+        $funder = $funderDao->newDataObject();
+        $funder->setAllData([
+            'contextId' => $contextId,
+            'submissionId' => $bodyParams['submissionId'],
+            'funderName' => $funderName,
+            'funderIdentification' => $funderIdentification
+        ]);
+        $funderId = $funderDao->insertObject($funder);
+
+        $grantNumbers = $bodyParams['funderGrants'];
+        foreach ($grantNumbers as $grantNumber) {
+            $funderAward = $funderAwardDao->newDataObject();
+			$funderAward->setAllData([
+                'funderId' => $funderId,
+                'funderAwardNumber' => $grantNumber
+            ]);
+			$funderAwardDao->insertObject($funderAward);
+        }
+
+        return $response->withStatus(200);
+    }
+
+    public function deleteFunder($slimRequest, $response, $args) {
         $funderId = $args['funderId'];
         $funderDao = DAORegistry::getDAO('FunderDAO');
         
@@ -210,5 +236,29 @@ class FundersHandler extends APIHandler
             'label' => $optionLabel,
             'value' => $optionLabel . ' [https://doi.org/10.13039/' . $subsidiaryId . ']'
         ];
+    }
+
+    private function getFunderNameAndIdentification($funderNameIdentification, $subOrganizationNameIdentification) {
+        $funderName = '';
+		$funderIdentification = '';
+		
+        if ($funderNameIdentification != ''){
+			$funderName = trim(preg_replace('/\s*\[.*?\]\s*/ ', '', $funderNameIdentification));
+			if (preg_match('/\[(.*?)\]/', $funderNameIdentification, $output)) {
+				$funderIdentification = $output[1];
+				if ($subOrganizationNameIdentification != ''){
+					$funderName = trim(preg_replace('/\s*\[.*?\]\s*/ ', '', $subOrganizationNameIdentification	));
+					$doiPrefix = '';
+					if (preg_match('/(http:\/\/dx\.doi\.org\/10\.\d{5}\/)(.+)/', $funderIdentification, $output)) {
+						$doiPrefix = $output[1];
+					}
+					if (preg_match('/\[(.*?)\]/', $subOrganizationNameIdentification, $output)) {
+						$funderIdentification = $doiPrefix . $output[1];
+					}
+				}
+			}
+		}
+
+        return [$funderName, $funderIdentification];
     }
 }

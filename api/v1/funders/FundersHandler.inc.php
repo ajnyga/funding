@@ -30,7 +30,12 @@ class FundersHandler extends APIHandler
                     'pattern' => $this->getEndpointPattern() . '/subOrganizations',
                     'handler' => [$this, 'getFundersSubOrganizations'],
                     'roles' => $roles
-                ] 
+                ],
+                [
+                    'pattern' => $this->getEndpointPattern() . '/vocabs',
+                    'handler' => [$this, 'getGrantNumberVocab'],
+                    'roles' => $roles
+                ]
             ],
             'POST' => [
                 [
@@ -144,6 +149,14 @@ class FundersHandler extends APIHandler
         }
 
         return $response->withJson(['items' => $subsidiaryOptions], 200);
+    }
+
+    /**
+	 * Allows the author to insert any grant number using the FieldControlledVocab field.
+	 */
+    public function getGrantNumberVocab($slimRequest, $response, $args)
+    {
+        return $response->withJson('', 200);
     }
 
     public function deleteFunder($slimRequest, $response, $args)

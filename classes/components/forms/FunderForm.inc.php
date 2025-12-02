@@ -3,6 +3,8 @@
 use PKP\components\forms\FormComponent;
 use PKP\components\forms\FieldRadioInput;
 use PKP\components\forms\FieldSelect;
+use PKP\components\forms\FieldControlledVocab;
+use APP\core\Application;
 
 class FunderForm extends FormComponent
 {
@@ -22,6 +24,13 @@ class FunderForm extends FormComponent
             'label' => __('plugins.generic.funding.funderSubOrganization'),
             'description' => __('plugins.generic.funding.funderSubOrganization.select'),
             'showWhen' => ['funderNameIdentification']
+        ]))
+        ->addField(new FieldControlledVocab('funderGrants', [
+            'label' => __('plugins.generic.funding.funderGrants'),
+            'apiUrl' => $this->action . '/vocabs',
+            'isMultilingual' => false,
+            'isRequired' => true,
+            'value' => []
         ]));
     }
 }

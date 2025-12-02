@@ -248,6 +248,7 @@ pkp.Vue.component('funders-list-panel', {
                         return;
                     }
                     self.items = response.items;
+					pkp.registry._instances.app.components.funders.items = self.items;
 				},
 				complete() {
 					if (self.latestGetRequest !== this._uuid) {

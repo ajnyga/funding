@@ -38,13 +38,13 @@
             </thead>
             <tbody>
                 <tr
-                    v-for="funder in funders"
+                    v-for="funder in components.funders.items"
                     :key="funder.id"
                     class="submissionWizard__reviewPanel__item__value"
                 >
                     <td style="vertical-align:top">{{ funder.name }}</td>
                     <td style="vertical-align:top">{{ funder.identification }}</td>
-                    <td style="vertical-align:top">{{ funder.awards }}</td>
+                    <td style="vertical-align:top">{{ funder.awards.join(', ') }}</td>
                 </tr>
             </tbody>
         </table>

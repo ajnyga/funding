@@ -64,7 +64,7 @@ class FundingPlugin extends GenericPlugin {
 
 			HookRegistry::register('TemplateManager::display', array($this, 'addToSubmissionWizardSteps'));
 			HookRegistry::register('Template::SubmissionWizard::Section', array($this, 'addToSubmissionWizardTemplate'));
-			// HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
+			HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
 
 			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
 

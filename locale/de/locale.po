@@ -23,6 +23,9 @@ msgstr "Daten zur Förderung"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Förderer hinzufügen"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Förderer bearbeiten"
+
 msgid "plugins.generic.funding.deleteFunder"
 msgstr "Förderer löschen"
 

@@ -23,6 +23,9 @@ msgstr "Rahoittajat"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Lisää rahoittaja"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Muokkaa rahoittajaa"
+
 msgid "plugins.generic.funding.deleteFunder"
 msgstr "Poista rahoittaja"
 

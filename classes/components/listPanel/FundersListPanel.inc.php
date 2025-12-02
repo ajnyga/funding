@@ -38,6 +38,7 @@ class FundersListPanel extends ListPanel
                 'emptyLabel' => __('plugins.generic.funding.noneCreated'),
                 'fundersApiUrl' => $fundersApiUrl,
 				'i18nAddFunder' => __('plugins.generic.funding.addFunder'),
+				'i18nEditFunder' => __('plugins.generic.funding.editFunder'),
                 'i18nDeleteFunder' => __('plugins.generic.funding.deleteFunder'),
                 'i18nConfirmDeleteFunder' => __('plugins.generic.funding.deleteFunder.confirmationMessage'),
                 'i18nSearchFunder' => __('plugins.generic.funding.searchFunders'),
@@ -59,14 +60,17 @@ class FundersListPanel extends ListPanel
     private function getFundersItems(int $submissionId): array
     {
 		$funderDao = DAORegistry::getDAO('FunderDAO');
+        $funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 		$funderResult = $funderDao->getBySubmissionId($submissionId);
 
 		$funders = [];
 		while ($funder = $funderResult->next()) {
-			$funders[] = [
+			$funderAwardNumbers = $funderAwardDao->getFunderAwardNumbersByFunderId($funder->getId());
+            $funders[] = [
 				'id' => $funder->getId(),
 				'name' => $funder->getFunderName(),
 				'identification' => $funder->getFunderIdentification(),
+                'awards' => array_values($funderAwardNumbers)
 			];
 		}
 

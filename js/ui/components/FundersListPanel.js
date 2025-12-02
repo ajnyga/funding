@@ -37,7 +37,10 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 					v-if="canEditPublication"
 					v-slot:item-actions="{item}"
 				>
-                    <pkp-button
+                    <pkp-button @click="openEditModal(item)" :disabled="isLoading">
+						{{ __('common.edit') }}
+					</pkp-button>
+					<pkp-button
                         :disabled="isLoading"
                         :isWarnable="true"
                         @click="openDeleteModal(item.id)"
@@ -123,6 +126,10 @@ pkp.Vue.component('funders-list-panel', {
 			type: String,
 			required: true,
 		},
+		i18nEditFunder: {
+			type: String,
+			required: true,
+		},
         i18nDeleteFunder: {
 			type: String,
 			required: true,
@@ -151,6 +158,32 @@ pkp.Vue.component('funders-list-panel', {
     methods: {
         openAddModal() {
 			this.formTitle = this.i18nAddFunder;
+			this.form.action = this.fundersApiUrl;
+			this.form.method = 'POST';
+			this.$modal.show(this.formModal);
+		},
+		openEditModal(funder) {
+			this.formTitle = this.i18nEditFunder;
+			this.form.action = this.fundersApiUrl + '/' + funder.id;
+			this.form.method = 'PUT';
+
+			const funderNameField = this.getFormField('funderNameIdentification');
+			funderNameField.value = funder.name + ' [' + funder.identification + ']';
+			funderNameField.options = [
+				{
+					label: funder.name,
+					value: funder.name + ' [' + funder.identification + ']',
+				}
+			];
+
+			const funderGrantsField = this.getFormField('funderGrants');
+			funderGrantsSelected = [];
+			for (const award of funder.awards) {
+				funderGrantsSelected.push({label: award, value: award});
+			}
+			funderGrantsField.selected = funderGrantsSelected;
+			funderGrantsField.value = funderGrantsSelected;
+
 			this.$modal.show(this.formModal);
 		},
         openDeleteModal(id) {

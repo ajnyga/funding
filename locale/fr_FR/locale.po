@@ -23,6 +23,9 @@ msgstr "Données de Fonds"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Ajouter un financeur"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Modifier un financeur"
+
 msgid "plugins.generic.funding.deleteFunder"
 msgstr "Supprimer un financeur"
 

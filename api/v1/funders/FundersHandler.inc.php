@@ -75,14 +75,17 @@ class FundersHandler extends APIHandler
     public function getBySubmission($slimRequest, $response, $args) {
         $submissionId = $args['submissionId'];
         $funderDao = DAORegistry::getDAO('FunderDAO');
+        $funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 
         $funders = $funderDao->getBySubmissionId($submissionId);
         $funderItems = [];
 		while ($funder = $funders->next()) {
+            $funderAwardNumbers = $funderAwardDao->getFunderAwardNumbersByFunderId($funder->getId());
 			$funderItems[] = [
 				'id' => $funder->getId(),
 				'name' => $funder->getFunderName(),
 				'identification' => $funder->getFunderIdentification(),
+                'awards' => array_values($funderAwardNumbers)
             ];
 		}
 
@@ -186,6 +189,39 @@ class FundersHandler extends APIHandler
         return $response->withStatus(200);
     }
 
+    public function editFunder($slimRequest, $response, $args) {
+        $funderId = $args['funderId'];
+        $funderDao = DAORegistry::getDAO('FunderDAO');
+        $funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
+
+        $funder = $funderDao->getById($funderId);
+        if (!$funder) {
+            return $response->withStatus(404)->withJsonError('api.404.resourceNotFound');
+        }
+
+        $bodyParams = $slimRequest->getParsedBody();
+        list($funderName, $funderIdentification) = $this->getFunderNameAndIdentification(
+            $bodyParams['funderNameIdentification'],
+            $bodyParams['funderSubOrganization']
+        );
+        $funder->setFunderName($funderName);
+        $funder->setFunderIdentification($funderIdentification);
+        $funderDao->updateObject($funder);
+
+        $funderAwardDao->deleteByFunderId($funderId);
+        $grantNumbers = $bodyParams['funderGrants'];
+        foreach ($grantNumbers as $grantNumber) {
+            $funderAward = $funderAwardDao->newDataObject();
+			$funderAward->setAllData([
+                'funderId' => $funderId,
+                'funderAwardNumber' => $grantNumber
+            ]);
+			$funderAwardDao->insertObject($funderAward);
+        }
+
+        return $response->withStatus(200);
+    }
+    
     public function deleteFunder($slimRequest, $response, $args) {
         $funderId = $args['funderId'];
         $funderDao = DAORegistry::getDAO('FunderDAO');

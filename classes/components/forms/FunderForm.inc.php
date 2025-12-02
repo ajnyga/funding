@@ -29,7 +29,6 @@ class FunderForm extends FormComponent
             'label' => __('plugins.generic.funding.funderGrants'),
             'apiUrl' => $this->action . '/vocabs',
             'isMultilingual' => false,
-            'isRequired' => true,
             'value' => []
         ]));
 

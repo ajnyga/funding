@@ -194,14 +194,14 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert funder grid in the publication tabs
+	 * Insert funder list panel in the publication tabs
 	 */
 	function addToPublicationForms($hookName, $params) {
 		$smarty =& $params[1];
 		$output =& $params[2];
 
 		$output .= sprintf(
-			'<tab id="fundingGridInWorkflow" label="%s">%s</tab>',
+			'<tab id="funding" label="%s">%s</tab>',
 			__('plugins.generic.funding.fundingData'),
 			$smarty->fetch($this->getTemplateResource('fundersListPanel.tpl'))
 		);

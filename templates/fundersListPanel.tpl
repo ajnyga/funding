@@ -8,7 +8,7 @@
  *}
 
 <funders-list-panel
-    v-if="section.type === 'funding'"
+    {if $page == 'submission'}v-if="section.type === 'funding'"{/if}
     v-bind="components.funders"
     @set='set'
 ></funders-list-panel>

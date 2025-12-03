@@ -67,11 +67,9 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
 
 			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
+			HookRegistry::register('TemplateManager::display', array($this, 'loadResourcesToWorkflow'));
 
 			HookRegistry::register('Dispatcher::dispatch', array($this, 'setupFunderAPIHandlers'));
-			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
-
-			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
 
 			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));	//OJS
 			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay')); //OMP
@@ -80,7 +78,6 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('articlecrossrefxmlfilter::execute', array($this, 'addCrossrefElement'));
 			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
 			HookRegistry::register('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
-
 
 			HookRegistry::register("Submission::getProperties::values", array($this, 'modifyObjectPropertyValues'));
 			HookRegistry::register('Publication::getProperties', array($this, 'modifyObjectPropertyValues'));
@@ -110,21 +107,6 @@ class FundingPlugin extends GenericPlugin {
         $handler->getApp()->run();
         exit;
     }
-
-	/**
-	 * Permit requests to the Funder grid handler
-	 * @param $hookName string The name of the hook being invoked
-	 * @param $args array The parameters to the invoked hook
-	 */
-	function setupGridHandler($hookName, $params) {
-		$component =& $params[0];
-		if ($component == 'plugins.generic.funding.controllers.grid.FunderGridHandler') {
-			import($component);
-			FunderGridHandler::setPlugin($this);
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * Add funding section to the details step of the submission wizard
@@ -188,7 +170,8 @@ class FundingPlugin extends GenericPlugin {
 		$smarty = $params[1];
 		$output =& $params[2];
 
-		$output .= $smarty->fetch($this->getTemplateResource('fundersSubmissionWizard.tpl'));
+		$smarty->assign('page', 'submission');
+		$output .= $smarty->fetch($this->getTemplateResource('fundersListPanel.tpl'));
 
 		return false;
 	}
@@ -220,32 +203,38 @@ class FundingPlugin extends GenericPlugin {
 		$output .= sprintf(
 			'<tab id="fundingGridInWorkflow" label="%s">%s</tab>',
 			__('plugins.generic.funding.fundingData'),
-			$smarty->fetch($this->getTemplateResource('fundersGrid.tpl'))
+			$smarty->fetch($this->getTemplateResource('fundersListPanel.tpl'))
 		);
 
 		return false;
 	}
 
-	/**
-	 * Add custom gridhandlerJS for backend
-	 */
-	function addGridhandlerJs($hookName, $params) {
+	function loadResourcesToWorkflow($hookName, $params) {
 		$templateMgr = $params[0];
-		$request = $this->getRequest();
-		$gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'FunderGridHandler.js';
-		$templateMgr->addJavaScript(
-			'FunderGridHandlerJs',
-			$gridHandlerJs,
-			array('contexts' => 'backend')
-		);
-		$templateMgr->addStylesheet(
-			'FunderGridHandlerStyles',
-			'#fundingGridInWorkflow { margin-top: 32px; }',
-			[
-				'inline' => true,
-				'contexts' => 'backend',
-			]
-		);
+        $template = $params[1];
+		$submission = $templateMgr->getTemplateVars('submission');
+
+        if (
+            $template != 'workflow/workflow.tpl'
+            && $template != 'authorDashboard/authorDashboard.tpl'
+        ) {
+            return false;
+        }
+
+		import('plugins.generic.funding.classes.components.listPanel.FundersListPanel');
+		$fundersListPanel = new FundersListPanel(
+            'funders',
+            __('plugins.generic.funding.fundingData'),
+            $submission
+        );
+		$workflowComponents = $templateMgr->getState('components');
+        $workflowComponents[$fundersListPanel->id] = $fundersListPanel->getConfig();
+
+		$this->addJavaScriptFile($templateMgr, 'funder-form', 'ui/components/FunderForm.js');
+		$this->addJavaScriptFile($templateMgr, 'funders-list-panel', 'ui/components/FundersListPanel.js');
+
+		$templateMgr->setState(['components' => $workflowComponents]);
+
 		return false;
 	}
 

@@ -291,7 +291,6 @@ pkp.Vue.component('funders-list-panel', {
 			funderSubOrganizationField.options = [];
 			funderSubOrganizationField.value = null;
 			funderSubOrganizationField.showWhen = ['funderNameIdentification'];
-			funderSubOrganizationField.isRequired = false;
 
 			funderGrantsField.value = [];
 		}

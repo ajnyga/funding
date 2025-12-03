@@ -18,7 +18,6 @@ pkp.Vue.component('funder-form', {
 			funderSubOrganizationField.options = [];
 			funderSubOrganizationField.value = null;
 			funderSubOrganizationField.showWhen = ['funderNameIdentification'];
-			funderSubOrganizationField.isRequired = false;
 
 			$.ajax({
 				url: this.action + '/subOrganizations',
@@ -32,7 +31,6 @@ pkp.Vue.component('funder-form', {
 					if (subOrganizations.length != 0) {
 						funderSubOrganizationField.options = subOrganizations;
 						funderSubOrganizationField.showWhen = ['funderNameIdentification', value];
-						funderSubOrganizationField.isRequired = true;
 					}
 				},
 			});

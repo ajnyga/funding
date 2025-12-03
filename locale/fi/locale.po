@@ -23,8 +23,26 @@ msgstr "Rahoittajat"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Lisää rahoittaja"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Muokkaa rahoittajaa"
+
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Poista rahoittaja"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Oletko varma, että haluat poistaa <strong>{$name}</strong> rahoittajana?"
+" Tätä toimintoa ei voi peruuttaa."
+
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Etsi rahoittaja"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Rahoittajan nimi"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Etsi rahoittajan nimi yllä olevasta hakukentästä."
+" Valitse sen jälkeen haluamasi rahoittaja ehdotuslistasta, joka näkyy alla."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Aliorganisaatio"
@@ -46,3 +64,6 @@ msgstr "Ei rahoittajia"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired"
 msgstr "Rahoittajan nimi vaaditaan"
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "Virhe esiintyi haettaessa rahoittajia Crossrefistä."

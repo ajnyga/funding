@@ -67,10 +67,9 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('Template::SubmissionWizard::Section::Review', array($this, 'addToSubmissionWizardReviewTemplate'));
 
 			HookRegistry::register('Template::Workflow::Publication', array($this, 'addToPublicationForms'));
+			HookRegistry::register('TemplateManager::display', array($this, 'loadResourcesToWorkflow'));
 
-			HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
-
-			HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
+			HookRegistry::register('Dispatcher::dispatch', array($this, 'setupFunderAPIHandlers'));
 
 			HookRegistry::register('Templates::Article::Details', array($this, 'addSubmissionDisplay'));	//OJS
 			HookRegistry::register('Templates::Catalog::Book::Details', array($this, 'addSubmissionDisplay')); //OMP
@@ -80,28 +79,34 @@ class FundingPlugin extends GenericPlugin {
 			HookRegistry::register('datacitexmlfilter::execute', array($this, 'addDataCiteElement'));
 			HookRegistry::register('OAIMetadataFormat_OpenAIRE::findFunders', array($this, 'addOpenAIREFunderElement'));
 
-
 			HookRegistry::register("Submission::getProperties::values", array($this, 'modifyObjectPropertyValues'));
 			HookRegistry::register('Publication::getProperties', array($this, 'modifyObjectPropertyValues'));
 		}
 		return $success;
 	}
 
+	public function setupFunderAPIHandlers($hookname, $params)
+    {
+        $request = $params[0];
+        $router = $request->getRouter();
 
-	/**
-	 * Permit requests to the Funder grid handler
-	 * @param $hookName string The name of the hook being invoked
-	 * @param $args array The parameters to the invoked hook
-	 */
-	function setupGridHandler($hookName, $params) {
-		$component =& $params[0];
-		if ($component == 'plugins.generic.funding.controllers.grid.FunderGridHandler') {
-			import($component);
-			FunderGridHandler::setPlugin($this);
-			return true;
-		}
-		return false;
-	}
+        if (!($router instanceof \PKP\core\APIRouter)) {
+            return;
+        }
+
+        if (str_contains($request->getRequestPath(), 'api/v1/funders')) {
+            import('plugins.generic.funding.api.v1.funders.FundersHandler');
+			$handler = new FundersHandler();
+        }
+
+        if (!isset($handler)) {
+            return;
+        }
+
+        $router->setHandler($handler);
+        $handler->getApp()->run();
+        exit;
+    }
 
 	/**
 	 * Add funding section to the details step of the submission wizard
@@ -109,11 +114,7 @@ class FundingPlugin extends GenericPlugin {
 	function addToSubmissionWizardSteps($hookName, $params) {
 		$request = Application::get()->getRequest();
 
-		if ($request->getRequestedPage() !== 'submission') {
-			return;
-		}
-
-		if ($request->getRequestedOp() === 'saved') {
+		if ($request->getRequestedPage() !== 'submission' || $request->getRequestedOp() === 'saved') {
 			return;
 		}
 
@@ -126,17 +127,17 @@ class FundingPlugin extends GenericPlugin {
 			return;
 		}
 
-		/** @var FunderDAO $funderDao */
-		$funderDao = DAORegistry::getDAO('FunderDAO');
-		$funderResult = $funderDao->getBySubmissionId($submission->getId());
-
-		$funders = [];
-		while ($funder = $funderResult->next()) {
-			$funders[] = $this->getFunderData($funder);
-		}
-
 		/** @var TemplateManager $templateMgr */
 		$templateMgr = $params[0];
+
+		import('plugins.generic.funding.classes.components.listPanel.FundersListPanel');
+		$fundersListPanel = new FundersListPanel(
+            'funders',
+            __('plugins.generic.funding.fundingData'),
+            $submission
+        );
+		$wizardComponents = $templateMgr->getState('components');
+        $wizardComponents[$fundersListPanel->id] = $fundersListPanel->getConfig();
 
 		$steps = $templateMgr->getState('steps');
 		$steps = array_map(function($step) {
@@ -145,40 +146,32 @@ class FundingPlugin extends GenericPlugin {
 					'id' => 'funding',
 					'name' => __('plugins.generic.funding.submissionWizard.name'),
 					'description' => __('plugins.generic.funding.submissionWizard.description'),
-					'type' => SubmissionHandler::SECTION_TYPE_TEMPLATE,
+					'type' => 'funding'
 				];
 			}
 			return $step;
 		}, $steps);
 
-		$templateMgr->setState([
-			'funders' => $funders,
-			'steps' => $steps,
-		]);
+		$this->addJavaScriptFile($templateMgr, 'funder-form', 'ui/components/FunderForm.js');
+		$this->addJavaScriptFile($templateMgr, 'funders-list-panel', 'ui/components/FundersListPanel.js');
 
-		$templateMgr->addJavaScript(
-			'plugin-funder-submission-wizard',
-            $request->getBaseUrl() . '/' . $this->getPluginPath() . '/js/SubmissionWizard.js',
-            [
-				'contexts' => 'backend',
-				'priority' => TemplateManager::STYLE_SEQUENCE_LATE,
-			]
-		);
+		$templateMgr->setState([
+			'steps' => $steps,
+			'components' => $wizardComponents
+		]);
 
 		return false;
 	}
 
 	/**
-	 * Insert template to display funding grid in submission wizard
+	 * Insert template to display funding list panel in submission wizard
 	 */
 	function addToSubmissionWizardTemplate($hookName, $params) {
 		$smarty = $params[1];
 		$output =& $params[2];
 
-		$output .= sprintf(
-			'<template v-else-if="section.id === \'funding\'">%s</template>',
-			$smarty->fetch($this->getTemplateResource('fundersGrid.tpl'))
-		);
+		$smarty->assign('page', 'submission');
+		$output .= $smarty->fetch($this->getTemplateResource('fundersListPanel.tpl'));
 
 		return false;
 	}
@@ -201,41 +194,47 @@ class FundingPlugin extends GenericPlugin {
 	}
 
 	/**
-	 * Insert funder grid in the publication tabs
+	 * Insert funder list panel in the publication tabs
 	 */
 	function addToPublicationForms($hookName, $params) {
 		$smarty =& $params[1];
 		$output =& $params[2];
 
 		$output .= sprintf(
-			'<tab id="fundingGridInWorkflow" label="%s">%s</tab>',
+			'<tab id="funding" label="%s">%s</tab>',
 			__('plugins.generic.funding.fundingData'),
-			$smarty->fetch($this->getTemplateResource('fundersGrid.tpl'))
+			$smarty->fetch($this->getTemplateResource('fundersListPanel.tpl'))
 		);
 
 		return false;
 	}
 
-	/**
-	 * Add custom gridhandlerJS for backend
-	 */
-	function addGridhandlerJs($hookName, $params) {
+	function loadResourcesToWorkflow($hookName, $params) {
 		$templateMgr = $params[0];
-		$request = $this->getRequest();
-		$gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'FunderGridHandler.js';
-		$templateMgr->addJavaScript(
-			'FunderGridHandlerJs',
-			$gridHandlerJs,
-			array('contexts' => 'backend')
-		);
-		$templateMgr->addStylesheet(
-			'FunderGridHandlerStyles',
-			'#fundingGridInWorkflow { margin-top: 32px; }',
-			[
-				'inline' => true,
-				'contexts' => 'backend',
-			]
-		);
+        $template = $params[1];
+		$submission = $templateMgr->getTemplateVars('submission');
+
+        if (
+            $template != 'workflow/workflow.tpl'
+            && $template != 'authorDashboard/authorDashboard.tpl'
+        ) {
+            return false;
+        }
+
+		import('plugins.generic.funding.classes.components.listPanel.FundersListPanel');
+		$fundersListPanel = new FundersListPanel(
+            'funders',
+            __('plugins.generic.funding.fundingData'),
+            $submission
+        );
+		$workflowComponents = $templateMgr->getState('components');
+        $workflowComponents[$fundersListPanel->id] = $fundersListPanel->getConfig();
+
+		$this->addJavaScriptFile($templateMgr, 'funder-form', 'ui/components/FunderForm.js');
+		$this->addJavaScriptFile($templateMgr, 'funders-list-panel', 'ui/components/FundersListPanel.js');
+
+		$templateMgr->setState(['components' => $workflowComponents]);
+
 		return false;
 	}
 
@@ -454,20 +453,16 @@ class FundingPlugin extends GenericPlugin {
 		return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
 	}
 
-	public function getFunderData(Funder $funder): array
-	{
-		/** @var FunderAwardDAO $funderAwardDao */
-		$funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
-		$funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($funder->getId());
-
-		return [
-			'id' => $funder->getId(),
-			'name' => $funder->getFunderName(),
-			'identification' => $funder->getFunderIdentification(),
-			'awards' => implode(";", $funderAwards),
-		];
+	private function addJavaScriptFile($templateMgr, $fileName, $filePath, $context = 'backend') {
+		$templateMgr->addJavaScript(
+			$fileName,
+			$this->getJavaScriptURL() . DIRECTORY_SEPARATOR . $filePath,
+			[
+				'priority' => TemplateManager::STYLE_SEQUENCE_LAST,
+				'contexts' => [$context]
+			]
+		);
 	}
-
 
 	/**
 	 * Add Funding submission, and publication values

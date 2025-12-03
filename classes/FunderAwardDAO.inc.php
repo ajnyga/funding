@@ -13,6 +13,8 @@
  * Operations for retrieving and modifying FunderAward objects.
  */
 
+use PKP\db\DAOResultFactory;
+
 import('lib.pkp.classes.db.DAO');
 import('plugins.generic.funding.classes.FunderAward');
 

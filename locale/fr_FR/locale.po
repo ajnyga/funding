@@ -23,8 +23,26 @@ msgstr "Données de Fonds"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Ajouter un financeur"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Modifier un financeur"
+
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Supprimer un financeur"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Êtes-vous sûr de vouloir supprimer <strong>{$name}</strong> en tant que financeur?"
+" Cette action ne peut pas être annulée."
+
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Rechercher des financeurs"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Nom du bailleur de fonds"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Recherchez le nom du bailleur de fonds dans le champ de recherche ci-dessus."
+" Ensuite, sélectionnez l'organisation bailleur de fonds souhaitée dans la liste des suggestions affichée ci-dessous."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Sous-organisation"
@@ -55,3 +73,6 @@ msgstr "Financeurs"
 
 msgid "plugins.generic.funding.submissionWizard.description"
 msgstr "Veuillez fournir des informations sur les institutions qui ont financé la recherche à l'origine de ce travail. Seuls les financeurs figurant dans le registre Crossref sont pris en charge. Si vous avez reçu des fonds d'une institution et que vous ne pouvez pas les trouver pour les ajouter ici, veuillez fournir ces informations dans le champ Commentaires pour l'éditeur."
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "Une erreur est survenue lors de la recherche des financeurs dans Crossref."

@@ -23,8 +23,26 @@ msgstr "Dados de financiamento"
 msgid "plugins.generic.funding.addFunder"
 msgstr "Adicionar financiador"
 
+msgid "plugins.generic.funding.editFunder"
+msgstr "Editar financiador"
+
+msgid "plugins.generic.funding.deleteFunder"
+msgstr "Excluir financiador"
+
+msgid "plugins.generic.funding.deleteFunder.confirmationMessage"
+msgstr ""
+"Tem certeza de que deseja remover <strong>{$name}</strong> como financiador?"
+" Esta ação não pode ser desfeita."
+
+msgid "plugins.generic.funding.searchFunders"
+msgstr "Buscar financiadores"
+
 msgid "plugins.generic.funding.funderName"
 msgstr "Nome do financiador"
+
+msgid "plugins.generic.funding.funderName.description"
+msgstr "Procure o nome do financiador no campo de pesquisa acima."
+" Em seguida, selecione a organização financiadora desejada na lista de sugestões exibida abaixo."
 
 msgid "plugins.generic.funding.funderSubOrganization"
 msgstr "Sub-organização"
@@ -49,3 +67,6 @@ msgstr "É obrigatório inserir o nome do financiador"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
 msgstr "Apenas são permitidos financiadores registados na CrossRef"
+
+msgid "plugins.generic.funding.api.500.fundersSearchError"
+msgstr "Ocorreu um erro ao buscar financiadores na Crossref."

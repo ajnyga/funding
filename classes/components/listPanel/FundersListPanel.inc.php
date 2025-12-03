@@ -34,6 +34,7 @@ class FundersListPanel extends ListPanel
             [
                 'form' => $form->getConfig(),
                 'submissionId' => $this->submission->getId(),
+                'submissionStatus' => $this->submission->getStatus(),
                 'canEditPublication' => $canEditPublication,
                 'emptyLabel' => __('plugins.generic.funding.noneCreated'),
                 'fundersApiUrl' => $fundersApiUrl,

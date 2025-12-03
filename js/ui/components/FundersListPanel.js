@@ -10,7 +10,10 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 					<spinner v-if="isLoading" />
 					<template slot="actions">
 						<pkp-button
-                            v-if="canEditPublication"
+                            v-if="
+								submissionStatus !== getConstant('STATUS_PUBLISHED')
+								&& canEditPublication
+							"
 							@click="openAddModal"
 							:disabled="isLoading"
 						>
@@ -34,7 +37,10 @@ const fundersListPanelTemplate = pkp.Vue.compile(`
 					</div>
 				</template>
                 <template
-					v-if="canEditPublication"
+					v-if="
+						submissionStatus !== getConstant('STATUS_PUBLISHED')
+						&& canEditPublication
+					"
 					v-slot:item-actions="{item}"
 				>
                     <pkp-button @click="openEditModal(item)" :disabled="isLoading">
@@ -105,6 +111,10 @@ pkp.Vue.component('funders-list-panel', {
 			type: Number,
 			required: true,
 		},
+		submissionStatus: {
+			type: Number,
+			required: true,
+		},
 		items: {
 			type: Array,
 			default() {
@@ -156,6 +166,9 @@ pkp.Vue.component('funders-list-panel', {
 		},
 	},
     methods: {
+		getConstant(constant) {
+			return pkp.const[constant];
+		},
         openAddModal() {
 			this.formTitle = this.i18nAddFunder;
 			this.form.action = this.fundersApiUrl;

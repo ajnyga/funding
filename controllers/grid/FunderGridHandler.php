@@ -314,6 +314,3 @@ class FunderGridHandler extends GridHandler {
 
 }
 
-if (!PKP_STRICT_MODE) {
-    class_alias('\APP\plugins\generic\funding\controllers\grid\FunderGridHandler', '\FunderGridHandler');
-}

@@ -39,7 +39,7 @@ class FunderForm extends Form {
     var $plugin;
 
     /** A mapping of funder DOIs to RORs for funders that support grant ID validation */
-    const array AWARD_FUNDERS = [
+    const AWARD_FUNDERS = [
         'doi.org/10.13039/501100002341' => '05k73zm37', // Research Council of Finland
         'doi.org/10.13039/501100001665' => '00rbzpz17', // French National Research Agency
         'doi.org/10.13039/501100000923' => '05mmh0f86', // Australian Research Council

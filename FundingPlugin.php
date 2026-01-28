@@ -653,7 +653,3 @@ class FundingPlugin extends GenericPlugin {
         return parent::manage($args, $request);
     }
 }
-
-if (!PKP_STRICT_MODE) {
-    class_alias('\APP\plugins\generic\funding\FundingPlugin', '\FundingPlugin');
-}

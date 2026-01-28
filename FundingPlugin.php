@@ -32,6 +32,7 @@ use APP\plugins\generic\funding\classes\FunderDAO;
 use APP\plugins\generic\funding\classes\FunderAward;
 use APP\plugins\generic\funding\classes\FunderAwardDAO;
 use APP\plugins\generic\funding\controllers\grid\FunderGridHandler;
+use PKP\context\Context;
 use PKP\db\DAORegistry;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
@@ -71,7 +72,7 @@ class FundingPlugin extends GenericPlugin {
 
             $funderAwardDao = new FunderAwardDAO();
             DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
-    
+
             Hook::add('LoadComponentHandler', function (string $hookName, array $args): bool {
                 $component = $args[0];
                 $componentInstance = & $args[2];
@@ -426,7 +427,7 @@ class FundingPlugin extends GenericPlugin {
         $preliminaryOutput =& $params[0];
         $request = Application::get()->getRequest();
         $context = $request->getContext();
-        $funderDAO = DAORegistry::getDAO('FunderDAO');
+        $funderDAO = DAORegistry::getDAO('FunderDAO'); /** @var FunderDAO $funderDAO */
         $funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
         $crossrefFRNS = 'http://www.crossref.org/fundref.xsd';
@@ -435,8 +436,7 @@ class FundingPlugin extends GenericPlugin {
         $articleNodes = $preliminaryOutput->getElementsByTagName('journal_article');
         foreach ($articleNodes as $articleNode) {
             $doiDataNode = $articleNode->getElementsByTagName('doi_data')->item(0);
-            
-            $aiProgramDataNode = $articleNode->getElementsByTagNameNS('http://www.crossref.org/AccessIndicators.xsd', 'program')->item(0);
+
             $doiNode = $doiDataNode->getElementsByTagName('doi')->item(0);
 
             $doi = $doiNode->nodeValue;
@@ -466,10 +466,19 @@ class FundingPlugin extends GenericPlugin {
                 }
                 $programNode->appendChild($groupNode);
             }
-            if ($aiProgramDataNode) {
-                $articleNode->insertBefore($programNode, $aiProgramDataNode);
+            $crossmarkNode = $articleNode->getElementsByTagName('crossmark')->item(0);
+            if (!$crossmarkNode) {
+                $aiProgramDataNode = $articleNode->getElementsByTagNameNS('http://www.crossref.org/AccessIndicators.xsd', 'program')->item(0);
+                if ($aiProgramDataNode) {
+                    $articleNode->insertBefore($programNode, $aiProgramDataNode);
+                } else {
+                    $articleNode->insertBefore($programNode, $doiDataNode);
+                }
             } else {
-                $articleNode->insertBefore($programNode, $doiDataNode);
+                $customMetadataNode = $crossmarkNode->getElementsByTagName('custom_metadata')->item(0);
+                $assertionNodes = $customMetadataNode->getElementsByTagName('assertion');
+                $lastAssertionNode = $assertionNodes->item($assertionNodes->length - 1);
+                $customMetadataNode->insertBefore($programNode, $lastAssertionNode->nextSibling);
             }
         }
         return false;

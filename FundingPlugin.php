@@ -37,6 +37,7 @@ use PKP\context\Context;
 use PKP\db\DAORegistry;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
+use Laravel\Scout\Builder;
 
 class FundingPlugin extends GenericPlugin {
 
@@ -65,15 +66,11 @@ class FundingPlugin extends GenericPlugin {
      * @copydoc Plugin::register()
      */
     function register($category, $path, $mainContextId = null) {
+        DAORegistry::registerDAO('FunderDAO', new FunderDAO());
+        DAORegistry::registerDAO('FunderAwardDAO', new FunderAwardDAO());
+
         $success = parent::register($category, $path, $mainContextId);
         if ($success && $this->getEnabled($mainContextId)) {
-
-            $funderDao = new FunderDAO();
-            DAORegistry::registerDAO('FunderDAO', $funderDao);
-
-            $funderAwardDao = new FunderAwardDAO();
-            DAORegistry::registerDAO('FunderAwardDAO', $funderAwardDao);
-
             Hook::add('LoadComponentHandler', function (string $hookName, array $args): bool {
                 $component = $args[0];
                 $componentInstance = & $args[2];
@@ -108,8 +105,27 @@ class FundingPlugin extends GenericPlugin {
             $templateMgr->addStyleSheet('backendUiExampleStyle',"{$request->getBaseUrl()}/{$this->getPluginPath()}/public/build/build.css", [
                 'contexts' => ['backend']
             ] );
-
         }
+
+        // Search indexing: Add funders to indexed date. (Intentionally outside enabled check!)
+        Hook::add('OpenSearchEngine::update', $this->addOpenSearchIndexing(...));
+        Hook::add('SubmissionSearchResult::builderFromRequest', function(string $hookName, Builder $builder, PKPRequest $request) {
+            $context = $request->getContext();
+            if ($context && $this->getEnabledForContextId($context->getId())) {
+                $builder->whereIn('funders', (array) $request->getUserVar('funders'));
+            }
+        });
+        Hook::add('OpenSearchEngine::buildQuery', function(string $hookName, array &$query, array &$filter, array &$sort, Builder $builder, Builder $originalBuilder) {
+            if ($originalBuilder->wheres['contextId'] && $this->getEnabledForContextId($originalBuilder->wheres['contextId'])) {
+                $funders = $builder->whereIns['funders'] ?? [];
+                if (!empty($funders)) {
+                    $filter[] = ['terms' => ['funders.name.keyword' => $funders]];
+                }
+                unset($builder->whereIns['funders']);
+            }
+            return Hook::CONTINUE;
+        });
+
         return $success;
     }
 
@@ -423,6 +439,29 @@ class FundingPlugin extends GenericPlugin {
     }
 
     /**
+     * Add indexing support for OpenSearch engine.
+     */
+    function addOpenSearchIndexing(string $hookName, array &$json, Submission $submission) : bool
+    {
+        if (!$this->getEnabledForContextId($submission->getData('contextId'))) return Hook::CONTINUE;
+
+        $funderDAO = DAORegistry::getDAO('FunderDAO');
+        $funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
+
+        $funders = $funderDAO->getBySubmissionId($submission->getId());
+        while ($funder = $funders->next()) {
+            $funderAwards = $funderAwardDAO->getByFunderId($funder->getId())->toArray();
+            $json['body']['funders'][] = [
+                'id' => $funder->getFunderIdentification(),
+                'name' => $funder->getFunderName(),
+                'awards' => array_map(fn($a) => $a->getFunderAwardNumber(), $funderAwards)
+            ];
+        }
+
+        return Hook::CONTINUE;
+    }
+
+    /**
      * Add <fundingReference> XML nodes to DataCite export for submission.
      */
     function addDataCiteElement(string $hookName, array $params) : bool
@@ -586,5 +625,10 @@ class FundingPlugin extends GenericPlugin {
                 return new JSONMessage(true, $form->fetch($request));
         }
         return parent::manage($args, $request);
+    }
+
+    function getEnabledForContextId(int $contextId) : bool
+    {
+        return $this->getSetting($contextId, 'enabled');
     }
 }

@@ -629,6 +629,6 @@ class FundingPlugin extends GenericPlugin {
 
     function getEnabledForContextId(int $contextId) : bool
     {
-        return $this->getSetting($contextId, 'enabled');
+        return (bool) $this->getSetting($contextId, 'enabled');
     }
 }

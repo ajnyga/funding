@@ -17,8 +17,20 @@ msgstr "Date de finanțare"
 msgid "plugins.generic.funding.description"
 msgstr "Acest plugin adaugă date de finanțare a depunerii folosind registrul de finanțatori Crossref și ia în considerare datele în exportul Crossref XML."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "Următoarele setări controlează colectarea și utilizarea informațiilor privind finanțarea introduse la fiecare depunere."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Activați validarea ID-ului grantului pentru finanțatorii acceptați (utilizând API-ul Zenodo)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "Unul sau mai multe dintre ID-urile subvenției nu sunt valabile pentru finanțatorul specificat. Vă rugăm să verificați din nou ID-urile subvenției."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Date de finanțare"
+
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Publicație: Date de finanțare"
 
 msgid "plugins.generic.funding.addFunder"
 msgstr "Adăugați finanțator"

@@ -17,8 +17,20 @@ msgstr "Dados de financiamento"
 msgid "plugins.generic.funding.description"
 msgstr "Este plugin adiciona dados do financiamento da submissão utilizando o registo de financiadores da CrossRef e considera esses dados para exportação como um XML da CrossRef."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "As seguintes configurações controlam a recolha e utilização das informações de financiamento introduzidas em cada submissão."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Ativar a validação do ID da subvenção para financiadores suportados (usando a API Zenodo)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "Um ou mais dos IDs de subsídio não são válidos para o financiador especificado. Verifique novamente os IDs de subsídio."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Dados de financiamento"
+
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Publicação: Dados de financiamento"
 
 msgid "plugins.generic.funding.addFunder"
 msgstr "Adicionar financiador"
@@ -49,3 +61,10 @@ msgstr "É obrigatório inserir o nome do financiador"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
 msgstr "Apenas são permitidos financiadores registados na CrossRef"
+
+msgid "plugins.generic.funding.submissionWizard.name"
+msgstr "Financiadores"
+
+msgid "plugins.generic.funding.submissionWizard.description"
+msgstr "Forneça informações sobre quaisquer instituições que financiaram a investigação por trás deste trabalho. Apenas financiadores do registo Crossref são suportados. Se recebeu financiamento de uma instituição e não consegue encontrá-la para adicionar aqui, forneça essa informação no campo Comentários para o editor."
+

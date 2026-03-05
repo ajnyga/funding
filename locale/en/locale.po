@@ -24,7 +24,7 @@ msgid "plugins.generic.funding.settings.enableGrantIdValidation"
 msgstr "Enable grant ID validation for supported funders (using the Zenodo API)."
 
 msgid "plugins.generic.funding.fundIdInvalid"
-msgstr "One or more of the fund IDs are not valid for the specified funder. Please check the fund IDs again."
+msgstr "One or more of the grant IDs are not valid for the specified funder. Please check the grant IDs again."
 
 msgid "plugins.generic.funding.fundingData"
 msgstr "Funding data"

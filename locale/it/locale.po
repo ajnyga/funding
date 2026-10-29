@@ -17,8 +17,20 @@ msgstr "Dati di finanziamento"
 msgid "plugins.generic.funding.description"
 msgstr "Questo plugin aggiunge i dati di finanziamento delle submission utilizzando il registro dei finanziatori di Crossref e considera i dati nell'esportazione XML di Crossref."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "Le seguenti impostazioni controllano la raccolta e l'utilizzo delle informazioni relative ai finanziamenti inserite con ogni invio."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Abilita la convalida dell'ID della sovvenzione per i finanziatori supportati (utilizzando l'API Zenodo)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "Uno o più ID delle sovvenzioni non sono validi per il finanziatore specificato. Controllare nuovamente gli ID delle sovvenzioni."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Dati di finanziamento"
+
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Pubblicazione: Dati di finanziamento"
 
 msgid "plugins.generic.funding.addFunder"
 msgstr "Aggiungi finanziatore"

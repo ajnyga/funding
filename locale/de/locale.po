@@ -17,8 +17,20 @@ msgstr "Fördererangaben"
 msgid "plugins.generic.funding.description"
 msgstr "Dieses Plugin fügt Daten zur Finanzierung von Einreichungen über die Crossref Funders Registry hinzu und schliesst die Daten im Crossref XML Export mit ein."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "Die folgenden Einstellungen regeln die Erfassung und Verwendung der mit jeder Einreichung eingegebenen Fördererinformationen."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Aktivieren Sie die Validierung der Förderungs-ID für unterstützte Förderer (mithilfe der Zenodo-API)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "Eine oder mehrere der Grant-IDs sind für den angegebenen Förderer ungültig. Bitte überprüfen Sie die Grant-IDs erneut."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Daten zur Förderung"
+
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Publikation: Daten zur Förderung"
 
 msgid "plugins.generic.funding.addFunder"
 msgstr "Förderer hinzufügen"

@@ -207,6 +207,8 @@ class FunderGridHandler extends GridHandler {
      * @return string Serialized JSON object
      */
     function editFunder($args, $request) {
+        if (!$this->canAdminister($request->getUser())) return new JSONMessage(false);
+
         $funderId = $request->getUserVar('funderId');
         $context = $request->getContext();
         $submission = $this->getSubmission();
@@ -227,10 +229,14 @@ class FunderGridHandler extends GridHandler {
      * @return string Serialized JSON object
      */
     function updateFunder($args, $request) {
+        if (!$this->canAdminister($request->getUser())) return new JSONMessage(false);
+
         $funderId = $request->getUserVar('funderId');
         $context = $request->getContext();
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
+
+        if ($funderId && !$this->funderDao->getById($funderId, $submissionId)) return new JSONMessage(false);
 
         $this->setupTemplate($request);
 
@@ -266,6 +272,7 @@ class FunderGridHandler extends GridHandler {
     function deleteFunder($args, $request) {
 
         if (!$request->checkCSRF()) return new JSONMessage(false);
+        if (!$this->canAdminister($request->getUser())) return new JSONMessage(false);
 
         $funderId = $request->getUserVar('funderId');
         $submission = $this->getSubmission();
@@ -273,6 +280,7 @@ class FunderGridHandler extends GridHandler {
 
         $funderDao = DAORegistry::getDAO('FunderDAO');
         $funder = $funderDao->getById($funderId, $submissionId);
+        if (!$funder) return new JSONMessage(false);
 
         $funderDao->deleteObject($funder);
 
@@ -292,10 +300,10 @@ class FunderGridHandler extends GridHandler {
         $contextId = $submission->getData('contextId');
 
         // Incomplete submissions can be edited. (Presumably author.)
-        if ($submission->getData('submissionProgress') == 'start') return true;
+        if ($submission->getData('submissionProgress')) return true;
 
         // Managers should always have access.
-        $userRoles = $this->getAuthorizedContextObject(ASSOC_TYPE_USER_ROLES);
+        $userRoles = $this->getAuthorizedContextObject(Application::ASSOC_TYPE_USER_ROLES);
         if (array_intersect(array(Role::ROLE_ID_MANAGER), $userRoles)) return true;
 
         // Sub editors and assistants need to be assigned to the current stage.

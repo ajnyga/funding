@@ -17,8 +17,20 @@ msgstr "Rahoittajat"
 msgid "plugins.generic.funding.description"
 msgstr "Tämä lisäosa mahdollistaa käsikirjoituksen rahoittajia koskevan metadatan lisäyksen. Rahoittajien nimet ja tunnisteet haetaan CrossRefin Funder Registrys -palvelusta."
 
+msgid "plugins.generic.funding.settings.description"
+msgstr "Seuraavat asetukset määrittävät, miten käsikirjoitusten yhteydessä annettuja rahoitustietoja kerätään ja käytetään."
+
+msgid "plugins.generic.funding.settings.enableGrantIdValidation"
+msgstr "Ota käyttöön apurahojen tunnisteiden tarkistus tuetuille rahoittajille (Zenodo-rajapinnan avulla)."
+
+msgid "plugins.generic.funding.fundIdInvalid"
+msgstr "Yksi tai useampi apurahan tunniste ei ole kelvollinen valitulle rahoittajalle. Tarkista apurahojen tunnisteet."
+
 msgid "plugins.generic.funding.fundingData"
 msgstr "Rahoittajat"
+
+msgid "plugins.generic.funding.publication.fundingData"
+msgstr "Julkaisu: Rahoittajat"
 
 msgid "plugins.generic.funding.addFunder"
 msgstr "Lisää rahoittaja"
@@ -46,3 +58,12 @@ msgstr "Ei rahoittajia"
 
 msgid "plugins.generic.funding.funderNameIdentificationRequired"
 msgstr "Rahoittajan nimi vaaditaan"
+
+msgid "plugins.generic.funding.funderNameIdentificationRequired.registry"
+msgstr "Vain Crossrefin rahoittajarekisterissä olevat rahoittajat ovat sallittuja"
+
+msgid "plugins.generic.funding.submissionWizard.name"
+msgstr "Rahoittajat"
+
+msgid "plugins.generic.funding.submissionWizard.description"
+msgstr "Anna tiedot tämän työn taustalla olevaa tutkimusta rahoittaneista tahoista. Vain Crossrefin rahoittajarekisterissä olevat rahoittajat ovat tuettuja. Jos olet saanut rahoitusta taholta, jota et löydä tästä, anna tiedot Kommentteja toimittajalle -kentässä."

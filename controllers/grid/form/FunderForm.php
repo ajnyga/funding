@@ -18,6 +18,7 @@ namespace APP\plugins\generic\funding\controllers\grid\form;
 
 use APP\template\TemplateManager;
 use APP\core\Application;
+use GuzzleHttp\Exception\GuzzleException;
 use PKP\db\DAORegistry;
 use PKP\form\Form;
 use PKP\form\validation\FormValidator;
@@ -89,16 +90,24 @@ class FunderForm extends Form {
         $this->addCheck(new FormValidatorCSRF($this));
         if ($this->plugin->getSetting($contextId, 'enableGrantIdValidation')) {
             $this->addCheck(new FormValidatorCustom($this, 'grantId', 'required', 'plugins.generic.funding.fundIdInvalid', function () {
-                $funderNameIdentification = $this->getData('funderNameIdentification');
+                $funderNameIdentification = (string) $this->getData('funderNameIdentification');
                 $ror = array_reduce(array_keys(self::AWARD_FUNDERS), function($carry, $item) use ($funderNameIdentification) {
                     return strpos($funderNameIdentification, $item) !== false ? self::AWARD_FUNDERS[$item] : $carry;
                 });
                 // If no matching ROR was found, the grant ID cannot be validated for this agency. Allow anything.
                 if (!$ror) return true;
 
-                foreach (explode(';', $this->getData('funderAwards')) as $grantId) {
+                // Grant IDs are optional; only validate the ones that were entered.
+                $grantIds = array_filter(array_map('trim', explode(';', (string) $this->getData('funderAwards'))), 'strlen');
+                foreach ($grantIds as $grantId) {
                     $httpClient = Application::get()->getHttpClient();
-                    $awardResponse = $httpClient->request('GET', "https://zenodo.org/api/awards?funders={$ror}&q=" . urlencode($grantId));
+                    try {
+                        $awardResponse = $httpClient->request('GET', "https://zenodo.org/api/awards?funders={$ror}&q=" . urlencode($grantId));
+                    } catch (GuzzleException $e) {
+                        // The Zenodo API could not be reached. Do not block saving.
+                        error_log('Funding plugin: grant ID validation failed: ' . $e->getMessage());
+                        return true;
+                    }
                     $body = json_decode($awardResponse->getBody(), true);
                     $success = array_reduce($body['hits']['hits'] ?? [], function($carry, $item) use ($grantId) {
                         return $carry || $item['id'] === $grantId || ($item['number']  ?? null) === $grantId;
@@ -120,7 +129,8 @@ class FunderForm extends Form {
             $funderDao = DAORegistry::getDAO('FunderDAO');
             $funderAwardDao = DAORegistry::getDAO('FunderAwardDAO');
 
-            $funder = $funderDao->getById($this->funderId);
+            $funder = $funderDao->getById($this->funderId, $this->submissionId);
+            if (!$funder) return;
             $this->setData('funderNameIdentification', $funder->getFunderNameIdentification());
 
             $funderAwards = $funderAwardDao->getFunderAwardNumbersByFunderId($this->funderId);

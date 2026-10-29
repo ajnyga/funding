@@ -99,13 +99,12 @@ class FundingPlugin extends GenericPlugin {
             Hook::add('datacitexmlfilter::execute', $this->addDataCiteElement(...));
             Hook::add('OAIMetadataFormat_OpenAIRE::findFunders', $this->addOpenAIREFunderElement(...));
 
+            Hook::add('Submission::delete', $this->deleteSubmissionFunders(...));
+
             // Registering build file for JS and CSS to be loaded
             $request = Application::get()->getRequest();
             $templateMgr = TemplateManager::getManager($request);
             $this->addJavaScript($request, $templateMgr);
-            $templateMgr->addStyleSheet('backendUiExampleStyle',"{$request->getBaseUrl()}/{$this->getPluginPath()}/public/build/build.css", [
-                'contexts' => ['backend']
-            ] );
 
         }
         return $success;
@@ -333,7 +332,7 @@ class FundingPlugin extends GenericPlugin {
     function addGridhandlerJs($hookName, $params) {
         $templateMgr = $params[0];
         $request = $this->getRequest();
-        $gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'FunderGridHandler.js';
+        $gridHandlerJs = $this->getJavaScriptURL() . '/FunderGridHandler.js';
         $templateMgr->addJavaScript(
             'FunderGridHandlerJs',
             $gridHandlerJs,
@@ -424,8 +423,6 @@ class FundingPlugin extends GenericPlugin {
      */
     function addCrossrefElement($hookName, $params) {
         $preliminaryOutput =& $params[0];
-        $request = Application::get()->getRequest();
-        $context = $request->getContext();
         $funderDAO = DAORegistry::getDAO('FunderDAO');
         $funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
@@ -441,11 +438,14 @@ class FundingPlugin extends GenericPlugin {
 
             $doi = $doiNode->nodeValue;
 
+            // Deposits run as queued jobs, so the request context may be missing or a different
+            // context. Use the context the DOI belongs to.
+            $doiObject = Repo::doi()->getCollector()->filterByIdentifier($doi)->getMany()->first();
+            $publishedSubmission = $doiObject ? Repo::submission()->getByDoi($doi, $doiObject->getData('contextId')) : null;
+            if (!$publishedSubmission) continue;
+
             $programNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:program');
             $programNode->setAttribute('name', 'fundref');
-
-            $publishedSubmission = Repo::submission()->getByDoi($doi, $context->getId());
-            assert($publishedSubmission);
 
             $funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
             while ($funder = $funders->next()) {
@@ -453,14 +453,14 @@ class FundingPlugin extends GenericPlugin {
                 $groupNode->setAttribute('name', 'fundgroup');
                 $funderNameNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8'));
                 $funderNameNode->setAttribute('name', 'funder_name');
-                $funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funder->getFunderIdentification());
+                $funderIdNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funder->getFunderIdentification(), ENT_COMPAT, 'UTF-8'));
                 $funderIdNode->setAttribute('name', 'funder_identifier');
                 $funderNameNode->appendChild($funderIdNode);
                 $groupNode->appendChild($funderNameNode);
                 // Append funder awards nodes
                 $funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
                 while ($funderAward = $funderAwards->next()) {
-                    $awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', $funderAward->getFunderAwardNumber());
+                    $awardNumberNode = $preliminaryOutput->createElementNS($crossrefFRNS, 'fr:assertion', htmlspecialchars($funderAward->getFunderAwardNumber(), ENT_COMPAT, 'UTF-8'));
                     $awardNumberNode->setAttribute('name', 'award_number');
                     $groupNode->appendChild($awardNumberNode);
                 }
@@ -485,8 +485,6 @@ class FundingPlugin extends GenericPlugin {
      */
     function addDataCiteElement($hookName, $params) {
         $preliminaryOutput =& $params[0];
-        $request = Application::get()->getRequest();
-        $context = $request->getContext();
         $funderDAO = DAORegistry::getDAO('FunderDAO');
         $funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
 
@@ -501,27 +499,27 @@ class FundingPlugin extends GenericPlugin {
                 $publisherId = $alternateIdentifierNode->nodeValue;
                 $idsArray = explode('-', $publisherId);
                 if (count($idsArray) == 3 ) {
-                    $submissionId = $idsArray[2];
+                    $submissionId = (int) $idsArray[2];
+                    $publishedSubmission = Repo::submission()->get($submissionId);
+                    if (!$publishedSubmission) continue;
                     // Add the parent fundingReferences element
                     $fundingReferencesNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReferences');
-                    $publishedSubmission = Repo::submission()->get($submissionId);
-                    assert($publishedSubmission);
                     $funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
                     while ($funder = $funders->next()) {
                         $funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
                         if ($funderAwards->wasEmpty) {
                             $funderReferenceNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReference');
                             $funderReferenceNode->appendChild($funderNameNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderName', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8')));
-                            $funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', $funder->getFunderIdentification()));
+                            $funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', htmlspecialchars($funder->getFunderIdentification(), ENT_COMPAT, 'UTF-8')));
                             $funderIdNode->setAttribute('funderIdentifierType', 'Crossref Funder ID');
                             $fundingReferencesNode->appendChild($funderReferenceNode);
                         }
                         while ($funderAward = $funderAwards->next()) {
                             $funderReferenceNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'fundingReference');
                             $funderReferenceNode->appendChild($funderNameNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderName', htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8')));
-                            $funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', $funder->getFunderIdentification()));
+                            $funderReferenceNode->appendChild($funderIdNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'funderIdentifier', htmlspecialchars($funder->getFunderIdentification(), ENT_COMPAT, 'UTF-8')));
                             $funderIdNode->setAttribute('funderIdentifierType', 'Crossref Funder ID');
-                            $funderReferenceNode->appendChild($awardNumberNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'awardNumber', $funderAward->getFunderAwardNumber()));
+                            $funderReferenceNode->appendChild($awardNumberNode = $preliminaryOutput->createElementNS($dataciteFRNS, 'awardNumber', htmlspecialchars($funderAward->getFunderAwardNumber(), ENT_COMPAT, 'UTF-8')));
                             $fundingReferencesNode->appendChild($funderReferenceNode);
                         }
                     }
@@ -545,26 +543,44 @@ class FundingPlugin extends GenericPlugin {
         $fundingReferences =& $params[1];
         $funderDAO = DAORegistry::getDAO('FunderDAO');
         $funderAwardDAO = DAORegistry::getDAO('FunderAwardDAO');
-        $publishedSubmission = Repo::submission()->get($submissionId);
-        assert($publishedSubmission);
+        $publishedSubmission = Repo::submission()->get((int) $submissionId);
+        if (!$publishedSubmission) return false;
         $funders = $funderDAO->getBySubmissionId($publishedSubmission->getId());
         while ($funder = $funders->next()) {
             $fundingReferences .= "\t\t\t\t<award-group id=\"group-" . $funder->getId() . "\">\n";
             $fundingReferences .= "\t\t\t\t\t<funding-source id=\"source-" . $funder->getId() . "\">\n";
             $fundingReferences .= "\t\t\t\t\t\t<institution-wrap>\n";
             $fundingReferences .= "\t\t\t\t\t\t\t<institution>" . htmlspecialchars($funder->getFunderName(), ENT_COMPAT, 'UTF-8') . "</institution>\n";
-            $fundingReferences .= "\t\t\t\t\t\t\t<institution-id institution-id-type=\"doi\" vocab=\"open-funder-registry\" vocab-identifier=\"" . $funder->getFunderIdentification() . "\">" . $funder->getFunderIdentification() . "</institution-id>\n";
+            $fundingReferences .= "\t\t\t\t\t\t\t<institution-id institution-id-type=\"doi\" vocab=\"open-funder-registry\" vocab-identifier=\"" . htmlspecialchars($funder->getFunderIdentification(), ENT_COMPAT, 'UTF-8') . "\">" . htmlspecialchars($funder->getFunderIdentification(), ENT_COMPAT, 'UTF-8') . "</institution-id>\n";
             $fundingReferences .= "\t\t\t\t\t\t</institution-wrap>\n";
             $fundingReferences .= "\t\t\t\t\t</funding-source>\n";
             $funderAwards = $funderAwardDAO->getByFunderId($funder->getId());
             while ($funderAward = $funderAwards->next()) {
-                $fundingReferences .= "\t\t\t\t\t<award-id>" . $funderAward->getFunderAwardNumber() . "</award-id>\n";
+                $fundingReferences .= "\t\t\t\t\t<award-id>" . htmlspecialchars($funderAward->getFunderAwardNumber(), ENT_COMPAT, 'UTF-8') . "</award-id>\n";
             }
             $fundingReferences .= "\t\t\t\t</award-group>\n";
         }
         if ($fundingReferences)
             $fundingReferences = "\t\t\t<funding-group specific-use=\"crossref\">\n" . $fundingReferences . "\t\t\t</funding-group>\n";
         return $fundingReferences;
+    }
+
+    /**
+     * Delete the funding data of a deleted submission.
+     *
+     * @param string $hookName
+     * @param array $params
+     *
+     * @return bool Hook return value
+     */
+    function deleteSubmissionFunders($hookName, $params) {
+        $submission = $params[0]; /** @var Submission $submission */
+        $funderDao = DAORegistry::getDAO('FunderDAO'); /** @var FunderDAO $funderDao */
+        $funders = $funderDao->getBySubmissionId($submission->getId());
+        while ($funder = $funders->next()) {
+            $funderDao->deleteObject($funder);
+        }
+        return false;
     }
 
     /**
@@ -580,7 +596,7 @@ class FundingPlugin extends GenericPlugin {
      * @return string
      */
     function getJavaScriptURL() {
-        return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
+        return Application::get()->getRequest()->getBaseUrl() . '/' . $this->getPluginPath() . '/js';
     }
 
     /**

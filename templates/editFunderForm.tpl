@@ -18,6 +18,9 @@
 
 		function addSubsidiaryOptions(descendants, names) {ldelim}
 			var selectElement = document.getElementById('subsidiaryOption');
+			// The form may have been closed before the Crossref response arrived
+			if (!selectElement) return;
+			descendants = descendants.filter(function(id) {ldelim} return names[id]; {rdelim});
 			descendants.sort(function(a, b) {ldelim}
 				return names[a].localeCompare(names[b]);
 			{rdelim});
